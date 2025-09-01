@@ -1,26 +1,25 @@
-# Deploying a GitHub actions compatible environment
+# GitHub Actions 호환 환경 배포
 
-The objective of the instructions below is to configure the infrastructure that allows you to run CI/CD deployments using
-GitHub Actions for the Terraform Example Foundation stages (`0-bootstrap`, `1-org`, `2-environments`, `3-networks`, `4-projects`).
-The infrastructure consists in two Google Cloud Platform projects (`prj-b-seed` and `prj-b-cicd-wif-gh`).
+아래 지침의 목표는 Terraform Example Foundation 단계(`0-bootstrap`, `1-org`, `2-environments`, `3-networks`, `4-projects`)에 대해 GitHub Actions를 사용하여 CI/CD 배포를 실행할 수 있는 인프라를 구성하는 것입니다.
+이 인프라는 두 개의 Google Cloud Platform 프로젝트(`prj-b-seed` 및 `prj-b-cicd-wif-gh`)로 구성됩니다.
 
-It is a best practice to have two separate projects here (`prj-b-seed` and `prj-b-cicd-wif-gh`) for separation of concerns.
-On one hand, `prj-b-seed` stores terraform state and has the Service Accounts able to create / modify infrastructure.
-On the other hand, the authentication infrastructure using [Workload identity federation](https://cloud.google.com/iam/docs/workload-identity-federation) is implemented in `prj-b-cicd-wif-gh`.
+관심사 분리를 위해 여기서 두 개의 별도 프로젝트(`prj-b-seed` 및 `prj-b-cicd-wif-gh`)를 갖는 것이 모범 사례입니다.
+한편으로, `prj-b-seed`는 terraform 상태를 저장하고 인프라를 생성/수정할 수 있는 서비스 계정을 보유합니다.
+반면에, [워크로드 ID 페더레이션](https://cloud.google.com/iam/docs/workload-identity-federation)을 사용한 인증 인프라는 `prj-b-cicd-wif-gh`에서 구현됩니다.
 
-## Requirements
+## 요구사항
 
-To run the instructions described in this document, install the following:
+이 문서에 설명된 지침을 실행하려면 다음을 설치하십시오:
 
-- [Google Cloud SDK](https://cloud.google.com/sdk/install) version 393.0.0 or later
-    - [terraform-tools](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) component
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) version 2.28.0 or later
-- [Terraform](https://www.terraform.io/downloads.html) version 1.5.7  or later
+- [Google Cloud SDK](https://cloud.google.com/sdk/install) 버전 393.0.0 이상
+    - [terraform-tools](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) 구성 요소
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 버전 2.28.0 이상
+- [Terraform](https://www.terraform.io/downloads.html) 버전 1.5.7 이상
 
-For the manual steps described in this document, you need to use the same [Terraform](https://www.terraform.io/downloads.html) version used on the build pipeline.
-Otherwise, you might experience Terraform state snapshot lock errors.
+이 문서에 설명된 수동 단계의 경우, 빌드 파이프라인에서 사용되는 것과 동일한 [Terraform](https://www.terraform.io/downloads.html) 버전을 사용해야 합니다.
+그렇지 않으면 Terraform 상태 스냅샷 잠금 오류가 발생할 수 있습니다.
 
-Version 1.5.7 is the last version before the license model change. To use a later version of Terraform, ensure that the Terraform version used in the Operational System to manually execute part of the steps in `3-networks` and `4-projects` is the same version configured in the following code
+버전 1.5.7은 라이선스 모델 변경 이전의 마지막 버전입니다. 최신 버전의 Terraform을 사용하려면, `3-networks` 및 `4-projects` 단계의 일부를 수동으로 실행하는 데 사용되는 운영 체제의 Terraform 버전이 다음 코드에 구성된 것과 동일한 버전인지 확인하십시오
 
 - 0-bootstrap/modules/jenkins-agent/variables.tf
    ```
@@ -53,40 +52,39 @@ Version 1.5.7 is the last version before the license model change. To use a late
    ARG TERRAFORM_VERSION=1.5.7
    ```
 
-Also make sure that you have the following:
+또한 다음 사항을 확인하십시오:
 
-- A [GitHub account](https://docs.github.com/en/get-started/onboarding/getting-started-with-your-github-account) for your User or [Organization](https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch).
-- A **private** [GitHub repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository) for each one of the stages of Foundation:
+- 사용자 또는 [조직](https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/creating-a-new-organization-from-scratch)의 [GitHub 계정](https://docs.github.com/en/get-started/onboarding/getting-started-with-your-github-account)
+- Foundation의 각 단계에 대한 **비공개** [GitHub 저장소](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository):
     - Bootstrap
     - Organization
     - Environments
     - Networks
     - Projects
-- A [Fine grained](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-fine-grained-personal-access-token) personal access token configured with:
-    - Repository access to Only select repositories, including all the repositories in the previous item.
-    - Permissions:
-        - Actions: Read and Write
-        - Metadata: Read-only
-        - Secrets: Read and Write
-        - Variables: Read and Write
-        - Workflows: Read and Write
-- A Google Cloud [organization](https://cloud.google.com/resource-manager/docs/creating-managing-organization).
-- A Google Cloud [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
-- Cloud Identity or Google Workspace groups for organization and billing admins.
-- For the user who will run the procedures in this document, grant the following roles:
-   - The `roles/resourcemanager.organizationAdmin` role on the Google Cloud organization.
-   - The `roles/orgpolicy.policyAdmin` role on the Google Cloud organization.
-   - The `roles/resourcemanager.projectCreator` role on the Google Cloud organization.
-   - The `roles/billing.admin` role on the billing account.
-   - The `roles/resourcemanager.folderCreator` role.
+- 다음과 같이 구성된 [세분화된](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-fine-grained-personal-access-token) 개인 액세스 토큰:
+    - 이전 항목의 모든 저장소를 포함하여 선택한 저장소에만 저장소 액세스
+    - 권한:
+        - Actions: 읽기 및 쓰기
+        - Metadata: 읽기 전용
+        - Secrets: 읽기 및 쓰기
+        - Variables: 읽기 및 쓰기
+        - Workflows: 읽기 및 쓰기
+- Google Cloud [조직](https://cloud.google.com/resource-manager/docs/creating-managing-organization)
+- Google Cloud [결제 계정](https://cloud.google.com/billing/docs/how-to/manage-billing-account)
+- 조직 및 결제 관리자를 위한 Cloud Identity 또는 Google Workspace 그룹
+- 이 문서의 절차를 실행할 사용자에게 다음 역할을 부여:
+   - Google Cloud 조직의 `roles/resourcemanager.organizationAdmin` 역할
+   - Google Cloud 조직의 `roles/orgpolicy.policyAdmin` 역할
+   - Google Cloud 조직의 `roles/resourcemanager.projectCreator` 역할
+   - 결제 계정의 `roles/billing.admin` 역할
+   - `roles/resourcemanager.folderCreator` 역할
 
-## Instructions
+## 지침
 
-Due to issue [First commit pushed triggers 2 workflow runs](https://github.com/orgs/community/discussions/50356),
-The repositories created must be initialized with an initial commit,
-so that the initial push for the `plan` branch does not trigger two workflow runs.
-The instructions in the following steps will ensure the creation of an initial commit
-for each one of the repositories.
+[첫 번째 커밋 푸시가 2개의 워크플로우 실행을 트리거함](https://github.com/orgs/community/discussions/50356) 문제로 인해,
+생성된 저장소는 초기 커밋으로 초기화되어야 하며,
+이는 `plan` 브랜치에 대한 초기 푸시가 두 개의 워크플로우 실행을 트리거하지 않도록 하기 위함입니다.
+다음 단계의 지침은 각 저장소에 대한 초기 커밋 생성을 보장합니다.
 
 ### Deploying step 0-bootstrap
 
@@ -118,7 +116,7 @@ You must be [authenticated to GitHub](https://docs.github.com/en/authentication/
    cd gcp-bootstrap
    ```
 
-1. Seed the repository if it has not been initialized yet.
+1. 아직 초기화되지 않은 경우 저장소를 시드합니다.
 
    ```bash
    git commit --allow-empty -m 'repository seed'
@@ -128,7 +126,7 @@ You must be [authenticated to GitHub](https://docs.github.com/en/authentication/
    git push --set-upstream origin production
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout -b plan
@@ -297,7 +295,7 @@ we recommend that you request 50 additional projects for the **projects step ser
    cd gcp-org
    ```
 
-1. Seed the repository if it has not been initialized yet.
+1. 아직 초기화되지 않은 경우 저장소를 시드합니다.
 
    ```bash
    git commit --allow-empty -m 'repository seed'
@@ -307,7 +305,7 @@ we recommend that you request 50 additional projects for the **projects step ser
    git push --set-upstream origin production
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout -b plan

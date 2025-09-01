@@ -1,50 +1,49 @@
-*Warning: the guidance for deploying with Jenkins is no longer actively tested or maintained. While we have left the guidance available for users who prefer Jenkins, we make no guarantees about its quality, and you might be responsible for troubleshooting and modifying the directions.*
+*경고: Jenkins를 사용한 배포 가이드는 더 이상 적극적으로 테스트되거나 유지보수되지 않습니다. Jenkins를 선호하는 사용자를 위해 가이드를 제공하고 있지만, 품질에 대한 보장은 없으며, 문제 해결 및 지침 수정에 대한 책임은 사용자에게 있을 수 있습니다.*
 
-# 0-bootstrap - deploying a Jenkins-compatible environment
+# 0-bootstrap - Jenkins 호환 환경 배포
 
-The purpose of this step is to bootstrap a GCP organization, creating all the required resources & permissions to start using the Cloud Foundation Toolkit (CFT). This step also guides you on how to configure a CI/CD project to host a Jenkins Agent, which connects to your existing Jenkins Controller infrastructure & your own Git repos (which might live on-prem). The Jenkins Agent will run [CI/CD Pipelines](../docs/GLOSSARY.md#foundation-cicd-pipeline) for foundations code in subsequent stages.
+이 단계의 목적은 GCP 조직을 부트스트랩하여 CFT(Cloud Foundation Toolkit) 사용을 시작하는 데 필요한 모든 리소스와 권한을 생성하는 것입니다. 이 단계는 또한 기존 Jenkins Controller 인프라와 자체 Git 저장소(온프레미스에 있을 수 있음)에 연결되는 Jenkins Agent를 호스팅하기 위한 CI/CD 프로젝트를 구성하는 방법에 대해 안내합니다. Jenkins Agent는 후속 단계에서 foundation 코드에 대한 [CI/CD 파이프라인](../docs/GLOSSARY.md#foundation-cicd-pipeline)을 실행합니다.
 
-Another CI/CD option is to use Cloud Build & Cloud Source Repos. If you don't have a Jenkins implementation and don't want one, then we recommend you to [use the Cloud Build module](./README.md#deploying-with-cloud-build) instead.
+다른 CI/CD 옵션은 Cloud Build와 Cloud Source Repos를 사용하는 것입니다. Jenkins 구현이 없고 원하지 않는 경우, 대신 [Cloud Build 모듈 사용](./README.md#deploying-with-cloud-build)을 권장합니다.
 
-**Disclaimer:** Jenkins support will be deprecated in a future release. Consider [using the Cloud Build module](./README.md#deploying-with-cloud-build) instead.
+**면책조항:** Jenkins 지원은 향후 릴리스에서 더 이상 사용되지 않을 예정입니다. 대신 [Cloud Build 모듈 사용](./README.md#deploying-with-cloud-build)을 고려하십시오.
 
-## Overview
+## 개요
 
-The objective of the instructions below is to configure the infrastructure that allows you to run CI/CD deployments for the next stages (`1-org, 2-environments, 3-networks, 4-projects`) using Jenkins. The infrastructure consists in two Google Cloud Platform projects (`prj-b-seed` and `prj-b-cicd`) and VPN configuration to connect to your on-prem environment.
+아래 지침의 목표는 Jenkins를 사용하여 다음 단계(`1-org, 2-environments, 3-networks, 4-projects`)에 대한 CI/CD 배포를 실행할 수 있는 인프라를 구성하는 것입니다. 인프라는 두 개의 Google Cloud Platform 프로젝트(`prj-b-seed` 및 `prj-b-cicd`)와 온프레미스 환경에 연결하는 VPN 구성으로 구성됩니다.
 
-It is a best practice to have two separate projects here (`prj-b-seed` and `prj-b-cicd`) for separation of concerns. On one hand, `prj-b-seed` stores terraform state and has the Service Account able to create / modify infrastructure. On the other hand, the deployment of that infrastructure is coordinated by Jenkins, which is implemented in `prj-b-cicd` and connected to your Controller on-prem.
+관심사 분리를 위해 여기서 두 개의 별도 프로젝트(`prj-b-seed` 및 `prj-b-cicd`)를 갖는 것이 모범 사례입니다. 한편으로, `prj-b-seed`는 terraform 상태를 저장하고 인프라를 생성/수정할 수 있는 서비스 계정을 보유합니다. 반면에, 해당 인프라의 배포는 `prj-b-cicd`에서 구현되고 온프레미스의 Controller에 연결된 Jenkins에 의해 조정됩니다.
 
-**After following the instructions below, you will have:**
+**아래 지침을 따른 후 다음을 보유하게 됩니다:**
 
-- The `prj-b-seed` project, which contains:
-  - Terraform state bucket.
-  - Custom Service Accounts used by Terraform to create new resources in GCP.
-- The `prj-b-cicd` project, which contains:
-  - GCE Instance for the Jenkins Agent, connected to your current Jenkins Controller using SSH.
-  - VPC to connect the Jenkins GCE Instance to.
-  - FW rules to allow communication over port 22.
-  - VPN connection with on-prem (or where ever your Jenkins Controller is located).
-  - Custom service account `sa-jenkins-agent-gce@prj-b-cicd-xxxx.iam.gserviceaccount.com` for the GCE instance.
-    - This service account is granted the access to generate tokens on the Terraform custom service accounts in the `prj-b-seed` project.
+- `prj-b-seed` 프로젝트, 여기에는 다음이 포함됩니다:
+  - Terraform 상태 버킷
+  - GCP에서 새 리소스를 생성하기 위해 Terraform에서 사용하는 사용자 지정 서비스 계정
+- `prj-b-cicd` 프로젝트, 여기에는 다음이 포함됩니다:
+  - SSH를 사용하여 현재 Jenkins Controller에 연결된 Jenkins Agent용 GCE 인스턴스
+  - Jenkins GCE 인스턴스를 연결할 VPC
+  - 포트 22를 통한 통신을 허용하는 방화벽 규칙
+  - 온프레미스(또는 Jenkins Controller가 있는 어느 곳이든)와의 VPN 연결
+  - GCE 인스턴스용 사용자 지정 서비스 계정 `sa-jenkins-agent-gce@prj-b-cicd-xxxx.iam.gserviceaccount.com`
+    - 이 서비스 계정은 `prj-b-seed` 프로젝트의 Terraform 사용자 지정 서비스 계정에서 토큰을 생성할 수 있는 액세스 권한이 부여됩니다.
 
-- **Note: these instructions do not indicate how to create a Jenkins Controller.** To deploy a Jenkins Controller, you should follow [Jenkins Architecture](https://www.jenkins.io/doc/book/scaling/architecting-for-scale/) recommendations.
+- **참고: 이 지침은 Jenkins Controller를 생성하는 방법을 설명하지 않습니다.** Jenkins Controller를 배포하려면 [Jenkins 아키텍처](https://www.jenkins.io/doc/book/scaling/architecting-for-scale/) 권장사항을 따르십시오.
 
-**If you don't have a Jenkins implementation and don't want one**, then we recommend you to [use the Cloud Build module](./README.md#deploying-with-cloud-build) instead.
+**Jenkins 구현이 없고 원하지 않는 경우**, 대신 [Cloud Build 모듈 사용](./README.md#deploying-with-cloud-build)을 권장합니다.
 
-## Requirements
+## 요구사항
 
-Please see the **[requirements](./modules/jenkins-agent/README.md#Requirements)** of Software, Infrastructure and Permissions before following the instructions below.
+아래 지침을 따르기 전에 소프트웨어, 인프라 및 권한에 대한 **[요구사항](./modules/jenkins-agent/README.md#Requirements)**을 참조하십시오.
 
-## Usage
+## 사용법
 
-**Note:** If you are using MacOS, replace `cp -RT` with `cp -R` in the relevant
-commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
+**참고:** MacOS를 사용하는 경우, 관련 명령에서 `cp -RT`를 `cp -R`로 바꿉니다. `-T` 플래그는 Linux에서 필요하지만 MacOS에서는 문제를 일으킵니다.
 
-## Instructions
+## 지침
 
-You arrived to these instructions because you are using the `jenkins_bootstrap` to run the 0-bootstrap step instead of `cloudbuild_bootstrap`. Please follow the indications below:
+`cloudbuild_bootstrap` 대신 `jenkins_bootstrap`을 사용하여 0-bootstrap 단계를 실행하기 때문에 이 지침에 도달했습니다. 아래 지시사항을 따르십시오:
 
-- Make sure you cover all the [requirements](./modules/jenkins-agent/README.md#Requirements) of Software, Infrastructure and Permissions before following the instructions below.
+- 아래 지침을 따르기 전에 소프트웨어, 인프라 및 권한의 모든 [요구사항](./modules/jenkins-agent/README.md#Requirements)을 충족하는지 확인하십시오.
 
 ### I. Setup your environment
 

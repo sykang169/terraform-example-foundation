@@ -1,25 +1,24 @@
-# Deploying a GitLab CI/CD compatible environment
+# GitLab CI/CD 호환 환경 배포
 
-The objective of the following instructions is to configure the infrastructure that allows CI/CD deployments using
-GitLab CI/CD for the deploy of the Terraform Example Foundation stages (`0-bootstrap`, `1-org`, `2-environments`, `3-networks`, `4-projects`).
-This infrastructure consists in two Google Cloud Platform projects (`prj-b-seed` and `prj-b-cicd-wif-gl`).
+다음 지침의 목표는 Terraform Example Foundation 단계(`0-bootstrap`, `1-org`, `2-environments`, `3-networks`, `4-projects`)의 배포를 위해 GitLab CI/CD를 사용하여 CI/CD 배포를 허용하는 인프라를 구성하는 것입니다.
+이 인프라는 두 개의 Google Cloud Platform 프로젝트(`prj-b-seed` 및 `prj-b-cicd-wif-gl`)로 구성됩니다.
 
-It is a best practice to have two separate projects here (`prj-b-seed` and `prj-b-cicd-wif-gl`) for separation of concerns.
-On one hand, `prj-b-seed` stores terraform state and has the Service Accounts able to create / modify infrastructure.
-On the other hand, the authentication infrastructure using [Workload identity federation](https://cloud.google.com/iam/docs/workload-identity-federation) is implemented in `prj-b-cicd-wif-gl`.
+관심사 분리를 위해 여기서 두 개의 별도 프로젝트(`prj-b-seed` 및 `prj-b-cicd-wif-gl`)를 갖는 것이 모범 사례입니다.
+한편으로, `prj-b-seed`는 terraform 상태를 저장하고 인프라를 생성/수정할 수 있는 서비스 계정을 보유합니다.
+반면에, [워크로드 ID 페더레이션](https://cloud.google.com/iam/docs/workload-identity-federation)을 사용한 인증 인프라는 `prj-b-cicd-wif-gl`에서 구현됩니다.
 
-To run the instructions described in this document, install the following:
+이 문서에 설명된 지침을 실행하려면 다음을 설치하십시오:
 
-- [Google Cloud SDK](https://cloud.google.com/sdk/install) version 393.0.0 or later
-    - [terraform-tools](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) component
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) version 2.28.0 or later
-- [Terraform](https://www.terraform.io/downloads.html) version 1.5.7 or later
-- [jq](https://jqlang.github.io/jq/) version 1.6 or later.
+- [Google Cloud SDK](https://cloud.google.com/sdk/install) 버전 393.0.0 이상
+    - [terraform-tools](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) 구성 요소
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 버전 2.28.0 이상
+- [Terraform](https://www.terraform.io/downloads.html) 버전 1.5.7 이상
+- [jq](https://jqlang.github.io/jq/) 버전 1.6 이상
 
-For the manual steps described in this document, you need to use the same [Terraform](https://www.terraform.io/downloads.html) version used on the build pipeline.
-Otherwise, you might experience Terraform state snapshot lock errors.
+이 문서에 설명된 수동 단계의 경우, 빌드 파이프라인에서 사용되는 것과 동일한 [Terraform](https://www.terraform.io/downloads.html) 버전을 사용해야 합니다.
+그렇지 않으면 Terraform 상태 스냅샷 잠금 오류가 발생할 수 있습니다.
 
-Version 1.5.7 is the last version before the license model change. To use a later version of Terraform, ensure that the Terraform version used in the Operational System to manually execute part of the steps in `3-networks` and `4-projects` is the same version configured in the following code
+버전 1.5.7은 라이선스 모델 변경 이전의 마지막 버전입니다. 최신 버전의 Terraform을 사용하려면, `3-networks` 및 `4-projects` 단계의 일부를 수동으로 실행하는 데 사용되는 운영 체제의 Terraform 버전이 다음 코드에 구성된 것과 동일한 버전인지 확인하십시오
 
 - 0-bootstrap/modules/jenkins-agent/variables.tf
    ```
@@ -52,17 +51,17 @@ Version 1.5.7 is the last version before the license model change. To use a late
    ARG TERRAFORM_VERSION=1.5.7
    ```
 
-Also make sure that you have the following:
+또한 다음 사항을 확인하십시오:
 
-- A [GitLab](https://docs.gitlab.com/ee/user/profile/account/create_accounts.html) account for your User or Group.
-- A private GitLab project (repository) for each one of the stages of Foundation and one for the GitLab runner Image:
+- 사용자 또는 그룹의 [GitLab](https://docs.gitlab.com/ee/user/profile/account/create_accounts.html) 계정
+- Foundation의 각 단계와 GitLab 러너 이미지를 위한 비공개 GitLab 프로젝트(저장소):
     - Bootstrap
     - Organization
     - Environments
     - Networks
     - Projects
     - CI/CD Runner
-- A [Personal](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) access token or a [Group](https://docs.gitlab.com/ee/user/group/settings/group_access_tokens.html) access token configured with the following [scopes](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-token-scopes):
+- 다음 [범위](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-token-scopes)로 구성된 [개인](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) 액세스 토큰 또는 [그룹](https://docs.gitlab.com/ee/user/group/settings/group_access_tokens.html) 액세스 토큰:
     - api
     - read_api
     - create_runner
@@ -70,31 +69,31 @@ Also make sure that you have the following:
     - write_repository
     - read_registry
     - write_registry
-- A Google Cloud [organization](https://cloud.google.com/resource-manager/docs/creating-managing-organization).
-- A Google Cloud [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
-- Cloud Identity or Google Workspace groups for organization and billing admins.
-- For the user who will run the procedures in this document, grant the following roles:
-   - The `roles/resourcemanager.organizationAdmin` role on the Google Cloud organization.
-   - The `roles/orgpolicy.policyAdmin` role on the Google Cloud organization.
-   - The `roles/resourcemanager.projectCreator` role on the Google Cloud organization.
-   - The `roles/billing.admin` role on the billing account.
-   - The `roles/resourcemanager.folderCreator` role.
+- Google Cloud [조직](https://cloud.google.com/resource-manager/docs/creating-managing-organization)
+- Google Cloud [결제 계정](https://cloud.google.com/billing/docs/how-to/manage-billing-account)
+- 조직 및 결제 관리자를 위한 Cloud Identity 또는 Google Workspace 그룹
+- 이 문서의 절차를 실행할 사용자에게 다음 역할을 부여:
+   - Google Cloud 조직의 `roles/resourcemanager.organizationAdmin` 역할
+   - Google Cloud 조직의 `roles/orgpolicy.policyAdmin` 역할
+   - Google Cloud 조직의 `roles/resourcemanager.projectCreator` 역할
+   - 결제 계정의 `roles/billing.admin` 역할
+   - `roles/resourcemanager.folderCreator` 역할
 
-## Instructions
+## 지침
 
-### Clone Terraform Example Foundation repo
+### Terraform Example Foundation 저장소 복제
 
-1. Clone [terraform-example-foundation](https://github.com/terraform-google-modules/terraform-example-foundation) into your local environment.
+1. 로컬 환경에 [terraform-example-foundation](https://github.com/terraform-google-modules/terraform-example-foundation)을 복제합니다.
 
    ```bash
    git clone https://github.com/terraform-google-modules/terraform-example-foundation.git
    ```
 
-### Create git branches
+### git 브랜치 생성
 
-1. The instructions described in this document require that the branches used in the Terraform Example Foundation deploy to exist and to be [protected](https://docs.gitlab.com/ee/user/project/protected_branches.html). Follow the instructions on this section to create all the branches.
-1. Clone all the private projects you created at the same level of the `terraform-example-foundation` folder.
-You must have [SSH keys](https://docs.gitlab.com/ee/user/ssh.html) configured with GitLab for [authentication](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github).
+1. 이 문서에 설명된 지침은 Terraform Example Foundation 배포에 사용되는 브랜치가 존재하고 [보호](https://docs.gitlab.com/ee/user/project/protected_branches.html)되어 있어야 합니다. 모든 브랜치를 생성하려면 이 섹션의 지침을 따르십시오.
+1. `terraform-example-foundation` 폴더와 같은 수준에서 생성한 모든 비공개 프로젝트를 복제합니다.
+[인증](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github)을 위해 GitLab에 [SSH 키](https://docs.gitlab.com/ee/user/ssh.html)가 구성되어 있어야 합니다.
 
    ```bash
    git clone git@gitlab.com:<GITLAB-OWNER>/<GITLAB-BOOTSTRAP-REPO>.git gcp-bootstrap
@@ -115,7 +114,7 @@ You must have [SSH keys](https://docs.gitlab.com/ee/user/ssh.html) configured wi
    git clone git@gitlab.com:<GITLAB-OWNER>/<GITLAB-RUNNER-REPO>.git gcp-cicd-runner
    ```
 
-1. The layout should be:
+1. 레이아웃은 다음과 같아야 합니다:
 
    ```bash
    gcp-bootstrap/
@@ -127,36 +126,36 @@ You must have [SSH keys](https://docs.gitlab.com/ee/user/ssh.html) configured wi
    terraform-example-foundation/
    ```
 
-1. The following branches must be created in your git projects .
+1. git 프로젝트에서 다음 브랜치들이 생성되어야 합니다.
 
    - CI/CD Runner: `image`
-   - Bootstrap: `plan` and `production`
-   - Organization: `plan` and `production`
-   - Environments: `plan`, `development`, `nonproduction`, and `production`
-   - Networks: `plan`, `development`, `nonproduction`, and `production`
-   - Projects: `plan`, `development`, `nonproduction`, and `production`
+   - Bootstrap: `plan` 및 `production`
+   - Organization: `plan` 및 `production`
+   - Environments: `plan`, `development`, `nonproduction`, `production`
+   - Networks: `plan`, `development`, `nonproduction`, `production`
+   - Projects: `plan`, `development`, `nonproduction`, `production`
 
-1. These branches must not be empty, so that they can be the target branch of a merge request.
-Run the `0-bootstrap/scripts/git_create_branches_helper.sh` script to create these branches with a seed file for each repository automatically.
+1. 이러한 브랜치들은 마지 요청의 대상 브랜치가 될 수 있도록 비어 있으면 안 됩니다.
+`0-bootstrap/scripts/git_create_branches_helper.sh` 스크립트를 실행하여 각 저장소에 대해 시드 파일과 함께 이러한 브랜치들을 자동으로 생성합니다.
 
    ```bash
    ./terraform-example-foundation/0-bootstrap/scripts/git_create_branches_helper.sh GITLAB
    ```
 
-1. The script will output logs related to the branches creation in the console and it will output the message
-`"Branch creation and push completed for all repositories"` at the end of the script execution.
-1. Terraform configuration on stage `0-bootstrap` will make these branches **protected**
+1. 스크립트는 콘솔에 브랜치 생성과 관련된 로그를 출력하고 스크립트 실행 끝에 
+`"Branch creation and push completed for all repositories"` 메시지를 출력합니다.
+1. `0-bootstrap` 단계의 Terraform 구성은 이러한 브랜치들을 **보호된** 브랜치로 만듭니다
 
-### Build CI/CD runner image
+### CI/CD 러너 이미지 빌드
 
-1. Navigate into CI/CD runner the repo. All subsequent steps assume you are running them from the `gcp-cicd-runner` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. CI/CD 러너 저장소로 이동합니다. 이후의 모든 단계는 `gcp-cicd-runner` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우 복사 경로를 적절히 조정하십시오.
 
    ```bash
    cd gcp-cicd-runner
    ```
 
-1. Checkout branch `image`. It will contain the Docker image used in the GitLab Pipelines.
+1. `image` 브랜치로 체크아웃합니다. 이 브랜치에는 GitLab 파이프라인에서 사용되는 Docker 이미지가 포함됩니다.
 
    ```bash
    git checkout image
