@@ -27,7 +27,7 @@
 
 통합 테스트는 [Blueprint test][blueprint-test] 프레임워크를 사용하여 실행됩니다. 프레임워크는 편의를 위해 Docker 이미지 내에 패키지되어 있습니다.
 
-Eight Blueprint tests are defined and should be executed in serial order:
+8개의 블루프린트 테스트가 정의되어 있으며 순차적으로 실행되어야 합니다:
 
 - `bootstrap`
 - `org`
@@ -38,23 +38,23 @@ Eight Blueprint tests are defined and should be executed in serial order:
 - `projects`
 - `app-infra`
 
-### Test Environment
+### 테스트 환경
 
-The easiest way to test the repo is in an isolated folder. The setup for such a project is defined in [test/setup](./test/setup/) directory.
+리포지토리를 테스트하는 가장 쉬운 방법은 격리된 폴더에서 테스트하는 것입니다. 이러한 프로젝트의 설정은 [test/setup](./test/setup/) 디렉토리에 정의되어 있습니다.
 
-To use this setup, you need a service account with:
+이 설정을 사용하려면 다음 권한을 가진 서비스 계정이 필요합니다:
 
-- Organization Admin access within an organization.
-- Folder Creator and Project Creator within a folder/organization.
-- Billing Account Administrator on a billing account
+- 조직 내에서 조직 관리자 액세스 권한
+- 폴더/조직 내에서 폴더 생성자 및 프로젝트 생성자 권한
+- 청구 계정에 대한 청구 계정 관리자 권한
 
-Export the Service Account credentials to your environment like so:
+다음과 같이 서비스 계정 자격 증명을 환경으로 내보냅니다:
 
 ```bash
 export SERVICE_ACCOUNT_JSON=$(< credentials.json)
 ```
 
-You will also need to set a few environment variables:
+또한 몇 가지 환경 변수를 설정해야 합니다:
 
 ```bash
 export TF_VAR_org_id="your_org_id"
@@ -65,44 +65,41 @@ export TF_VAR_domain_to_allow="your_test_domain"
 export TF_VAR_example_foundations_mode="your_network_mode(base|HubAndSpoke)"
 ```
 
-With these settings in place, you can prepare a test project using Docker:
+이러한 설정이 완료되면 Docker를 사용하여 테스트 프로젝트를 준비할 수 있습니다:
 
 ```bash
 make docker_test_prepare
 ```
 
-### Test Execution
+### 테스트 실행
 
-1. Run `make docker_run` to start the testing Docker container in
-   interactive mode.
+1. `make docker_run`을 실행하여 대화형 모드에서 테스트 Docker 컨테이너를 시작합니다.
 
-1. Run `cd test/integration` to go to the integration test directory.
+1. `cd test/integration`을 실행하여 통합 테스트 디렉토리로 이동합니다.
 
-1. Run `cft test list --test-dir /workspace/test/integration` to list the available test.
+1. `cft test list --test-dir /workspace/test/integration`을 실행하여 사용 가능한 테스트를 나열합니다.
 
-1. Run `cft test run <TEST_NAME> --stage init --verbose --test-dir /workspace/test/integration` to initialize the working
-   directory for the stage.
+1. `cft test run <TEST_NAME> --stage init --verbose --test-dir /workspace/test/integration`을 실행하여 단계의 작업 디렉토리를 초기화합니다.
 
-1. Run `cft test run <TEST_NAME> --stage apply --verbose --test-dir /workspace/test/integration` to apply the stage.
+1. `cft test run <TEST_NAME> --stage apply --verbose --test-dir /workspace/test/integration`을 실행하여 단계를 적용합니다.
 
-1. Run `cft test run <TEST_NAME> --stage verify --verbose --test-dir /workspace/test/integration` to test the resources created in the current stage.
+1. `cft test run <TEST_NAME> --stage verify --verbose --test-dir /workspace/test/integration`을 실행하여 현재 단계에서 생성된 리소스를 테스트합니다.
 
-Destruction of resources should be done in the reverse order of creation.
+리소스 제거는 생성의 역순으로 수행되어야 합니다.
 
-1. Run `cft test run <TEST_NAME> --stage destroy --verbose --test-dir /workspace/test/integration` to destroy the stage.
+1. `cft test run <TEST_NAME> --stage destroy --verbose --test-dir /workspace/test/integration`을 실행하여 단계를 제거합니다.
 
-## Linting and Formatting
+## 린팅 및 포맷팅
 
-Many of the files in the repository can be linted or formatted to
-maintain a standard of quality.
+리포지토리의 많은 파일들이 품질 표준을 유지하기 위해 린팅되거나 포맷팅될 수 있습니다.
 
-### Execution
+### 실행
 
-Run `make docker_test_lint` to list lint issues.
+`make docker_test_lint`를 실행하여 린트 문제를 나열합니다.
 
-Use Terraform command [fmt] to format terraform code.
+Terraform [fmt] 명령을 사용하여 테라폼 코드를 포맷합니다.
 
-Use [gofmt] to format Go code.
+[gofmt]를 사용하여 Go 코드를 포맷합니다.
 
 [docker-engine]: https://www.docker.com/products/docker-engine
 [flake8]: https://flake8.pycqa.org/en/latest/

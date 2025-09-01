@@ -73,16 +73,16 @@ FedRAMP Moderate 워크로드는 Google Cloud 제품 및 서비스 사용에 대
 Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려면 그 하위의 리소스를 수동으로 삭제해야 합니다.
 삭제할 리소스를 식별하려면 [GCP 콘솔](https://console.cloud.google.com/compliance/assuredworkloads)을 사용하세요.
 
-## Usage
+## 사용법
 
-**Note:** If you are using MacOS, replace `cp -RT` with `cp -R` in the relevant
-commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
+**참고:** MacOS를 사용하는 경우, 관련 명령에서 `cp -RT`를 `cp -R`로 바꾸세요.
+`-T` 플래그는 Linux에서는 필요하지만 MacOS에서는 문제를 일으킵니다.
 
-### Deploying with Cloud Build
+### Cloud Build로 배포하기
 
-1. Clone the `gcp-environments` repo based on the Terraform output from the `0-bootstrap` step.
-Clone the repo at the same level of the `terraform-example-foundation` folder, the following instructions assume this layout.
-Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get the Cloud Build Project ID.
+1. `0-bootstrap` 단계의 Terraform 출력을 기반으로 `gcp-environments` 리포지토리를 복제합니다.
+`terraform-example-foundation` 폴더와 같은 수준에서 리포를 복제합니다. 다음 지침은 이 레이아웃을 가정합니다.
+`0-bootstrap` 폴더에서 `terraform output cloudbuild_project_id`를 실행하여 Cloud Build 프로젝트 ID를 가져옵니다.
 
    ```bash
    export CLOUD_BUILD_PROJECT_ID=$(terraform -chdir="terraform-example-foundation/0-bootstrap/" output -raw cloudbuild_project_id)
@@ -91,9 +91,9 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
    gcloud source repos clone gcp-environments --project=${CLOUD_BUILD_PROJECT_ID}
    ```
 
-1. Navigate into the repo, change to the non-main branch and copy contents of foundation to new repo.
-   All subsequent steps assume you are running them from the gcp-environments directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 리포지토리로 이동하고, 메인이 아닌 브랜치로 변경한 다음, 기반 콘텐츠를 새 리포지토리로 복사합니다.
+   이후의 모든 단계는 gcp-environments 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-environments
@@ -163,17 +163,17 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
 
 1. You can now move to the instructions in the network step. To use the [Dual Shared VPC](https://cloud.google.com/architecture/security-foundations/networking#vpcsharedvpc-id7-1-shared-vpc-) network mode go to [3-networks-svpc](../3-networks-svpc/README.md), or go to [3-networks-hub-and-spoke](../3-networks-hub-and-spoke/README.md) to use the [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) network mode.
 
-### Deploying with Jenkins
+### Jenkins로 배포하기
 
-See `0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-2-environments).
+`0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-2-environments)를 참조하세요.
 
-### Deploying with GitHub Actions
+### GitHub Actions로 배포하기
 
-See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-2-environments).
+`0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-2-environments)를 참조하세요.
 
-### Run Terraform locally
+### 로컬에서 Terraform 실행하기
 
-1. The next instructions assume that you are at the same level of the `terraform-example-foundation` folder. Create the `gcp-environments` folder, copy the Terraform wrapper script and ensure it can be executed.
+1. 다음 지침은 `terraform-example-foundation` 폴더와 같은 수준에 있다고 가정합니다. `gcp-environments` 폴더를 생성하고, Terraform 래퍼 스크립트를 복사한 다음 실행할 수 있도록 설정합니다.
 
    ```bash
    mkdir gcp-environments
@@ -183,7 +183,7 @@ See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-s
    chmod 755 ./gcp-environments/tf-wrapper.sh
    ```
 
-1. Navigate to `gcp-environments` and initialize a local Git repository to manage versions locally. Then, create the environment branches.
+1. `gcp-environments`로 이동하여 로컬에서 버전을 관리하기 위해 로컬 Git 리포지토리를 초기화합니다. 그런 다음 환경 브랜치를 생성합니다.
 
    ```bash
    cd gcp-environments
@@ -210,9 +210,9 @@ See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-s
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./terraform.tfvars
    ```
 
-We will now deploy each of our environments(development/production/nonproduction) using this script.
+이제 이 스크립트를 사용하여 각 환경(development/production/nonproduction)을 배포합니다.
 
-To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+`tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
 1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
 
@@ -292,9 +292,9 @@ To use the `validate` option of the `tf-wrapper.sh` script, please follow the [i
    git commit -m "Production initial commit."
    ```
 
-If you received any errors or made any changes to the Terraform config or `terraform.tfvars` you must re-run `./tf-wrapper.sh plan <env>` before running `./tf-wrapper.sh apply <env>`.
+오류가 발생하거나 Terraform 구성 또는 `terraform.tfvars`에 변경사항을 적용한 경우, `./tf-wrapper.sh apply <env>`를 실행하기 전에 `./tf-wrapper.sh plan <env>`를 다시 실행해야 합니다.
 
-Before executing the next stages, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
 ```bash
 unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT

@@ -161,14 +161,14 @@
    git checkout image
    ```
 
-1. Copy contents of foundation to cloned project (modify accordingly based on your current directory).
+1. foundation의 내용을 복제된 프로젝트로 복사합니다 (현재 디렉토리에 따라 적절히 수정).
 
    ```bash
    cp ../terraform-example-foundation/build/gitlab-ci.yml ./.gitlab-ci.yml
    cp ../terraform-example-foundation/0-bootstrap/Dockerfile ./Dockerfile
    ```
 
-1. Save the CI/CD runner configuration to `gcp-cicd-runner` GitLab project:
+1. CI/CD 러너 구성을 `gcp-cicd-runner` GitLab 프로젝트에 저장합니다:
 
    ```bash
    git add .
@@ -176,32 +176,32 @@
    git push
    ```
 
-1. Review the CI/CD Job output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-RUNNER-REPO/-/jobs under name `build-image`.
-1. If the CI/CD Job is successful proceed with the next steps.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-RUNNER-REPO/-/jobs의 `build-image` 이름 하에서 CI/CD Job 출력을 검토합니다.
+1. CI/CD Job이 성공하면 다음 단계로 진행합니다.
 
-### Provide access to the CI/CD runner image
+### CI/CD 러너 이미지에 대한 액세스 제공
 
-1. Go to https://gitlab.com/GITLAB-OWNER/GITLAB-RUNNER-REPO/-/settings/ci_cd#js-token-access
-1. Add all the repositories: Bootstrap, Organization, Environments, Networks, and Projects to the allow list tha allow access to the CI/CD runner image.
-1. In "Allow CI job tokens from the following projects to access this project" add the other projects/repositories. Format is `<GITLAB-OWNER>/<GITLAB-REPO>`
+1. https://gitlab.com/GITLAB-OWNER/GITLAB-RUNNER-REPO/-/settings/ci_cd#js-token-access로 이동합니다
+1. 모든 저장소: Bootstrap, Organization, Environments, Networks, Projects를 CI/CD 러너 이미지에 대한 액세스를 허용하는 허용 목록에 추가합니다.
+1. "Allow CI job tokens from the following projects to access this project"에서 다른 프로젝트/저장소를 추가합니다. 형식은 `<GITLAB-OWNER>/<GITLAB-REPO>`입니다
 
-### Deploying step 0-bootstrap
+### 0-bootstrap 단계 배포
 
-1. Navigate into the Bootstrap repo. All subsequent
-   steps assume you are running them from the `gcp-bootstrap` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. Bootstrap 저장소로 이동합니다. 이후의 모든
+   단계는 `gcp-bootstrap` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우 복사 경로를 적절히 조정하십시오.
 
    ```bash
    cd gcp-bootstrap
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout plan
    ```
 
-1. Copy contents of foundation to cloned project (modify accordingly based on your current directory).
+1. foundation의 내용을 복제된 프로젝트로 복사합니다 (현재 디렉토리에 따라 적절히 수정).
 
    ```bash
    mkdir -p envs/shared
@@ -215,55 +215,55 @@
    cd ./envs/shared
    ```
 
-1. In the versions file `./versions.tf` un-comment the `gitlab` required provider
-1. In the variables file `./variables.tf` un-comment variables in the section `Specific to gitlab_bootstrap`
-1. In the outputs file `./outputs.tf` Comment-out outputs in the section `Specific to cloudbuild_module`
-1. In the outputs file `./outputs.tf` un-comment outputs in the section `Specific to gitlab_bootstrap`
-1. Rename file `./cb.tf` to `./cb.tf.example`
+1. 버전 파일 `./versions.tf`에서 `gitlab` 필수 프로바이더의 주석을 해제합니다
+1. 변수 파일 `./variables.tf`에서 `Specific to gitlab_bootstrap` 섹션의 변수들의 주석을 해제합니다
+1. 출력 파일 `./outputs.tf`에서 `Specific to cloudbuild_module` 섹션의 출력들을 주석 처리합니다
+1. 출력 파일 `./outputs.tf`에서 `Specific to gitlab_bootstrap` 섹션의 출력들의 주석을 해제합니다
+1. `./cb.tf` 파일을 `./cb.tf.example`로 이름을 변경합니다
 
    ```bash
    mv ./cb.tf ./cb.tf.example
    ```
 
-1. Rename file `./gitlab.tf.example` to `./gitlab.tf`
+1. `./gitlab.tf.example` 파일을 `./gitlab.tf`로 이름을 변경합니다
 
    ```bash
    mv ./gitlab.tf.example ./gitlab.tf
    ```
 
-1. Rename file `terraform.example.tfvars` to `terraform.tfvars`
+1. `terraform.example.tfvars` 파일을 `terraform.tfvars`로 이름을 변경합니다
 
    ```bash
    mv ./terraform.example.tfvars ./terraform.tfvars
    ```
 
-1. Update the file `terraform.tfvars` with values from your Google Cloud environment
-1. Update the file `terraform.tfvars` with values from your GitLab projects
-1. To prevent saving the `gitlab_token` in plain text in the `terraform.tfvars` file,
-export the GitLab personal or group access token as an environment variable:
+1. Google Cloud 환경의 값으로 `terraform.tfvars` 파일을 업데이트합니다
+1. GitLab 프로젝트의 값으로 `terraform.tfvars` 파일을 업데이트합니다
+1. `terraform.tfvars` 파일에 `gitlab_token`을 평문으로 저장하는 것을 방지하기 위해,
+GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다:
 
    ```bash
    export TF_VAR_gitlab_token="YOUR-PERSONAL-OR-GROUP-ACCESS-TOKEN"
    ```
 
-1. Use the helper script [validate-requirements.sh](../scripts/validate-requirements.sh) to validate your environment:
+1. 헬퍼 스크립트 [validate-requirements.sh](../scripts/validate-requirements.sh)를 사용하여 환경을 검증합니다:
 
    ```bash
    ../../../terraform-example-foundation/scripts/validate-requirements.sh  -o <ORGANIZATION_ID> -b <BILLING_ACCOUNT_ID> -u <END_USER_EMAIL> -e
    ```
 
-   **Note:** The script is not able to validate if the user is in a Cloud Identity or Google Workspace group with the required roles.
+   **참고:** 스크립트는 사용자가 필요한 역할을 가진 Cloud Identity 또는 Google Workspace 그룹에 있는지 검증할 수 없습니다.
 
-1. Run `terraform init` and `terraform plan` and review the output.
+1. `terraform init`과 `terraform plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    terraform init
    terraform plan -input=false -out bootstrap.tfplan
    ```
 
-1. To  validate your policies, run `gcloud beta terraform vet`. For installation instructions, see [Validate policies](https://cloud.google.com/docs/terraform/policy-validation/validate-policies) instructions for the Google Cloud CLI.
+1. 정책을 검증하려면 `gcloud beta terraform vet`를 실행합니다. 설치 지침은 Google Cloud CLI용 [정책 검증](https://cloud.google.com/docs/terraform/policy-validation/validate-policies) 지침을 참조하십시오.
 
-1. Run the following commands and check for violations:
+1. 다음 명령을 실행하고 위반 사항을 확인합니다:
 
    ```bash
    export VET_PROJECT_ID=A-VALID-PROJECT-ID
@@ -272,17 +272,17 @@ export the GitLab personal or group access token as an environment variable:
    gcloud beta terraform vet bootstrap.json --policy-library="../../policy-library" --project ${VET_PROJECT_ID}
    ```
 
-   *`A-VALID-PROJECT-ID`* must be an existing project you have access to. This is necessary because `gcloud beta terraform vet` needs to link resources to a valid Google Cloud Platform project.
+   *`A-VALID-PROJECT-ID`*는 액세스 권한이 있는 기존 프로젝트여야 합니다. `gcloud beta terraform vet`이 리소스를 유효한 Google Cloud Platform 프로젝트에 연결해야 하므로 이는 필요합니다.
 
-1. No violations and an output with `done` means the validation was successful.
+1. 위반 사항이 없고 `done`이라는 출력이 있으면 검증이 성공한 것입니다.
 
-1. Run `terraform apply`.
+1. `terraform apply`를 실행합니다.
 
    ```bash
    terraform apply bootstrap.tfplan
    ```
 
-1. Run `terraform output` to get the email address of the terraform service accounts that will be used to run manual steps for `shared` environments in steps `3-networks-svpc`, `3-networks-hub-and-spoke`, and `4-projects`.
+1. `terraform output`을 실행하여 `3-networks-svpc`, `3-networks-hub-and-spoke`, `4-projects` 단계에서 `shared` 환경에 대한 수동 단계를 실행하는 데 사용될 terraform 서비스 계정의 이메일 주소를 가져옵니다.
 
    ```bash
    export network_step_sa=$(terraform output -raw networks_step_terraform_service_account_email)
@@ -292,14 +292,14 @@ export the GitLab personal or group access token as an environment variable:
    echo "projects step service account = ${projects_step_sa}"
    ```
 
-1. Run `terraform output` to get the ID of your CI/CD project:
+1. `terraform output`을 실행하여 CI/CD 프로젝트의 ID를 가져옵니다:
 
    ```bash
    export cicd_project_id=$(terraform output -raw cicd_project_id)
    echo "CI/CD Project ID = ${cicd_project_id}"
    ```
 
-1. Copy the backend and update `backend.tf` with the name of your Google Cloud Storage bucket for Terraform's state. Also update the `backend.tf` of all steps.
+1. 백엔드를 복사하고 Terraform 상태를 위한 Google Cloud Storage 버킷 이름으로 `backend.tf`를 업데이트합니다. 또한 모든 단계의 `backend.tf`도 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform output -raw gcs_bucket_tfstate)
@@ -314,14 +314,14 @@ export the GitLab personal or group access token as an environment variable:
    cd gcp-bootstrap/envs/shared
    ```
 
-1. Re-run `terraform init`. When you're prompted, agree to copy Terraform state to Cloud Storage.
+1. `terraform init`을 다시 실행합니다. 메시지가 표시되면 Terraform 상태를 Cloud Storage로 복사하는 것에 동의합니다.
 
    ```bash
    terraform init
    ```
 
-1. (Optional) Run `terraform plan` to verify that state is configured correctly. You should see no changes from the previous state.
-1. Save the Terraform configuration to `gcp-bootstrap` GitLab project:
+1. (선택사항) `terraform plan`을 실행하여 상태가 올바르게 구성되었는지 확인합니다. 이전 상태에서 변경 사항이 없어야 합니다.
+1. Terraform 구성을 `gcp-bootstrap` GitLab 프로젝트에 저장합니다:
 
    ```bash
    cd ../..
@@ -330,46 +330,46 @@ export the GitLab personal or group access token as an environment variable:
    git push
    ```
 
-1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-BOOTSTRAP-REPO/-/merge_requests?scope=all&state=opened from the `plan` branch to the `production` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `production` environment.
-1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-BOOTSTRAP-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `production` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `production` environment.
-1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-BOOTSTRAP-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab에서 https://gitlab.com/GITLAB-OWNER/GITLAB-BOOTSTRAP-REPO/-/merge_requests?scope=all&state=opened에서 `plan` 브랜치에서 `production` 브랜치로 병합 요청을 열고 출력을 검토합니다.
+1. 병합 요청은 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-BOOTSTRAP-REPO/-/pipelines에서 GitLab 파이프라인 출력을 검토합니다.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `production` 브랜치로 병합합니다.
+1. 병합은 `production` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-BOOTSTRAP-REPO/-/pipelines의 `tf-apply`에서 병합 출력을 검토합니다.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
-1. Before moving to the next step, go back to the parent directory.
+1. 다음 단계로 이동하기 전에 상위 디렉토리로 돌아갑니다.
 
    ```bash
    cd ..
    ```
 
-**Note 1:** The stages after `0-bootstrap` use `terraform_remote_state` data source to read common configuration like the organization ID from the output of the `0-bootstrap` stage.
-They will [fail](../docs/TROUBLESHOOTING.md#error-unsupported-attribute) if the state is not copied to the Cloud Storage bucket.
+**참고 1:** `0-bootstrap` 이후의 단계들은 `terraform_remote_state` 데이터 소스를 사용하여 `0-bootstrap` 단계의 출력에서 조직 ID와 같은 공통 구성을 읽습니다.
+상태가 Cloud Storage 버킷에 복사되지 않으면 [실패](../docs/TROUBLESHOOTING.md#error-unsupported-attribute)합니다.
 
-**Note 2:** After the deploy, to prevent the project quota error described in the [Troubleshooting guide](../docs/TROUBLESHOOTING.md#project-quota-exceeded),
-we recommend that you request 50 additional projects for the **projects step service account** created in this step.
+**참고 2:** 배포 후 [문제 해결 가이드](../docs/TROUBLESHOOTING.md#project-quota-exceeded)에 설명된 프로젝트 할당량 오류를 방지하기 위해,
+이 단계에서 생성된 **프로젝트 단계 서비스 계정**에 대해 추가로 50개의 프로젝트를 요청하는 것을 권장합니다.
 
-**Note 3:** In case GitLab variables are not being created on GitLab projects, it may be related to the existence of an Access Token in both User/Group profile and in the repo settings. The deploy will [fail](../docs/TROUBLESHOOTING.md#terraform-deploy-fails-due-to-gitlab-repositories-not-found).
+**참고 3:** GitLab 변수가 GitLab 프로젝트에 생성되지 않는 경우, 사용자/그룹 프로파일과 저장소 설정 모두에 Access Token이 존재하는 것과 관련이 있을 수 있습니다. 배포가 [실패](../docs/TROUBLESHOOTING.md#terraform-deploy-fails-due-to-gitlab-repositories-not-found)합니다.
 
-**Note 4:** If the GitLab pipelines fail in 0-bootstrap or next steps with access denied in the runner image, you may need to add all projects to the [Token Access allow list in the CI/CD Runner repository](../docs/TROUBLESHOOTING.md#gitlab-pipelines-access-denied).
+**참고 4:** 0-bootstrap이나 다음 단계에서 GitLab 파이프라인이 러너 이미지에서 액세스 거부로 인해 실패하는 경우, [CI/CD Runner 저장소의 Token Access 허용 목록](../docs/TROUBLESHOOTING.md#gitlab-pipelines-access-denied)에 모든 프로젝트를 추가해야 할 수도 있습니다.
 
-## Deploying step 1-org
+## 1-org 단계 배포
 
-1. Navigate into the repo. All subsequent steps assume you are running them from the `gcp-org` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 저장소로 이동합니다. 이후의 모든 단계는 `gcp-org` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우 복사 경로를 적절히 조정하십시오.
 
    ```bash
    cd gcp-org
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/1-org/ .
@@ -380,16 +380,16 @@ we recommend that you request 50 additional projects for the **projects step ser
    chmod 755 ./*.sh
    ```
 
-1. Rename `./envs/shared/terraform.example.tfvars` to `./envs/shared/terraform.tfvars`
+1. `./envs/shared/terraform.example.tfvars`를 `./envs/shared/terraform.tfvars`로 이름을 변경합니다
 
    ```bash
    mv ./envs/shared/terraform.example.tfvars ./envs/shared/terraform.tfvars
    ```
 
-1. Update the file `envs/shared/terraform.tfvars` with values from your GCP environment.
-See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for additional information on the values in the `terraform.tfvars` file.
+1. GCP 환경의 값으로 `envs/shared/terraform.tfvars` 파일을 업데이트합니다.
+`terraform.tfvars` 파일의 값에 대한 추가 정보는 shared 폴더 [README.md](../1-org/envs/shared/README.md#inputs)를 참조하십시오.
 
-1. Un-comment the variable `create_access_context_manager_access_policy = false` if your organization already has an Access Context Manager Policy.
+1. 조직에 이미 Access Context Manager 정책이 있는 경우 `create_access_context_manager_access_policy = false` 변수의 주석을 해제합니다.
 
     ```bash
     export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -json common_config | jq '.org_id' --raw-output)
@@ -401,7 +401,7 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
     if [ ! -z "${ACCESS_CONTEXT_MANAGER_ID}" ]; then sed -i'' -e "s=//create_access_context_manager_access_policy=create_access_context_manager_access_policy=" ./envs/shared/terraform.tfvars; fi
     ```
 
-1. Update the `remote_state_bucket` variable with the backend bucket from step Bootstrap.
+1. Bootstrap 단계의 백엔드 버킷으로 `remote_state_bucket` 변수를 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -411,7 +411,7 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./envs/shared/terraform.tfvars
    ```
 
-1. Check if a Security Command Center Notification with the default name, **scc-notify**, already exists in your organization.
+1. 조직에 기본 이름인 **scc-notify**를 가진 Security Command Center 알림이 이미 있는지 확인합니다.
 
    ```bash
    export ORG_STEP_SA=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw organization_step_terraform_service_account_email)
@@ -419,21 +419,21 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
    gcloud scc notifications describe "scc-notify" --format="value(name)" --organization=${ORGANIZATION_ID} --impersonate-service-account=${ORG_STEP_SA}
    ```
 
-1. If the notification exists the output will be:
+1. 알림이 존재하면 출력은 다음과 같습니다:
 
     ```text
     organizations/ORGANIZATION_ID/notificationConfigs/scc-notify
     ```
 
-1. If the notification does not exist the output will be:
+1. 알림이 존재하지 않으면 출력은 다음과 같습니다:
 
     ```text
     ERROR: (gcloud.scc.notifications.describe) NOT_FOUND: Requested entity was not found.
     ```
 
-1. If the notification exists, choose a different value for the `scc_notification_name` variable in the `./envs/shared/terraform.tfvars` file.
+1. 알림이 존재하면 `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 대해 다른 값을 선택합니다.
 
-1. Commit changes and Push your plan branch.
+1. 변경 사항을 커밋하고 plan 브랜치를 푸시합니다.
 
    ```bash
    git add .
@@ -441,15 +441,15 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
    git push
    ```
 
-1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ORGANIZATION-REPO/-/merge_requests?scope=all&state=opened from the `plan` branch to the `production` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `production` environment.
-1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ORGANIZATION-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `production` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `production` environment.
-1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ORGANIZATION-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab에서 https://gitlab.com/GITLAB-OWNER/GITLAB-ORGANIZATION-REPO/-/merge_requests?scope=all&state=opened에서 `plan` 브랜치에서 `production` 브랜치로 병합 요청을 열고 출력을 검토합니다.
+1. 병합 요청은 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ORGANIZATION-REPO/-/pipelines에서 GitLab 파이프라인 출력을 검토합니다.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `production` 브랜치로 병합합니다.
+1. 병합은 `production` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ORGANIZATION-REPO/-/pipelines의 `tf-apply`에서 병합 출력을 검토합니다.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
-1. Before moving to the next step, go back to the parent directory.
+1. 다음 단계로 이동하기 전에 상위 디렉토리로 돌아갑니다.
 
    ```bash
    cd ..
@@ -457,7 +457,7 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
 
 ## Deploying step 2-environments
 
-1. Navigate into the repo. All subsequent
+1. 저장소로 이동합니다. 이후의 모든
    steps assume you are running them from the `gcp-environments` directory.
    If you run them from another directory, adjust your copy paths accordingly.
 
@@ -465,13 +465,13 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
    cd gcp-environments
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/2-environments/ .
@@ -482,16 +482,16 @@ See the shared folder [README.md](../1-org/envs/shared/README.md#inputs) for add
    chmod 755 ./*.sh
    ```
 
-1. Rename `terraform.example.tfvars` to `terraform.tfvars`.
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. Update the file with values from your GCP environment.
-See any of the envs folder [README.md](../2-environments/envs/production/README.md#inputs) files for additional information on the values in the `terraform.tfvars` file.
+1. GCP 환경의 값으로 파일을 업데이트합니다.
+`terraform.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../2-environments/envs/production/README.md#inputs) 파일을 참조하십시오.
 
-1. Update the `remote_state_bucket` variable with the backend bucket from step Bootstrap.
+1. Bootstrap 단계의 백엔드 버킷으로 `remote_state_bucket` 변수를 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -500,7 +500,7 @@ See any of the envs folder [README.md](../2-environments/envs/production/README.
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" terraform.tfvars
    ```
 
-1. Commit changes and push your plan branch.
+1. 변경 사항을 커밋하고 plan 브랜치를 푸시합니다.
 
    ```bash
    git add .
@@ -514,7 +514,7 @@ See any of the envs folder [README.md](../2-environments/envs/production/README.
 1. If the GitLab pipelines is successful, merge the merge request in to the `development` branch.
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `development` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened from the `development` branch to the `nonproduction` branch and review the output.
 1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
@@ -522,16 +522,16 @@ See any of the envs folder [README.md](../2-environments/envs/production/README.
 1. If the GitLab pipelines is successful, merge the merge request in to the `nonproduction` branch.
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `nonproduction` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened from the `nonproduction` branch to the `production` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `production` environment.
+1. 병합 요청은 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
 1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `production` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `production` environment.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `production` 브랜치로 병합합니다.
+1. 병합은 `production` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines under `tf-apply`.
 
-1. Before moving to the next step, go back to the parent directory.
+1. 다음 단계로 이동하기 전에 상위 디렉토리로 돌아갑니다.
 
    ```bash
    cd ..
@@ -543,20 +543,20 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
 
 ## Deploying step 3-networks-svpc
 
-1. Navigate into the repo. All subsequent steps assume you are running them from the `gcp-networks` directory.
+1. 저장소로 이동합니다. 이후의 모든 steps assume you are running them from the `gcp-networks` directory.
    If you run them from another directory, adjust your copy paths accordingly.
 
    ```bash
    cd gcp-networks
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/3-networks-svpc/ .
@@ -567,7 +567,7 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
    chmod 755 ./*.sh
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`, rename `production.auto.example.tfvars` to `production.auto.tfvars` and rename `access_context.auto.example.tfvars` to `access_context.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로, `production.auto.example.tfvars`를 `production.auto.tfvars`로, `access_context.auto.example.tfvars`를 `access_context.auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -575,8 +575,8 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
    mv access_context.auto.example.tfvars access_context.auto.tfvars
    ```
 
-1. Update the file `production.auto.tfvars` with the values for the `target_name_server_addresses`.
-1. Update the file `access_context.auto.tfvars` with the organization's `access_context_manager_policy_id`.
+1. `target_name_server_addresses`의 값으로 `production.auto.tfvars` 파일을 업데이트합니다.
+1. 조직의 `access_context_manager_policy_id`로 `access_context.auto.tfvars` 파일을 업데이트합니다.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -json common_config | jq '.org_id' --raw-output)
@@ -588,10 +588,10 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
    sed -i'' -e "s/ACCESS_CONTEXT_MANAGER_ID/${ACCESS_CONTEXT_MANAGER_ID}/" ./access_context.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your GCP environment.
-See any of the envs folder [README.md](../3-networks-svpc/envs/production/README.md#inputs) files for additional information on the values in the `common.auto.tfvars` file.
-1. You must add your user email in the variable `perimeter_additional_members` to be able to see the resources created in the project.
-1. Update the `remote_state_bucket` variable with the backend bucket from step Bootstrap in the `common.auto.tfvars` file.
+1. GCP 환경의 값으로 `common.auto.tfvars` 파일을 업데이트합니다.
+`common.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../3-networks-svpc/envs/production/README.md#inputs) 파일을 참조하십시오.
+1. 프로젝트에서 생성된 리소스를 보려면 `perimeter_additional_members` 변수에 사용자 이메일을 추가해야 합니다.
+1. `common.auto.tfvars` 파일에서 Bootstrap 단계의 백엔드 버킷으로 `remote_state_bucket` 변수를 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw gcs_bucket_tfstate)
@@ -601,73 +601,73 @@ See any of the envs folder [README.md](../3-networks-svpc/envs/production/README
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes
+1. 변경 사항을 커밋합니다
 
    ```bash
    git add .
    git commit -m 'Initialize networks repo'
    ```
 
-1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
-1. Use `terraform output` to get the CI/CD project ID and the networks step Terraform Service Account from gcp-bootstrap output.
-1. The CI/CD project ID will be used in the [validation](https://cloud.google.com/docs/terraform/policy-validation/quickstart) of the Terraform configuration
+1. `development`, `nonproduction`, `production` 환경이 종속되어 있으므로 `shared` 환경을 수동으로 계획하고 적용해야 합니다(한 번만).
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 CI/CD 프로젝트 ID와 네트워크 단계 Terraform 서비스 계정을 가져옵니다.
+1. CI/CD 프로젝트 ID는 Terraform 구성의 [검증](https://cloud.google.com/docs/terraform/policy-validation/quickstart)에 사용됩니다
 
    ```bash
    export CICD_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw cicd_project_id)
    echo ${CICD_PROJECT_ID}
    ```
 
-1. The networks step Terraform Service Account will be used for [Service Account impersonation](https://cloud.google.com/docs/authentication/use-service-account-impersonation) in the following steps.
-An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with the Terraform Service Account to enable impersonation.
+1. 네트워크 단계 Terraform 서비스 계정은 다음 단계에서 [서비스 계정 가장](https://cloud.google.com/docs/authentication/use-service-account-impersonation)에 사용됩니다.
+가장을 활성화하기 위해 Terraform 서비스 계정으로 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw networks_step_terraform_service_account_email)
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. shared 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
-1. Run `validate` and check for violations.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면 terraform-tools 구성 요소를 설치하기 위해 [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따르십시오.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/policy-library ${CICD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. shared를 `apply`합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
    ```
 
-1. You must manually plan and apply the `production` environment since the `development`, `nonproduction` and `plan` environments depend on it.
+1. `development`, `nonproduction`, `plan` 환경이 종속되어 있으므로 `production` 환경을 수동으로 계획하고 적용해야 합니다.
 
    ```bash
    git checkout production
    git merge plan
    ```
 
-1. Run `init` and `plan` and review output for environment production.
+1. production 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init production
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `apply` production.
+1. production을 `apply`합니다.
 
    ```bash
    ./tf-wrapper.sh apply production
    ```
 
-   1. Push your production branch since development and nonproduction depends it.
+   1. development와 nonproduction이 이에 종속되어 있으므로 production 브랜치를 푸시합니다.
 
-*Note:** The Production envrionment must be the first branch to be pushed as it includes the DNS Hub communication that will be used by other environments.
+*참고:** 다른 환경에서 사용할 DNS 허브 통신이 포함되어 있으므로 Production 환경은 처음 푸시되는 브랜치여야 합니다.
 
    ```bash
    git add .
@@ -677,7 +677,7 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/merge_requests?scope=all&state=opened from the `production` branch to the `plan` branch and review the output.
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git checkout plan
@@ -686,7 +686,7 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/merge_requests?scope=all&state=opened from the `production` branch to the `development` branch and review the output.
 
-   > NOTE: Development and Non-production branches depends on the production branch to be deployed first, for the `3-networks-dual-svpc`.
+   > 참고: `3-networks-dual-svpc`의 경우 개발 및 비프로덕션 브랜치는 production 브랜치가 먼저 배포되어야 합니다.
 
 1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `development` environment.
 1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/pipelines.
@@ -701,36 +701,36 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `nonproduction` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/pipelines under `tf-apply`.
 
-1. Before executing the next steps, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+1. 다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 설정 해제합니다.
 
    ```bash
    unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT
    ```
 
-1. Before moving to the next step, go back to the parent directory.
+1. 다음 단계로 이동하기 전에 상위 디렉토리로 돌아갑니다.
 
    ```bash
    cd ..
    ```
 
-1. You can now move to the instructions in the [4-projects](#deploying-step-4-projects) stage.
+1. 이제 [4-projects](#deploying-step-4-projects) 단계의 지침으로 이동할 수 있습니다.
 
 ## Deploying step 3-networks-hub-and-spoke
 
-1. Navigate into the repo. All subsequent steps assume you are running them from the `gcp-networks` directory.
+1. 저장소로 이동합니다. 이후의 모든 steps assume you are running them from the `gcp-networks` directory.
    If you run them from another directory, adjust your copy paths accordingly.
 
    ```bash
    cd gcp-networks
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/3-networks-hub-and-spoke/ .
@@ -741,7 +741,7 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
    chmod 755 ./*.sh
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`, rename `shared.auto.example.tfvars` to `shared.auto.tfvars` and rename `access_context.auto.example.tfvars` to `access_context.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로, `shared.auto.example.tfvars`를 `shared.auto.tfvars`로, `access_context.auto.example.tfvars`를 `access_context.auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -749,10 +749,10 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
    mv access_context.auto.example.tfvars access_context.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your GCP environment.
-See any of the envs folder [README.md](../3-networks-hub-and-spoke/envs/production/README.md#inputs) files for additional information on the values in the `common.auto.tfvars` file.
-1. You must add your user email in the variable `perimeter_additional_members` to be able to see the resources created in the project.
-1. Update the `remote_state_bucket` variable with the backend bucket from step Bootstrap in the `common.auto.tfvars` file.
+1. GCP 환경의 값으로 `common.auto.tfvars` 파일을 업데이트합니다.
+`common.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../3-networks-hub-and-spoke/envs/production/README.md#inputs) 파일을 참조하십시오.
+1. 프로젝트에서 생성된 리소스를 보려면 `perimeter_additional_members` 변수에 사용자 이메일을 추가해야 합니다.
+1. `common.auto.tfvars` 파일에서 Bootstrap 단계의 백엔드 버킷으로 `remote_state_bucket` 변수를 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw gcs_bucket_tfstate)
@@ -762,51 +762,51 @@ See any of the envs folder [README.md](../3-networks-hub-and-spoke/envs/producti
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes
+1. 변경 사항을 커밋합니다
 
    ```bash
    git add .
    git commit -m 'Initialize networks repo'
    ```
 
-1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
-1. Use `terraform output` to get the CI/CD project ID and the networks step Terraform Service Account from gcp-bootstrap output.
-1. The CI/CD project ID will be used in the [validation](https://cloud.google.com/docs/terraform/policy-validation/quickstart) of the Terraform configuration
+1. `development`, `nonproduction`, `production` 환경이 종속되어 있으므로 `shared` 환경을 수동으로 계획하고 적용해야 합니다(한 번만).
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 CI/CD 프로젝트 ID와 네트워크 단계 Terraform 서비스 계정을 가져옵니다.
+1. CI/CD 프로젝트 ID는 Terraform 구성의 [검증](https://cloud.google.com/docs/terraform/policy-validation/quickstart)에 사용됩니다
 
    ```bash
    export CICD_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw cicd_project_id)
    echo ${CICD_PROJECT_ID}
    ```
 
-1. The networks step Terraform Service Account will be used for [Service Account impersonation](https://cloud.google.com/docs/authentication/use-service-account-impersonation) in the following steps.
-An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with the Terraform Service Account to enable impersonation.
+1. 네트워크 단계 Terraform 서비스 계정은 다음 단계에서 [서비스 계정 가장](https://cloud.google.com/docs/authentication/use-service-account-impersonation)에 사용됩니다.
+가장을 활성화하기 위해 Terraform 서비스 계정으로 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw networks_step_terraform_service_account_email)
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. shared 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
-1. Run `validate` and check for violations.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면 terraform-tools 구성 요소를 설치하기 위해 [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따르십시오.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/policy-library ${CICD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. shared를 `apply`합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push
@@ -818,7 +818,7 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 1. If the GitLab pipelines is successful, merge the merge request in to the `development` branch.
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `development` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/merge_requests?scope=all&state=opened from the `development` branch to the `nonproduction` branch and review the output.
 1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
@@ -826,33 +826,33 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 1. If the GitLab pipelines is successful, merge the merge request in to the `nonproduction` branch.
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `nonproduction` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/merge_requests?scope=all&state=opened from the `nonproduction` branch to the `production` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `production` environment.
+1. 병합 요청은 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
 1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `production` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `production` environment.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `production` 브랜치로 병합합니다.
+1. 병합은 `production` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/pipelines under `tf-apply`.
 
 
-1. Before executing the next steps, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+1. 다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 설정 해제합니다.
 
    ```bash
    unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT
    ```
 
-1. Before moving to the next step, go back to the parent directory.
+1. 다음 단계로 이동하기 전에 상위 디렉토리로 돌아갑니다.
 
    ```bash
    cd ..
    ```
 
-1. You can now move to the instructions in the [4-projects](#deploying-step-4-projects) stage.
+1. 이제 [4-projects](#deploying-step-4-projects) 단계의 지침으로 이동할 수 있습니다.
 
 ## Deploying step 4-projects
 
-1. Navigate into the repo. All subsequent
+1. 저장소로 이동합니다. 이후의 모든
    steps assume you are running them from the `gcp-projects` directory.
    If you run them from another directory, adjust your copy paths accordingly.
 
@@ -860,13 +860,13 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
    cd gcp-projects
    ```
 
-1. change to a nonproduction branch.
+1. 비프로덕션 브랜치로 변경합니다.
 
    ```bash
    git checkout plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/4-projects/ .
@@ -877,7 +877,7 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
    chmod 755 ./*.sh
    ```
 
-1. Rename `auto.example.tfvars` files to `auto.tfvars`.
+1. `auto.example.tfvars` 파일들을 `auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -887,10 +887,10 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
    mv production.auto.example.tfvars production.auto.tfvars
    ```
 
-1. See any of the envs folder [README.md](../4-projects/business_unit_1/production/README.md#inputs) files for additional information on the values in the `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, and `production.auto.tfvars` files.
-1. See any of the shared folder [README.md](../4-projects/business_unit_1/shared/README.md#inputs) files for additional information on the values in the `shared.auto.tfvars` file.
+1. `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, `production.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../4-projects/business_unit_1/production/README.md#inputs) 파일을 참조하십시오.
+1. `shared.auto.tfvars` 파일의 값에 대한 추가 정보는 shared 폴더의 [README.md](../4-projects/business_unit_1/shared/README.md#inputs) 파일을 참조하십시오.
 
-1. Use `terraform output` to get the backend bucket value from bootstrap output.
+1. `terraform output`을 사용하여 bootstrap 출력에서 백엔드 버킷 값을 가져옵니다.
 
    ```bash
    export remote_state_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw gcs_bucket_tfstate)
@@ -899,9 +899,9 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${remote_state_bucket}/" ./common.auto.tfvars
    ```
 
-1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
+1. (선택 사항) 별도의 비즈니스 단위 또는 엔티티에 대한 추가 하위 폴더를 원하는 경우 `business_unit_1` 폴더의 추가 복사본을 만들고 `business_code`, `business_unit`, `subnet_ip_range`와 같이 비즈니스 단위마다 다른 값들을 수정하십시오.
 
-For example, to create a new business unit similar to business_unit_1, run the following:
+예를 들어 business_unit_1과 유사한 새 비즈니스 단위를 생성하려면 다음을 실행하십시오:
 
    ```bash
    #copy the business_unit_1 folder and it's contents to a new folder business_unit_2
@@ -913,52 +913,52 @@ For example, to create a new business unit similar to business_unit_1, run the f
    ```
 
 
-1. Commit changes.
+1. 변경 사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize projects repo'
    ```
 
-1. You need to manually plan and apply only once the `business_unit_1/shared` and `business_unit_2/shared` environments since `development`, `nonproduction`, and `production` depend on them.
+1. `development`, `nonproduction`, `production`이 종속되어 있으므로 `business_unit_1/shared` 및 `business_unit_2/shared` 환경을 한 번만 수동으로 계획하고 적용해야 합니다.
 
 1. Use `terraform output` to get the CI/CD project ID and the projects step Terraform Service Account from gcp-bootstrap output.
-1. The CI/CD project ID will be used in the [validation](https://cloud.google.com/docs/terraform/policy-validation/quickstart) of the Terraform configuration
+1. CI/CD 프로젝트 ID는 Terraform 구성의 [검증](https://cloud.google.com/docs/terraform/policy-validation/quickstart)에 사용됩니다
 
    ```bash
    export CICD_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw cicd_project_id)
    echo ${CICD_PROJECT_ID}
    ```
 
-1. The projects step Terraform Service Account will be used for [Service Account impersonation](https://cloud.google.com/docs/authentication/use-service-account-impersonation) in the following steps.
-An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with the Terraform Service Account to enable impersonation.
+1. 프로젝트 단계 Terraform 서비스 계정은 다음 단계에서 [서비스 계정 가장](https://cloud.google.com/docs/authentication/use-service-account-impersonation)에 사용됩니다.
+가장을 활성화하기 위해 Terraform 서비스 계정으로 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=$(terraform -chdir="../gcp-bootstrap/envs/shared/" output -raw projects_step_terraform_service_account_email)
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. shared 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
-1. Run `validate` and check for violations.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면 terraform-tools 구성 요소를 설치하기 위해 [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따르십시오.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/policy-library ${CICD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. shared를 `apply`합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push
@@ -970,7 +970,7 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 1. If the GitLab pipelines is successful, merge the merge request in to the `development` branch.
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `development` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-PROJECTS-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-PROJECTS-REPO/-/merge_requests?scope=all&state=opened from the `development` branch to the `nonproduction` branch and review the output.
 1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
@@ -978,13 +978,13 @@ An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set with th
 1. If the GitLab pipelines is successful, merge the merge request in to the `nonproduction` branch.
 1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `nonproduction` environment.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-PROJECTS-REPO/-/pipelines under `tf-apply`.
-1. If the GitLab pipelines is successful, apply the next environment.
+1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-PROJECTS-REPO/-/merge_requests?scope=all&state=opened from the `nonproduction` branch to the `production` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `production` environment.
+1. 병합 요청은 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
 1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-PROJECTS-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `production` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `production` environment.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `production` 브랜치로 병합합니다.
+1. 병합은 `production` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
 1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-PROJECTS-REPO/-/pipelines under `tf-apply`.
 
 1. Unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.

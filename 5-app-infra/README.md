@@ -52,30 +52,30 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
 인프라 파이프라인은 공유 환경 내의 `4-projects` 단계에서 생성되며, 프로젝트 내의 인프라를 관리하도록 구성된 [Cloud Build](https://cloud.google.com/build/docs) 파이프라인을 보유합니다.
 
 `0-bootstrap`에서 설정한 [CI/CD 파이프라인](https://github.com/terraform-google-modules/terraform-example-foundation#0-bootstrap)과 유사한 빌드 트리거로 구성된 [Source Repository](https://cloud.google.com/source-repositories)도 있습니다.
-This Compute Engine instance is created using the base network from step `3-networks` and is used to access private services.
+이 Compute Engine 인스턴스는 `3-networks` 단계의 기본 네트워크를 사용하여 생성되며 비공개 서비스에 액세스하는 데 사용됩니다.
 
-## Prerequisites
+## 전제 조건
 
-1. 0-bootstrap executed successfully.
-1. 1-org executed successfully.
-1. 2-environments executed successfully.
-1. 3-networks executed successfully.
-1. 4-projects executed successfully.
+1. 0-bootstrap이 성공적으로 실행되었습니다.
+1. 1-org가 성공적으로 실행되었습니다.
+1. 2-environments가 성공적으로 실행되었습니다.
+1. 3-networks가 성공적으로 실행되었습니다.
+1. 4-projects가 성공적으로 실행되었습니다.
 
-### Troubleshooting
+### 문제 해결
 
-Please refer to [troubleshooting](../docs/TROUBLESHOOTING.md) if you run into issues during this step.
+이 단계에서 문제가 발생하면 [문제 해결](../docs/TROUBLESHOOTING.md)을 참조하세요.
 
-## Usage
+## 사용법
 
-**Note:** If you are using MacOS, replace `cp -RT` with `cp -R` in the relevant
-commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
+**참고:** MacOS를 사용하는 경우, 관련 명령에서 `cp -RT`를 `cp -R`로 바꾸세요.
+`-T` 플래그는 Linux에서는 필요하지만 MacOS에서는 문제를 일으킵니다.
 
-### Deploying with Cloud Build
+### Cloud Build로 배포하기
 
-1. Clone the `gcp-policies` repo based on the Terraform output from the `0-bootstrap` step.
-Clone the repo at the same level of the `terraform-example-foundation` folder, the following instructions assume this layout.
-Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get the Cloud Build Project ID.
+1. `0-bootstrap` 단계의 Terraform 출력을 기반으로 `gcp-policies` 리포지토리를 복제합니다.
+`terraform-example-foundation` 폴더와 같은 수준에서 리포를 복제합니다. 다음 지침은 이 레이아웃을 가정합니다.
+`0-bootstrap` 폴더에서 `terraform output cloudbuild_project_id`를 실행하여 Cloud Build 프로젝트 ID를 가져옵니다.
 
    ```bash
    export INFRA_PIPELINE_PROJECT_ID=$(terraform -chdir="gcp-projects/business_unit_1/shared/" output -raw cloudbuild_project_id)
@@ -84,11 +84,11 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
    gcloud source repos clone gcp-policies gcp-policies-app-infra --project=${INFRA_PIPELINE_PROJECT_ID}
    ```
 
-   **Note:** `gcp-policies` repo has the same name as the repo created in step `1-org`. In order to prevent a collision, the previous command will clone this repo in the folder `gcp-policies-app-infra`.
+   **참고:** `gcp-policies` 리포지토리는 `1-org` 단계에서 생성된 리포지토리와 같은 이름을 가지고 있습니다. 충돌을 방지하기 위해 이전 명령은 이 리포를 `gcp-policies-app-infra` 폴더에 복제합니다.
 
-1. Navigate into the repo and copy contents of policy-library to new repo. All subsequent steps assume you are running them
-   from the gcp-policies-app-infra directory. If you run them from another directory,
-   adjust your copy paths accordingly.
+1. 리포지토리로 이동하고 policy-library의 콘텐츠를 새 리포지토리로 복사합니다. 이후의 모든 단계는
+   gcp-policies-app-infra 디렉토리에서 실행한다고 가정합니다. 다른 디렉토리에서 실행하는 경우,
+   복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-policies-app-infra
@@ -97,7 +97,7 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
    cp -RT ../terraform-example-foundation/policy-library/ .
    ```
 
-1. Commit changes and push your main branch to the new repo.
+1. 변경사항을 커밋하고 main 브랜치를 새 리포지토리에 푸시합니다.
 
    ```bash
    git add .
@@ -106,21 +106,21 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
    git push --set-upstream origin main
    ```
 
-1. Navigate out of the repo.
+1. 리포지토리에서 나갑니다.
 
    ```bash
    cd ..
    ```
 
-1. Clone the `bu1-example-app` repo.
+1. `bu1-example-app` 리포지토리를 복제합니다.
 
    ```bash
    gcloud source repos clone bu1-example-app --project=${INFRA_PIPELINE_PROJECT_ID}
    ```
 
-1. Navigate into the repo, change to non-main branch and copy contents of foundation to new repo.
-   All subsequent steps assume you are running them from the bu1-example-app directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 리포지토리로 이동하고, 메인이 아닌 브랜치로 변경한 다음, 기반 콘텐츠를 새 리포지토리로 복사합니다.
+   이후의 모든 단계는 bu1-example-app 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd bu1-example-app
@@ -240,7 +240,7 @@ When using Cloud Build or Jenkins as your CI/CD tool, each environment correspon
 
 To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
 
-1. Use `terraform output` to get the Infra Pipeline Project ID from 4-projects output.
+1. `terraform output`을 사용하여 4-projects 출력에서 인프라 파이프라인 프로젝트 ID를 가져옵니다.
 
    ```bash
    export INFRA_PIPELINE_PROJECT_ID=$(terraform -chdir="../4-projects/business_unit_1/shared/" output -raw cloudbuild_project_id)

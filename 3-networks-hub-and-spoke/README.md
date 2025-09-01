@@ -54,12 +54,12 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
 - 글로벌 [DNS Hub](https://cloud.google.com/blog/products/networking/cloud-forwarding-peering-and-zones)를 설정합니다.
 - Hub와 해당 Spoke들을 설정합니다. 각 환경에 대해 기본 DNS, NAT(선택사항), Private Service 네트워킹, VPC Service Controls(선택사항), 온프레미스 Dedicated 또는 Partner Interconnect, 기준선 방화벽 규칙을 포함합니다.
 
-## Prerequisites
+## 전제 조건
 
-1. 0-bootstrap executed successfully.
-1. 1-org executed successfully.
-1. 2-environments executed successfully.
-1. Obtain the value for the access_context_manager_policy_id variable. It can be obtained by running the following commands. We assume you are at the same level as directory `terraform-example-foundation`, If you run them from another directory, adjust your paths accordingly.
+1. 0-bootstrap이 성공적으로 실행되었습니다.
+1. 1-org가 성공적으로 실행되었습니다.
+1. 2-environments가 성공적으로 실행되었습니다.
+1. access_context_manager_policy_id 변수의 값을 가져옵니다. 다음 명령을 실행하여 가져올 수 있습니다. `terraform-example-foundation` 디렉토리와 같은 수준에 있다고 가정합니다. 다른 디렉토리에서 실행하는 경우, 경로를 적절히 조정하세요.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="terraform-example-foundation/0-bootstrap/" output -json common_config | jq '.org_id' --raw-output)
@@ -67,52 +67,52 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    echo "access_context_manager_policy_id = ${ACCESS_CONTEXT_MANAGER_ID}"
    ```
 
-1. For the manual step described in this document, you need to use the same [Terraform](https://www.terraform.io/downloads.html) version used on the build pipeline.
-Otherwise, you might experience Terraform state snapshot lock errors.
+1. 이 문서에서 설명하는 수동 단계의 경우, 빌드 파이프라인에서 사용하는 같은 [Terraform](https://www.terraform.io/downloads.html) 버전을 사용해야 합니다.
+그렇지 않으면 Terraform 상태 스냅샷 잠금 오류가 발생할 수 있습니다.
 
-### Troubleshooting
+### 문제 해결
 
-Please refer to [troubleshooting](../docs/TROUBLESHOOTING.md) if you run into issues during this step.
+이 단계에서 문제가 발생하면 [문제 해결](../docs/TROUBLESHOOTING.md)을 참조하세요.
 
-## Usage
+## 사용법
 
-**Note:** If you are using MacOS, replace `cp -RT` with `cp -R` in the relevant
-commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
+**참고:** MacOS를 사용하는 경우, 관련 명령에서 `cp -RT`를 `cp -R`로 바꾸세요.
+`-T` 플래그는 Linux에서는 필요하지만 MacOS에서는 문제를 일으킵니다.
 
-### Networking Architecture
+### 네트워킹 아키텍처
 
-This step uses the **Hub and Spoke** architecture mode.
-More details can be found at the **Networking** section of the [Google cloud security foundations guide](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke).
+이 단계는 **허브 앤 스포크** 아키텍처 모드를 사용합니다.
+더 자세한 내용은 [Google 클라우드 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke)의 **네트워킹** 섹션에서 찾을 수 있습니다.
 
-**Hub and Spoke** [transitivity](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke_transitivity) can be used to deploy network virtual appliances (NVAs) on the hub Shared VPC that act as gateways for the spoke-to-spoke traffic to allow connectivity across environments.
-To enable **Hub and Spoke** transitivity set the variable `enable_hub_and_spoke_transitivity` to `true`.
+**허브 앤 스포크** [전이성](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke_transitivity)을 사용하여 허브 공유 VPC에 네트워크 가상 어플라이언스(NVA)를 배포할 수 있으며, 이들은 스포크 간 트래픽의 게이트웨이 역할을 하여 환경 간 연결을 가능하게 합니다.
+**허브 앤 스포크** 전이성을 활성화하려면 `enable_hub_and_spoke_transitivity` 변수를 `true`로 설정하세요.
 
-**Note:** The default `allow-transitivity-ingress` firewall rule will create Security Command Center (SCC) findings because it allows ingress for all ports and protocols in the [Shared Address Space CIDR Block](https://en.wikipedia.org/wiki/IPv4_shared_address_space) set in this rule.
-Because of this, you should update the implemented network access controls between spokes with valid values for your environment through the [firewall functionality](./modules/transitivity/main.tf#L142) of the corresponding NVAs to make them more restrictive.
+**참고:** 기본 `allow-transitivity-ingress` 방화벽 규칙은 이 규칙에서 설정된 [공유 주소 공간 CIDR 블록](https://en.wikipedia.org/wiki/IPv4_shared_address_space)에서 모든 포트와 프로토콜에 대한 인그레스를 허용하기 때문에 Security Command Center(SCC) 발견 사항을 생성합니다.
+이로 인해 해당 NVA의 [방화벽 기능](./modules/transitivity/main.tf#L142)을 통해 스포크 간의 구현된 네트워크 액세스 제어를 환경에 맞는 유효한 값으로 업데이트하여 더 제한적으로 만들어야 합니다.
 
-To see the version that makes use of the **Dual Shared VPC** architecture mode check the step [3-networks-svpc](../3-networks-svpc).
+**이중 공유 VPC** 아키텍처 모드를 사용하는 버전을 보려면 [3-networks-svpc](../3-networks-svpc) 단계를 확인하세요.
 
-### Using Dedicated Interconnect
+### Dedicated Interconnect 사용하기
 
-If you provisioned the prerequisites listed in the [Dedicated Interconnect README](./modules/dedicated_interconnect/README.md), follow these steps to enable Dedicated Interconnect to access on-premises resources.
+[Dedicated Interconnect README](./modules/dedicated_interconnect/README.md)에 나열된 전제 조건을 프로비저닝한 경우, 다음 단계를 따라 Dedicated Interconnect를 활성화하여 온프레미스 리소스에 액세스할 수 있습니다.
 
 1. Rename `interconnect.tf.example` to `interconnect.tf` in the shared envs folder in `3-networks-hub-and-spoke/envs/shared`.
 1. Rename `interconnect.auto.tfvars.example` to `interconnect.auto.tfvars` in the shared envs folder in `3-networks-hub-and-spoke/envs/shared`.
 1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
 1. The candidate subnetworks and vlan_tag8021q variables can be set to `null` to allow the interconnect module to auto generate these values.
 
-### Using Partner Interconnect
+### Partner Interconnect 사용하기
 
-If you provisioned the prerequisites listed in the [Partner Interconnect README](./modules/partner_interconnect/README.md) follow this steps to enable Partner Interconnect to access on-premises resources.
+[Partner Interconnect README](./modules/partner_interconnect/README.md)에 나열된 전제 조건을 프로비저닝한 경우, 다음 단계를 따라 Partner Interconnect를 활성화하여 온프레미스 리소스에 액세스할 수 있습니다.
 
 1. Rename `partner_interconnect.tf.example` to `partner_interconnect.tf`in the shared envs folder in `3-networks-hub-and-spoke/envs/shared`.
 1. Rename `partner_interconnect.auto.tfvars.example` to `partner_interconnect.auto.tfvars` in the shared envs folder in `3-networks-hub-and-spoke/envs/shared`.
 1. Update the file `partner_interconnect.tf` with values that are valid for your environment for the VLAN attachments, locations, and candidate subnetworks.
 1. The candidate subnetworks variable can be set to `null` to allow the interconnect module to auto generate this value.
 
-### OPTIONAL - Using High Availability VPN
+### 선택사항 - 고가용성 VPN 사용하기
 
-If you are not able to use Dedicated or Partner Interconnect, you can also use an HA Cloud VPN to access on-premises resources.
+Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud VPN을 사용하여 온프레미스 리소스에 액세스할 수도 있습니다.
 
 1. Rename `vpn.tf.example` to `vpn.tf` in base-env folder in `3-networks-hub-and-spoke/modules/base_env`.
 1. Create secret for VPN private pre-shared key and grant required roles to Networks terraform service account.
@@ -136,11 +136,11 @@ If you are not able to use Dedicated or Partner Interconnect, you can also use a
 1. In the file `vpn.tf`, update the values for `environment`, `vpn_psk_secret_name`, `on_prem_router_ip_address1`, `on_prem_router_ip_address2` and `bgp_peer_asn`.
 1. Verify other default values are valid for your environment.
 
-### Deploying with Cloud Build
+### Cloud Build로 배포하기
 
-1. Clone the `gcp-networks` repo based on the Terraform output from the `0-bootstrap` step.
-Clone the repo at the same level of the `terraform-example-foundation` folder, the following instructions assume this layout.
-Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get the Cloud Build Project ID.
+1. `0-bootstrap` 단계의 Terraform 출력을 기반으로 `gcp-networks` 리포지토리를 복제합니다.
+`terraform-example-foundation` 폴더와 같은 수준에서 리포를 복제합니다. 다음 지침은 이 레이아웃을 가정합니다.
+`0-bootstrap` 폴더에서 `terraform output cloudbuild_project_id`를 실행하여 Cloud Build 프로젝트 ID를 가져옵니다.
 
    ```bash
    export CLOUD_BUILD_PROJECT_ID=$(terraform -chdir="terraform-example-foundation/0-bootstrap/" output -raw cloudbuild_project_id)
@@ -149,7 +149,7 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
    gcloud source repos clone gcp-networks --project=${CLOUD_BUILD_PROJECT_ID}
    ```
 
-1. Change to the freshly cloned repo, change to the non-main branch and copy contents of foundation to new repo.
+1. 새로 복제된 리포지토리로 이동하고, 메인이 아닌 브랜치로 변경한 다음, 기반 콘텐츠를 새 리포지토리로 복사합니다.
 
    ```bash
    cd gcp-networks/
@@ -269,17 +269,17 @@ Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get 
 
 1. You can now move to the instructions in the [4-projects](../4-projects/README.md) step.
 
-### Deploying with Jenkins
+### Jenkins로 배포하기
 
-See `0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-3-networks-hub-and-spoke).
+`0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-3-networks-hub-and-spoke)를 참조하세요.
 
-### Deploying with GitHub Actions
+### GitHub Actions로 배포하기
 
-See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-3-networks-hub-and-spoke).
+`0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-3-networks-hub-and-spoke)를 참조하세요.
 
-### Run Terraform locally
+### 로컬에서 Terraform 실행하기
 
-1. The next instructions assume that you are at the same level of the `terraform-example-foundation` folder. Create and change into `gcp-network` folder, copy `3-networks-hub-and-spoke` content, the Terraform wrapper script and ensure it can be executed. Also, initialize git so you can manage versions locally.
+1. 다음 지침은 `terraform-example-foundation` 폴더와 같은 수준에 있다고 가정합니다. `gcp-network` 폴더를 생성하고 이동한 다음, `3-networks-hub-and-spoke` 콘텐츠, Terraform 래퍼 스크립트를 복사하고 실행할 수 있도록 설정합니다. 또한 로컬에서 버전을 관리할 수 있도록 git을 초기화합니다.
 
    ```bash
    mkdir gcp-network
@@ -326,9 +326,9 @@ See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-s
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ````
 
-We will now deploy each of our environments(development/production/nonproduction) using this script.
+이제 이 스크립트를 사용하여 각 환경(development/production/nonproduction)을 배포합니다.
 
-To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+`tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
 1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from 0-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
 
@@ -432,18 +432,18 @@ To use the `validate` option of the `tf-wrapper.sh` script, please follow the [i
    cd ../
    ```
 
-If you received any errors or made any changes to the Terraform config or any `.tfvars`, you must re-run `./tf-wrapper.sh plan <env>` before run `./tf-wrapper.sh apply <env>`.
+오류가 발생하거나 Terraform 구성 또는 `.tfvars`에 변경사항을 적용한 경우, `./tf-wrapper.sh apply <env>`를 실행하기 전에 `./tf-wrapper.sh plan <env>`를 다시 실행해야 합니다.
 
-Before executing the next stages, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
 ```bash
 unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT
 ```
 
-### (Optional) Enforce VPC Service Controls
+### (선택사항) VPC 서비스 제어 적용하기
 
-Because enabling VPC Service Controls can be a disruptive process, this repo configures VPC Service Controls perimeters in dry run mode by default. This configuration will service traffic that crosses the security perimeter (API requests that originate from inside your perimeter communicating with external resources, or API requests from external resources communicating with resources inside your perimeter) but still allow service traffic normally.
+VPC 서비스 제어를 활성화하는 것은 중단을 일으킬 수 있는 프로세스이므로, 이 리포지토리는 기본적으로 VPC 서비스 제어 경계를 드라이 런 모드로 구성합니다. 이 구성은 보안 경계를 가로지르는 서비스 트래픽 (경계 내부에서 외부 리소스와 통신하는 API 요청 또는 외부 리소스에서 경계 내부 리소스와 통신하는 API 요청)을 모니터링하지만 여전히 서비스 트래픽을 정상적으로 허용합니다.
 
-When you are ready to enforce VPC Service Controls, we recommend that you review the guidance at [Best practices for enabling VPC Service Controls](https://cloud.google.com/vpc-service-controls/docs/enable). After you have added the necessary exceptions and are confident that VPC Service Controls will not disrupt your intended operations, set the variable `enforce_vpcsc` under the module `shared_vpc` to `true` and re-apply this stage. Then re-apply the 4-projects stage, which will inherit the new setting and include those projects inside the enforced perimeter.
+VPC 서비스 제어를 적용할 준비가 되면, [VPC 서비스 제어 활성화를 위한 모범 사례](https://cloud.google.com/vpc-service-controls/docs/enable)의 지침을 검토하는 것이 좋습니다. 필요한 예외를 추가하고 VPC 서비스 제어가 의도한 작업을 방해하지 않을 것이라고 확신한 후, `shared_vpc` 모듈 하의 `enforce_vpcsc` 변수를 `true`로 설정하고 이 단계를 다시 적용합니다. 그런 다음 새 설정을 상속받고 해당 프로젝트를 적용된 경계 내에 포함시킬 4-projects 단계를 다시 적용합니다.
 
-When you need to make changes to an existing enforced perimeter, you can test safely by modifying the configuration of the dry run perimeter. This will log traffic denied by the dry run perimeter without impacting whether the enforced perimeter allows or denies traffic.
+기존의 적용된 경계를 변경해야 할 때, 드라이 런 경계의 구성을 수정하여 안전하게 테스트할 수 있습니다. 이렇게 하면 적용된 경계가 트래픽을 허용하거나 거부하는지에 영향을 주지 않으면서 드라이 런 경계에서 거부된 트래픽을 기록합니다.

@@ -1,32 +1,32 @@
-# Upgrade Guidance
-Before moving forward with adopting components of v4, review the list of breaking changes below. You can find a complete list of features, bug fixes and other updates in the [Changelog](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/CHANGELOG.md).
+# 업그레이드 가이드
+v4 구성 요소 채택을 진행하기 전에 아래의 주요 변경 사항 목록을 검토하시기 바랍니다. 기능, 버그 수정 및 기타 업데이트의 전체 목록은 [변경 로그](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/CHANGELOG.md)에서 확인할 수 있습니다.
 
-**Important:** There is no in-place upgrade path from v3 to v4.
+**중요:** v3에서 v4로의 현재 위치 업그레이드 경로는 제공되지 않습니다.
 
-## Breaking Changes
+## 주요 변경 사항
 
-- The BigQuery log destination was removed from the centralized logging created in step 1-org and replaced with the Log bucket destination with support for Log Analytics enabled and associated a BigQuery dataset.
-- Customer-managed encryption keys (CMEK) were enabled for the Terraform state buckets create in 0-bootstrap.
-- The configuration of Budget Alerts for the projects was changed from alarm by **spent** value to alarm by **forecast** value
-- `compute.disableGuestAttributesAccess` organization policy was removed
--  Cloud Platform Resource Hierarchy changes:
-  - Subfolders for business units were created in 4-projects step
-  - A new Network folder was created be used as parent by network projects:
+- 1-org 단계에서 생성된 중앙 집중식 로깅에서 BigQuery 로그 대상이 제거되고, Log Analytics 지원이 활성화된 Log 버킷 대상과 연관된 BigQuery 데이터세트로 대체되었습니다.
+- 0-bootstrap에서 생성되는 Terraform 상태 버킷에 대해 고객 관리 암호화 키(CMEK)가 활성화되었습니다.
+- 프로젝트의 예산 알림 구성이 **지출** 값 기준 알림에서 **예측** 값 기준 알림으로 변경되었습니다.
+- `compute.disableGuestAttributesAccess` 조직 정책이 제거되었습니다.
+- Cloud Platform 리소스 계층 구조 변경:
+  - 4-projects 단계에서 비즈니스 유닛용 하위 폴더가 생성되었습니다.
+  - 네트워크 프로젝트의 상위로 사용될 새로운 Network 폴더가 생성되었습니다:
     - `prj-ENV-shared-base`
     - `prj-ENV-shared-restricted`
     - `prj-net-hub-base`
     - `prj-net-hub-restricted`
     - `prj-net-dns`
     - `prj-net-interconnect`
-- Network Refactoring
-  - Network projects are now created under a new folder `network`
-  - VPC firewall rules (`google_compute_firewall`) resources were replaced with Compute Network firewall policy (`google_compute_network_firewall_policy`) resources
+- 네트워크 리팩터링
+  - 네트워크 프로젝트가 이제 새로운 `network` 폴더 하위에 생성됩니다.
+  - VPC 방화벽 규칙(`google_compute_firewall`) 리소스가 Compute Network 방화벽 정책(`google_compute_network_firewall_policy`) 리소스로 대체되었습니다.
 
-## Integrating New Features
+## 새로운 기능 통합
 
-There is no direct path for upgrading from v3 to v4 as this may result in resources getting deleted or recreated.
+v3에서 v4로의 직접적인 업그레이드 경로는 없습니다. 이는 리소스가 삭제되거나 재생성될 수 있기 때문입니다.
 
-In case you require to integrate some of the v4's features, we recommend to review the documentation regarding the feature you are interested in and use v4's code as a guidance for its implementation. We also recommend to review the output from `terraform plan` for any destructive operations before applying the updates.
+v4의 일부 기능을 통합해야 하는 경우, 관심 있는 기능에 대한 문서를 검토하고 v4의 코드를 구현 가이드로 사용하는 것을 권장합니다. 또한 업데이트를 적용하기 전에 파괴적인 작업에 대한 `terraform plan` 출력을 검토하는 것을 권장합니다.
 
-**Note:** You must verify that you are using the correct version for `terraform` and `gcloud`.
-You can check these and other additional requirements using this [validate script](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/scripts/validate-requirements.sh).
+**참고:** `terraform`과 `gcloud`에 대해 올바른 버전을 사용하고 있는지 확인해야 합니다.
+이 [검증 스크립트](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/scripts/validate-requirements.sh)를 사용하여 이러한 요구사항과 기타 추가 요구사항을 확인할 수 있습니다.

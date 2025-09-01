@@ -45,18 +45,18 @@
 
 - 아래 지침을 따르기 전에 소프트웨어, 인프라 및 권한의 모든 [요구사항](./modules/jenkins-agent/README.md#Requirements)을 충족하는지 확인하십시오.
 
-### I. Setup your environment
+### I. 환경 설정
 
-- Required information:
-  - Access to the Jenkins Controller host to run `ssh-keygen` command
-  - Access to the Jenkins Controller Web UI
-  - [SSH Agent Jenkins plugin](https://plugins.jenkins.io/ssh-agent) installed in your Jenkins Controller
-  - Private IP address for the Jenkins Agent: usually assigned by your network administrator. You will use this IP for the GCE instance that will be created in the `prj-b-cicd` GCP Project in step [II. Create the SEED and CI/CD projects using Terraform](#ii-create-the-seed-and-cicd-projects-using-terraform).
-  - Access to create five Git repositories, one for each directory in this [monorepo](https://github.com/terraform-google-modules/terraform-example-foundation) (`gcp-bootstrap, gcp-org, gcp-environments, gcp-networks, gcp-projects`). These are usually private repositories that might be on-prem.
+- 필수 정보:
+  - `ssh-keygen` 명령을 실행할 Jenkins Controller 호스트에 대한 액세스
+  - Jenkins Controller Web UI에 대한 액세스
+  - Jenkins Controller에 설치된 [SSH Agent Jenkins plugin](https://plugins.jenkins.io/ssh-agent)
+  - Jenkins Agent의 사설 IP 주소: 일반적으로 네트워크 관리자가 할당합니다. 이 IP는 [II. Terraform을 사용하여 SEED 및 CI/CD 프로젝트 생성](#ii-create-the-seed-and-cicd-projects-using-terraform) 단계에서 `prj-b-cicd` GCP 프로젝트에 생성될 GCE 인스턴스에 사용됩니다.
+  - 이 [monorepo](https://github.com/terraform-google-modules/terraform-example-foundation)의 각 디렉토리에 대해 하나씩 다섯 개의 Git 저장소를 만들 수 있는 액세스(`gcp-bootstrap, gcp-org, gcp-environments, gcp-networks, gcp-projects`). 이들은 보통 온프레미스에 있을 수 있는 비공개 저장소입니다.
 
-1. Generate a SSH key pair. In the Jenkins Controller host, use the `ssh-keygen` command to generate a SSH key pair.
-   - You will need this key pair to enable authentication between the Controller and Agent. Although the key pair can be generated in any linux machine, it is recommended not to copy the secret private key from one host to another, so you probably want to do this in the Jenkins Controller host command line.
-   - Note the `ssh-keygen` command uses the `-N` option to protect the private key with a password. In this example, we are using `-N "my-password"`. This is important because you will need both, the private key and the password when configuring the SSH Agent in you Jenkins Controller Web UI.
+1. SSH 키 쌍을 생성합니다. Jenkins Controller 호스트에서 `ssh-keygen` 명령을 사용하여 SSH 키 쌍을 생성합니다.
+   - Controller와 Agent 간의 인증을 활성화하려면 이 키 쌍이 필요합니다. 키 쌍은 어떤 linux 머신에서도 생성할 수 있지만, 비밀 사설 키를 한 호스트에서 다른 호스트로 복사하지 않는 것이 좋으므로, Jenkins Controller 호스트 명령줄에서 이 작업을 수행하는 것이 좋습니다.
+   - `ssh-keygen` 명령은 `-N` 옵션을 사용하여 사설 키를 암호로 보호합니다. 이 예시에서는 `-N "my-password"`를 사용합니다. Jenkins Controller Web UI에서 SSH Agent를 구성할 때 사설 키와 암호가 모두 필요하므로 이는 중요합니다.
 
    ```bash
    SSH_LOCAL_CONFIG_DIR="$HOME/.ssh"
@@ -68,18 +68,18 @@
    cat $SSH_KEY_FILE_PATH
    ```
 
-   - You will see an output similar to this:
+   - 다음과 비슷한 출력을 볼 수 있습니다:
 
       ![RSA private key example](./files/private_key_example.png)
 
-1. Configure a new SSH Jenkins Agent in the Jenkins Controller’s Web UI. You need the following information:
-   - [SSH Agent Jenkins plugin](https://plugins.jenkins.io/ssh-agent/) installed in your Controller
-   - SSH private key you just generated in the previous step
-   - Passphrase that protects the private key (the one you used in the `-N` option)
-   - Jenkins Agent’s private IP address (usually assigned by your Network Administrator. In the provided examples this IP is "172.16.1.6"). This private IP will be reachable through the VPN connection that you will create later.
+1. Jenkins Controller의 Web UI에서 새 SSH Jenkins Agent를 구성합니다. 다음 정보가 필요합니다:
+   - Controller에 설치된 [SSH Agent Jenkins plugin](https://plugins.jenkins.io/ssh-agent/)
+   - 이전 단계에서 방금 생성한 SSH 사설 키
+   - 사설 키를 보호하는 암호구(`-N` 옵션에서 사용한 것)
+   - Jenkins Agent의 사설 IP 주소(보통 네트워크 관리자가 할당. 제공된 예시에서 이 IP는 "172.16.1.6"입니다). 이 사설 IP는 나중에 생성할 VPN 연결을 통해 접근 가능합니다.
 
-1. Create five individual Git repositories in your Git server (This might be a task delegated to your infrastructure team)
-   - Note that although this infrastructure code is distributed to you as a [monorepo](https://github.com/terraform-google-modules/terraform-example-foundation), you will store the code in five different repositories, one for each directory:
+1. Git 서버에 다섯 개의 개별 Git 저장소를 만듭니다(이는 인프라 팀에 위임될 수 있는 작업입니다)
+   - 이 인프라 코드는 [monorepo](https://github.com/terraform-google-modules/terraform-example-foundation)로 배포되지만, 각 디렉토리에 대해 하나씩 다섯 개의 서로 다른 저장소에 코드를 저장합니다:
 
    ```text
    ./gcp-bootstrap
@@ -89,7 +89,7 @@
    ./gcp-projects
    ```
 
-   - For simplicity, let's name your five repositories as follows:
+   - 간단히 하기 위해 다섯 개의 저장소 이름을 다음과 같이 지정합니다:
 
    ```text
    YOUR_NEW_REPO-gcp-bootstrap
@@ -99,7 +99,7 @@
    YOUR_NEW_REPO-gcp-projects
    ```
 
-   - **Note:** Towards the end of these instructions, you will configure your Jenkins Controller with **new automatic pipelines only for the following repositories:**
+   - **참고:** 이 지침의 끝에서 **다음 저장소에만** 새 자동 파이프라인으로 Jenkins Controller를 구성합니다:
 
    ```text
    YOUR_NEW_REPO-gcp-org
@@ -108,29 +108,29 @@
    YOUR_NEW_REPO-gcp-projects
    ```
 
-   - **Note: there is no automatic pipeline needed for `YOUR_NEW_REPO-gcp-bootstrap`**
-   - In this 0-bootstrap section we only work with your new repository that is a copy of the directory `./0-bootstrap` (`YOUR_NEW_REPO-gcp-bootstrap`)
+   - **참고: `YOUR_NEW_REPO-gcp-bootstrap`에는 자동 파이프라인이 필요하지 않습니다**
+   - 이 0-bootstrap 섹션에서는 `./0-bootstrap` 디렉토리의 복사본인 새 저장소(`YOUR_NEW_REPO-gcp-bootstrap`)만 작업합니다
 
-1. Clone this mono-repository with:
+1. 다음으로 이 모노 저장소를 복제합니다:
 
    ```bash
    git clone https://github.com/terraform-google-modules/terraform-example-foundation
    ```
 
-1. Clone the repository you created to host the `0-bootstrap` directory with:
+1. `0-bootstrap` 디렉토리를 호스팅하기 위해 생성한 저장소를 복제합니다:
 
    ```bash
    git clone <YOUR_NEW_REPO-gcp-bootstrap> gcp-bootstrap
    ```
 
-1. Navigate into the freshly cloned repo and change to a new branch
+1. 방금 복제한 저장소로 이동하고 새 브랜치로 변경합니다
 
    ```bash
    cd gcp-bootstrap
    git checkout -b plan
    ```
 
-1. Copy contents of foundation to new repo (modify accordingly based on your current directory).
+1. foundation의 내용을 새 저장소로 복사합니다(현재 디렉토리에 따라 적절히 수정).
 
    ```bash
    mkdir -p envs/shared
@@ -138,48 +138,48 @@
    cd ./envs/shared
    ```
 
-1. Activate the Jenkins module and disable the Cloud Build module. This implies manually editing the following files:
-   1. Rename file `./cb.tf` to `./cb.tf.example`
+1. Jenkins 모듈을 활성화하고 Cloud Build 모듈을 비활성화합니다. 이는 다음 파일을 수동으로 편집하는 것을 의미합니다:
+   1. 파일 `./cb.tf`를 `./cb.tf.example`로 이름 변경
 
    ```bash
    mv ./cb.tf ./cb.tf.example
    ```
 
-   1. Rename file `./jenkins.tf.example` to `./jenkins.tf`
+   1. 파일 `./jenkins.tf.example`을 `./jenkins.tf`로 이름 변경
 
    ```bash
    mv ./jenkins.tf.example ./jenkins.tf
    ```
 
-   1. Un-comment the `jenkins_bootstrap` variables in `./variables.tf`
-   1. Un-comment the `jenkins_bootstrap` outputs in `./outputs.tf`
-   1. Comment-out the `cloudbuild_bootstrap` outputs in `./outputs.tf`
-1. Rename `terraform.example.tfvars` to `terraform.tfvars` and update the file with values from your environment.
+   1. `./variables.tf`에서 `jenkins_bootstrap` 변수들의 주석 해제
+   1. `./outputs.tf`에서 `jenkins_bootstrap` 출력들의 주석 해제
+   1. `./outputs.tf`에서 `cloudbuild_bootstrap` 출력들을 주석 처리
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 변경하고 환경의 값으로 파일을 업데이트합니다.
 
    ```bash
    mv ./terraform.example.tfvars ./terraform.tfvars
    ```
 
-1. One of the value to supply (variable `jenkins_agent_gce_ssh_pub_key`) is the **public SSH key** you generated in the first step.
-   - **Note: this is not the secret private key**. The public SSH key can be in your repository code.
-1. Show the public key using
+1. 제공해야 하는 값 중 하나(변수 `jenkins_agent_gce_ssh_pub_key`)는 첫 번째 단계에서 생성한 **공개 SSH 키**입니다.
+   - **참고: 이는 비밀 사설 키가 아닙니다**. 공개 SSH 키는 저장소 코드에 있을 수 있습니다.
+1. 다음을 사용하여 공개 키를 표시합니다
 
    ```bash
    cat "${SSH_KEY_FILE_PATH}.pub"
    ```
 
-1. You will copy / paste it in the `terraform.tfvars` file (variable `jenkins_agent_gce_ssh_pub_key`).
-1. Provide the rest of the values needed in `terraform.tfvars`
+1. 이를 `terraform.tfvars` 파일(변수 `jenkins_agent_gce_ssh_pub_key`)에 복사/붙여넣기 합니다.
+1. `terraform.tfvars`에 필요한 나머지 값들을 제공합니다
 
-1. Use the helper script [validate-requirements.sh](../scripts/validate-requirements.sh) to validate your environment:
+1. 환경을 검증하려면 헬퍼 스크립트 [validate-requirements.sh](../scripts/validate-requirements.sh)를 사용합니다:
 
    ```bash
    ../../../terraform-example-foundation/scripts/validate-requirements.sh  -o <ORGANIZATION_ID> -b <BILLING_ACCOUNT_ID> -u <END_USER_EMAIL> -e
    ```
 
-   **Note:** The script is not able to validate if the user is in a Cloud Identity or Google Workspace group with the required roles.
+   **참고:** 스크립트는 사용자가 필요한 역할을 가진 Cloud Identity 또는 Google Workspace 그룹에 있는지 검증할 수 없습니다.
 
-1. Commit changes:
+1. 변경 사항을 커밋합니다:
 
    ```bash
    cd ../..
@@ -187,23 +187,23 @@
    git commit -m 'Bootstrap configuration using jenkins_module'
    ```
 
-1. Push `plan` branch to your repository YOUR_NEW_REPO-gcp-bootstrap with
+1. 다음으로 `plan` 브랜치를 YOUR_NEW_REPO-gcp-bootstrap 저장소에 푸시합니다
 
    ```bash
    git push --set-upstream origin plan
    cd ./envs/shared
    ```
 
-### II. Create the SEED and CI/CD projects using Terraform
+### II. Terraform을 사용하여 SEED 및 CI/CD 프로젝트 생성
 
-- Required information:
-  - Terraform version 1.5.7 - See [Requirements](#requirements) section for more details.
-  - The `terraform.tfvars` file with all the necessary values.
+- 필수 정보:
+  - Terraform 버전 1.5.7 - 자세한 내용은 [요구사항](#requirements) 섹션을 참조하십시오.
+  - 모든 필수 값을 갖는 `terraform.tfvars` 파일.
 
-For the manual steps described in this document, you need to use the same [Terraform](https://www.terraform.io/downloads.html) version used on the build pipeline.
-Otherwise, you might experience Terraform state snapshot lock errors.
+이 문서에 설명된 수동 단계의 경우, 빌드 파이프라인에서 사용되는 것과 동일한 [Terraform](https://www.terraform.io/downloads.html) 버전을 사용해야 합니다.
+그렇지 않으면 Terraform 상태 스냅샷 잠금 오류가 발생할 수 있습니다.
 
-Version 1.5.7 is the last version before the license model change. To use a later version of Terraform, ensure that the Terraform version used in the Operational System to manually execute part of the steps in `3-networks` and `4-projects` is the same version configured in the following code
+버전 1.5.7은 라이선스 모델 변경 이전의 마지막 버전입니다. 최신 버전의 Terraform을 사용하려면, `3-networks` 및 `4-projects` 단계의 일부를 수동으로 실행하는 데 사용되는 운영 체제의 Terraform 버전이 다음 코드에 구성된 것과 동일한 버전인지 확인하십시오
 
 - 0-bootstrap/modules/jenkins-agent/variables.tf
    ```
@@ -237,13 +237,13 @@ Version 1.5.7 is the last version before the license model change. To use a late
    ```
 
 
-1. Get the appropriate credentials: run the following command with an account that has the [necessary permissions](./modules/jenkins-agent/README.md#permissions).
+1. 적절한 자격 증명을 가져옵니다: [필요한 권한](./modules/jenkins-agent/README.md#permissions)을 가진 계정으로 다음 명령을 실행합니다.
 
    ```bash
    gcloud auth application-default login
    ```
 
-1. Open the link in your browser and accept.
+1. 브라우저에서 링크를 열고 수락합니다.
 
 1. Run terraform commands.
    - After the credentials are configured, we will create the `prj-b-seed` project (which contains the GCS state bucket and Terraform custom service account) and the `prj-b-cicd` project (which contains the Jenkins Agent, its custom service account and where we will add VPN configuration)
@@ -287,7 +287,7 @@ Version 1.5.7 is the last version before the license model change. To use a late
    git commit -m 'Terraform Backend configuration using GCS'
    ```
 
-1. Push `plan` branch to your repository YOUR_NEW_REPO-gcp-bootstrap with
+1. 다음으로 `plan` 브랜치를 YOUR_NEW_REPO-gcp-bootstrap 저장소에 푸시합니다
 
    ```bash
    git push

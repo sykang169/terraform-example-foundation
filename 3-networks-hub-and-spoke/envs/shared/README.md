@@ -1,14 +1,14 @@
 # 3-networks-hub-and-spoke/shared
 
-The purpose of this step is to set up the global [DNS Hub](https://cloud.google.com/blog/products/networking/cloud-forwarding-peering-and-zones) that will be used by all environments. This step will also create the Network Hubs that are part of the [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) setup.
+이 단계의 목적은 모든 환경에서 사용될 글로벌 [DNS Hub](https://cloud.google.com/blog/products/networking/cloud-forwarding-peering-and-zones)를 설정하는 것입니다. 이 단계에서는 [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) 설정의 일부인 네트워크 Hub도 생성합니다.
 
-## Prerequisites
+## 전제 조건
 
-1. 0-bootstrap executed successfully.
-1. 1-org executed successfully.
+1. 0-bootstrap이 성공적으로 실행되었습니다.
+1. 1-org가 성공적으로 실행되었습니다.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -39,7 +39,7 @@ The purpose of this step is to set up the global [DNS Hub](https://cloud.google.
 | tfc\_org\_name | Name of the TFC organization | `string` | `""` | no |
 | vpc\_flow\_logs | enable\_logging: set to true to enable VPC flow logging for the subnetworks.<br>  aggregation\_interval: Toggles the aggregation interval for collecting flow logs. Increasing the interval time will reduce the amount of generated flow logs for long lasting connections. Possible values are: INTERVAL\_5\_SEC, INTERVAL\_30\_SEC, INTERVAL\_1\_MIN, INTERVAL\_5\_MIN, INTERVAL\_10\_MIN, INTERVAL\_15\_MIN.<br>  flow\_sampling: Set the sampling rate of VPC flow logs within the subnetwork where 1.0 means all collected logs are reported and 0.0 means no logs are reported. The value of the field must be in [0, 1].<br>  metadata: Configures whether metadata fields should be added to the reported VPC flow logs. Possible values are: EXCLUDE\_ALL\_METADATA, INCLUDE\_ALL\_METADATA, CUSTOM\_METADATA.<br>  metadata\_fields: ist of metadata fields that should be added to reported logs. Can only be specified if VPC flow logs for this subnetwork is enabled and "metadata" is set to CUSTOM\_METADATA.<br>  filter\_expr: Export filter used to define which VPC flow logs should be logged, as as CEL expression. See https://cloud.google.com/vpc/docs/flow-logs#filtering for details on how to format this field. | <pre>object({<br>    enable_logging       = optional(string, "true")<br>    aggregation_interval = optional(string, "INTERVAL_5_SEC")<br>    flow_sampling        = optional(string, "0.5")<br>    metadata             = optional(string, "INCLUDE_ALL_METADATA")<br>    metadata_fields      = optional(list(string), [])<br>    filter_expr          = optional(string, "true")<br>  })</pre> | `{}` | no |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

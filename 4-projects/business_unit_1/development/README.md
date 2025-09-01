@@ -1,5 +1,5 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -13,7 +13,7 @@
 | remote\_state\_bucket | Backend bucket to load Terraform Remote State Data from previous steps. | `string` | n/a | yes |
 | tfc\_org\_name | Name of the TFC organization. | `string` | `""` | no |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

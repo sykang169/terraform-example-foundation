@@ -105,7 +105,7 @@ commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `auto.example.tfvars` files to `auto.tfvars`.
+1. `auto.example.tfvars` 파일들을 `auto.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -222,17 +222,17 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
 
 1. You can now move to the instructions in the [5-app-infra](../5-app-infra/README.md) step.
 
-### Deploying with Jenkins
+### Jenkins로 배포하기
 
-See `0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-4-projects).
+`0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-4-projects)를 참조하세요.
 
-### Deploying with GitHub Actions
+### GitHub Actions로 배포하기
 
-See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-4-projects).
+`0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-4-projects)를 참조하세요.
 
-### Run Terraform locally
+### 로컬에서 Terraform 실행하기
 
-1. The next instructions assume that you are at the same level of the `terraform-example-foundation` folder. Create and change into `gcp-projects` folder, copy the code, Terraform wrapper script and ensure it can be executed.
+1. 다음 지침은 `terraform-example-foundation` 폴더와 같은 수준에 있다고 가정합니다. `gcp-projects` 폴더를 생성하고 이동한 다음, 코드, Terraform 래퍼 스크립트를 복사하고 실행할 수 있도록 설정합니다.
 
    ```bash
    mkdir gcp-projects
@@ -242,7 +242,7 @@ See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-s
    chmod 755 ./gcp-projects/tf-wrapper.sh
    ```
 
-1. Navigate to `gcp-projects` and initialize a local Git repository to manage versions locally. Then, create the environment branches.
+1. `gcp-projects`로 이동하여 로컬에서 버전을 관리하기 위해 로컬 Git 리포지토리를 초기화합니다. 그런 다음 환경 브랜치를 생성합니다.
 
    ```bash
    cd gcp-projects
@@ -254,7 +254,7 @@ See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-s
    git checkout -b production
    ```
 
-1. Rename `auto.example.tfvars` files to `auto.tfvars`.
+1. `auto.example.tfvars` 파일들을 `auto.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -275,9 +275,9 @@ See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-s
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${remote_state_bucket}/" ./common.auto.tfvars
    ```
 
-We will now deploy each of our environments(development/production/nonproduction) using the `tf-wrapper.sh` script.
+이제 `tf-wrapper.sh` 스크립트를 사용하여 각 환경(development/production/nonproduction)을 배포합니다.
 
-To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+`tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
 1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
 
@@ -396,9 +396,9 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    cd ../
    ```
 
-If you received any errors or made any changes to the Terraform config or any `.tfvars`, you must re-run `./tf-wrapper.sh plan <env>` before run `./tf-wrapper.sh apply <env>`.
+오류가 발생하거나 Terraform 구성 또는 `.tfvars`에 변경사항을 적용한 경우, `./tf-wrapper.sh apply <env>`를 실행하기 전에 `./tf-wrapper.sh plan <env>`를 다시 실행해야 합니다.
 
-Before executing the next stages, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
 ```bash
 unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT

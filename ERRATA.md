@@ -3,60 +3,60 @@
 
 ## 4.x [WIP]
 
-### Code Discrepancies
+### 코드 차이점
 
-#### Notes
-- The "Alerting on log-based metrics and performance metrics" described in Section "Architecture/Detective controls" will be integrated in a future release.
+#### 참고사항
+- "Architecture/Detective controls" 섹션에서 설명된 "로그 기반 메트릭 및 성능 메트릭에 대한 알림"은 향후 릴리스에서 통합될 예정입니다.
 
 ## 3.x [WIP]
 
-### Code Discrepancies
+### 코드 차이점
 
-#### Networking
+#### 네트워킹
 
-- The “allow-windows-activation” rule that exists in the code is not explicitly called out in the guide.
-- [Tags](https://cloud.google.com/resource-manager/docs/tags/tags-overview) at Project level will be integrated in a future release.
-- [Global network firewall policies](https://cloud.google.com/vpc/docs/network-firewall-policies) will be integrated in a future release.
+- 코드에 존재하는 "allow-windows-activation" 규칙은 가이드에서 명시적으로 언급되지 않습니다.
+- 프로젝트 수준의 [태그](https://cloud.google.com/resource-manager/docs/tags/tags-overview)는 향후 릴리스에서 통합될 예정입니다.
+- [글로벌 네트워크 방화벽 정책](https://cloud.google.com/vpc/docs/network-firewall-policies)은 향후 릴리스에서 통합될 예정입니다.
 
-#### Naming
+#### 명명 규칙
 
-- Firewall rules created for healthcheck in the transitivity infrastructure for the hub and spoke network model, do not follow the naming convention as recommended in the guide.
+- 허브 앤 스포크 네트워크 모델의 전이성 인프라에서 상태 확인을 위해 생성된 방화벽 규칙이 가이드에서 권장하는 명명 규칙을 따르지 않습니다.
 
 ## 2.x [WIP]
-### Code Discrepancies
+### 코드 차이점
 
-#### Labeling
-- The guide defines vpc-type for shared, service, float, nic, and peer projects. It does not define a vpc-type for Jenkins agents (vpc-b-jenkinsagents), the DNS Hub (vpc-dns-hub) and projects created in 4-projects.
-This will be addressed in the next version of the blueprint guide.
+#### 라벨링
+- 가이드에서는 shared, service, float, nic, peer 프로젝트에 대한 vpc-type을 정의합니다. Jenkins 에이전트(vpc-b-jenkinsagents), DNS 허브(vpc-dns-hub), 4-projects에서 생성된 프로젝트에 대한 vpc-type은 정의하지 않습니다.
+이는 블루프린트 가이드의 다음 버전에서 다루어질 예정입니다.
 
-#### Naming
-- The Service Account naming is not aligned to the blueprint guide. Naming will be modified accordingly in a future release.
-- The infrastructure pipeline project naming (`prj-buN-c-infra-pipeline`) is not aligned to the blueprint guide(`prj-buN-c-sample-infra-pipeline`). Naming will be modified accordingly in a future release.
+#### 명명 규칙
+- 서비스 계정 명명이 블루프린트 가이드와 일치하지 않습니다. 향후 릴리스에서 명명이 적절히 수정될 예정입니다.
+- 인프라 파이프라인 프로젝트 명명(`prj-buN-c-infra-pipeline`)이 블루프린트 가이드(`prj-buN-c-sample-infra-pipeline`)와 일치하지 않습니다. 향후 릴리스에서 명명이 적절히 수정될 예정입니다.
 
-#### Networking
-- The “allow-windows-activation” rule that exists in the code is not explicitly called out in the guide.
+#### 네트워킹
+- 코드에 존재하는 "allow-windows-activation" 규칙은 가이드에서 명시적으로 언급되지 않습니다.
 
-#### Notes
-- The BigQuery Log Detection solution, described in Section 10 will be integrated in a future release.
-- Splunk log integration will be integrated in a future release.
-- Cloud Asset Inventory will be integrated in a future release.
-- The unallocated IP address space in the Shared VPC networks, described in Section 7.3, is currently being used by Private Service Networking in this release.
+#### 참고사항
+- 섹션 10에서 설명된 BigQuery 로그 탐지 솔루션은 향후 릴리스에서 통합될 예정입니다.
+- Splunk 로그 통합은 향후 릴리스에서 통합될 예정입니다.
+- Cloud Asset Inventory는 향후 릴리스에서 통합될 예정입니다.
+- 섹션 7.3에서 설명된 공유 VPC 네트워크의 할당되지 않은 IP 주소 공간은 현재 이 릴리스에서 Private Service Networking에 의해 사용되고 있습니다.
 
 ## [1.x](https://github.com/terraform-google-modules/terraform-example-foundation/releases/tag/v1.0.0)
-### Code Discrepancies
+### 코드 차이점
 
-#### Labeling
-- The guide defines vpc-type for shared, service, float, nic, and peer projects. It does not define a vpc-type for Jenkins agents (vpc-b-jenkinsagents), the DNS Hub (vpc-dns-hub) and projects created in 4-projects.
-This will be addressed in the next version of the blueprint guide.
+#### 라벨링
+- 가이드에서는 shared, service, float, nic, peer 프로젝트에 대한 vpc-type을 정의합니다. Jenkins 에이전트(vpc-b-jenkinsagents), DNS 허브(vpc-dns-hub), 4-projects에서 생성된 프로젝트에 대한 vpc-type은 정의하지 않습니다.
+이는 블루프린트 가이드의 다음 버전에서 다루어질 예정입니다.
 
-#### Naming
-- The Service Account & Storage bucket naming are not aligned to the blueprint guide. Naming will be modified accordingly in a future release.
+#### 명명 규칙
+- 서비스 계정 및 스토리지 버킷 명명이 블루프린트 가이드와 일치하지 않습니다. 향후 릴리스에서 명명이 적절히 수정될 예정입니다.
 
-#### Pre-deployment Check
-- Terraform Validator, described in Section 5.2, is not implemented in the Cloud Build and Jenkins pipelines, but will be integrated in a future release.
+#### 배포 전 확인
+- 섹션 5.2에서 설명된 Terraform Validator는 Cloud Build 및 Jenkins 파이프라인에서 구현되지 않았지만, 향후 릴리스에서 통합될 예정입니다.
 
-#### Notes
-- The BigQuery Log Detection solution, described in Section 10 will be integrated in a future release.
-- Splunk log integration will be integrated in a future release.
-- Cloud Asset Inventory will be integrated in a future release.
-- The unallocated IP address space in the Shared VPC networks, described in Section 7.3, is currently being used by Private Service Networking in this release.
+#### 참고사항
+- 섹션 10에서 설명된 BigQuery 로그 탐지 솔루션은 향후 릴리스에서 통합될 예정입니다.
+- Splunk 로그 통합은 향후 릴리스에서 통합될 예정입니다.
+- Cloud Asset Inventory는 향후 릴리스에서 통합될 예정입니다.
+- 섹션 7.3에서 설명된 공유 VPC 네트워크의 할당되지 않은 IP 주소 공간은 현재 이 릴리스에서 Private Service Networking에 의해 사용되고 있습니다.

@@ -134,21 +134,21 @@ Bigquery와 Pub/Sub로 내보내는 싱크도 생성합니다. 이로 인해 해
    mv ./envs/shared/terraform.example.tfvars ./envs/shared/terraform.tfvars
    ```
 
-1. Check if a Security Command Center notification with the default name, **scc-notify**, already exists. If it exists, choose a different value for the `scc_notification_name` variable in the `./envs/shared/terraform.tfvars` file.
+1. 기본 이름인 **scc-notify**를 가진 Security Command Center 알림이 이미 존재하는지 확인합니다. 존재하는 경우, `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 다른 값을 선택하세요.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -json common_config | jq '.org_id' --raw-output)
    gcloud scc notifications describe "scc-notify" --organization=${ORGANIZATION_ID}
    ```
 
-1. Check if your organization already has an Access Context Manager policy.
+1. 조직에 이미 Access Context Manager 정책이 있는지 확인합니다.
 
    ```bash
    export ACCESS_CONTEXT_MANAGER_ID=$(gcloud access-context-manager policies list --organization ${ORGANIZATION_ID} --format="value(name)")
    echo "access_context_manager_policy_id = ${ACCESS_CONTEXT_MANAGER_ID}"
    ```
 
-1. Update the `envs/shared/terraform.tfvars` file with values from your environment and 0-bootstrap step. If the previous step showed a numeric value, un-comment the variable `create_access_context_manager_access_policy = false`. See the shared folder [README.md](./envs/shared/README.md) for additional information on the values in the `terraform.tfvars` file.
+1. 환경과 0-bootstrap 단계의 값으로 `envs/shared/terraform.tfvars` 파일을 업데이트합니다. 이전 단계에서 숫자 값이 표시된 경우, `create_access_context_manager_access_policy = false` 변수의 주석을 해제하세요. `terraform.tfvars` 파일의 값에 대한 추가 정보는 공유 폴더 [README.md](./envs/shared/README.md)를 참조하세요.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw gcs_bucket_tfstate)
@@ -159,50 +159,47 @@ Bigquery와 Pub/Sub로 내보내는 싱크도 생성합니다. 이로 인해 해
    if [ ! -z "${ACCESS_CONTEXT_MANAGER_ID}" ]; then sed -i'' -e "s=//create_access_context_manager_access_policy=create_access_context_manager_access_policy=" ./envs/shared/terraform.tfvars; fi
    ```
 
-1. Commit changes.
+1. 변경사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize org repo'
    ```
 
-1. Push your plan branch to trigger a plan for all environments. Because the
-   _plan_ branch is not a [named environment branch](../docs/FAQ.md#what-is-a-named-branch), pushing your _plan_
-   branch triggers _terraform plan_ but not _terraform apply_. Review the plan output in your Cloud Build project.
+1. plan 브랜치를 푸시하여 모든 환경에 대한 계획을 트리거합니다. _plan_ 브랜치는 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)가 아니므로, plan 브랜치를 푸시하면 _terraform plan_이 트리거되지만 _terraform apply_는 트리거되지 않습니다. Cloud Build 프로젝트에서 계획 출력을 검토하세요.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-1. Merge changes to the production branch. Because the _production_ branch is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project.
+1. production 브랜치로 변경사항을 병합합니다. _production_ 브랜치는 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토하세요.
 
    ```bash
    git checkout -b production
    git push origin production
    ```
 
-1. Proceed to the [2-environments](../2-environments/README.md) step.
+1. [2-environments](../2-environments/README.md) 단계로 진행합니다.
 
-**Troubleshooting:**
-If you received a `PERMISSION_DENIED` error while running the `gcloud access-context-manager` or the `gcloud scc notifications` commands, you can append the following to run the command as the Terraform service account:
+**문제 해결:**
+`gcloud access-context-manager` 또는 `gcloud scc notifications` 명령을 실행하는 동안 `PERMISSION_DENIED` 오류가 발생한 경우, 다음을 추가하여 Terraform 서비스 계정으로 명령을 실행할 수 있습니다:
 
 ```bash
 --impersonate-service-account=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw organization_step_terraform_service_account_email)
 ```
 
-### Deploying with Jenkins
+### Jenkins로 배포하기
 
-See `0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-1-org).
+`0-bootstrap` [README-Jenkins.md](../0-bootstrap/README-Jenkins.md#deploying-step-1-org)를 참조하세요.
 
-### Deploying with GitHub Actions
+### GitHub Actions로 배포하기
 
-See `0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-1-org).
+`0-bootstrap` [README-GitHub.md](../0-bootstrap/README-GitHub.md#deploying-step-1-org)를 참조하세요.
 
-### Running Terraform locally
+### 로컬에서 Terraform 실행하기
 
-1. The next instructions assume that you are at the same level of the `terraform-example-foundation` folder.
-Create `gcp-org` folder, copy `1-org` content and Terraform wrapper script; ensure it can be executed.
+1. 다음 지침은 `terraform-example-foundation` 폴더와 같은 수준에 있다고 가정합니다.
+`gcp-org` 폴더를 생성하고, `1-org` 내용과 Terraform 래퍼 스크립트를 복사한 다음, 실행 가능하도록 설정합니다.
 
    ```bash
    mkdir gcp-org
@@ -213,7 +210,7 @@ Create `gcp-org` folder, copy `1-org` content and Terraform wrapper script; ensu
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Initialize a local Git repository to manage versions locally. Then, create the environment branches.
+1. 로컬에서 버전을 관리하기 위해 로컬 Git 리포지토리를 초기화합니다. 그런 다음 환경 브랜치를 생성합니다.
 
    ```bash
       git init
@@ -222,27 +219,27 @@ Create `gcp-org` folder, copy `1-org` content and Terraform wrapper script; ensu
       git checkout -b production
    ```
 
-1. Rename `./envs/shared/terraform.example.tfvars` to `./envs/shared/terraform.tfvars`.
+1. `./envs/shared/terraform.example.tfvars`를 `./envs/shared/terraform.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv ./envs/shared/terraform.example.tfvars ./envs/shared/terraform.tfvars
    ```
 
-1. Check if a Security Command Center notification with the default name, **scc-notify**, already exists. If it exists, choose a different value for the `scc_notification_name` variable in the `./envs/shared/terraform.tfvars` file.
+1. 기본 이름인 **scc-notify**를 가진 Security Command Center 알림이 이미 존재하는지 확인합니다. 존재하는 경우, `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 다른 값을 선택하세요.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/" output -json common_config | jq '.org_id' --raw-output)
    gcloud scc notifications describe "scc-notify" --organization=${ORGANIZATION_ID}
    ```
 
-1. Check if your organization already has an Access Context Manager policy.
+1. 조직에 이미 Access Context Manager 정책이 있는지 확인합니다.
 
    ```bash
    export ACCESS_CONTEXT_MANAGER_ID=$(gcloud access-context-manager policies list --organization ${ORGANIZATION_ID} --format="value(name)")
    echo "access_context_manager_policy_id = ${ACCESS_CONTEXT_MANAGER_ID}"
    ```
 
-1. Update the `envs/shared/terraform.tfvars` file with values from your environment and `gcp-bootstrap` step. If the previous step showed a numeric value, un-comment the variable `create_access_context_manager_access_policy = false`. See the shared folder [README.md](./envs/shared/README.md) for additional information on the values in the `terraform.tfvars` file.
+1. 환경과 `gcp-bootstrap` 단계의 값으로 `envs/shared/terraform.tfvars` 파일을 업데이트합니다. 이전 단계에서 숫자 값이 표시된 경우, `create_access_context_manager_access_policy = false` 변수의 주석을 해제하세요. `terraform.tfvars` 파일의 값에 대한 추가 정보는 공유 폴더 [README.md](./envs/shared/README.md)를 참조하세요.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/" output -raw gcs_bucket_tfstate)
@@ -253,11 +250,11 @@ Create `gcp-org` folder, copy `1-org` content and Terraform wrapper script; ensu
    if [ ! -z "${ACCESS_CONTEXT_MANAGER_ID}" ]; then sed -i'' -e "s=//create_access_context_manager_access_policy=create_access_context_manager_access_policy=" ./envs/shared/terraform.tfvars; fi
    ```
 
-You can now deploy your environment (production) using this script.
+이제 이 스크립트를 사용하여 환경(production)을 배포할 수 있습니다.
 
-To use the `validate` option of the `tf-wrapper.sh` script, follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+`tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
-1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 Seed 프로젝트 ID와 조직 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export SEED_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/" output -raw seed_project_id)
@@ -267,7 +264,7 @@ To use the `validate` option of the `tf-wrapper.sh` script, follow the [instruct
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review the output.
+1. `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout plan
@@ -275,20 +272,20 @@ To use the `validate` option of the `tf-wrapper.sh` script, follow the [instruct
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `validate` and resolve any violations.
+1. `validate`를 실행하고 위반 사항을 해결합니다.
 
    ```bash
    ./tf-wrapper.sh validate production $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Commit validated code in plan branch.
+1. plan 브랜치에서 검증된 코드를 커밋합니다.
 
    ```bash
    git add .
    git commit -m "Initial version of gcp-org."
    ```
 
-1. Checkout `production` branch and merge plan into it. Run `apply production`.
+1. `production` 브랜치를 체크아웃하고 plan을 병합합니다. `apply production`을 실행합니다.
 
    ```bash
    git checkout production
@@ -296,9 +293,9 @@ To use the `validate` option of the `tf-wrapper.sh` script, follow the [instruct
    ./tf-wrapper.sh apply production
    ```
 
-If you receive any errors or made any changes to the Terraform config or `terraform.tfvars`, re-run `./tf-wrapper.sh plan production` before you run `./tf-wrapper.sh apply production`.
+오류가 발생하거나 Terraform 구성 또는 `terraform.tfvars`에 변경사항을 적용한 경우, `./tf-wrapper.sh apply production`을 실행하기 전에 `./tf-wrapper.sh plan production`을 다시 실행하세요.
 
-Before executing the next stages, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
 ```bash
 unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT
