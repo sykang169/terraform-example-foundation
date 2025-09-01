@@ -1,6 +1,6 @@
-# High Availability VPN module
+# 고가용성 VPN 모듈
 
-This module implements the recommendation proposed in
+이 모듈은 다음에서 제안된 권장 사항을 구현합니다:
 [High Availability VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies#overview).
 
 If you are not able to use Dedicated Interconnect or Partner Interconnect you can also use an High Availability Cloud VPN to connect the On-Prem to your Google Organization.
@@ -16,7 +16,7 @@ If you are not able to use Dedicated Interconnect or Partner Interconnect you ca
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -50,7 +50,7 @@ If you are not able to use Dedicated Interconnect or Partner Interconnect you ca
 | vpc\_name | Label to identify the VPC associated with shared VPC that will use the Interconnect. | `string` | n/a | yes |
 | vpn\_psk\_secret\_name | The name of the secret to retrieve from secret manager. This will be retrieved from the environment secrets project. | `string` | n/a | yes |
 
-## Outputs
+## 출력
 
 No outputs.
 

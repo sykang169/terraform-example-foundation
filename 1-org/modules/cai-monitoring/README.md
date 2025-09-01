@@ -1,7 +1,7 @@
-# Cloud Asset Inventory Notification
-Uses Google Cloud Asset Inventory to create a feed of IAM Policy change events, then process them to detect when a roles (from a preset list) is given to a member (service account, user or group). Then generates a SCC Finding with the member, role, resource where it was granted and the time that was granted.
+# Cloud Asset Inventory 알림
+Google Cloud Asset Inventory를 사용하여 IAM 정책 변경 이벤트의 피드를 생성한 다음, 이를 처리하여 (사전 설정된 목록에서) 역할이 멤버(서비스 계정, 사용자 또는 그룹)에게 부여되는 시점을 감지합니다. 그런 다음 멤버, 역할, 부여된 리소스 및 부여된 시간이 포함된 SCC 발견 사항을 생성합니다.
 
-## Usage
+## 사용법
 
 ```hcl
 module "secure_cai_notification" {
@@ -18,7 +18,7 @@ module "secure_cai_notification" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -33,38 +33,38 @@ module "secure_cai_notification" {
 | random\_suffix | Adds a suffix of 4 random characters to the created resources names. | `bool` | `true` | no |
 | roles\_to\_monitor | List of roles that will save a SCC Finding if granted to any member (service account, user or group) on an update in the IAM Policy. | `list(string)` | <pre>[<br>  "roles/owner",<br>  "roles/editor",<br>  "roles/resourcemanager.organizationAdmin",<br>  "roles/compute.networkAdmin",<br>  "roles/compute.orgFirewallPolicyAdmin"<br>]</pre> | no |
 
-## Outputs
+## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
-| artifact\_registry\_name | Artifact Registry Repo to store the Cloud Function image. |
-| asset\_feed\_name | Organization Asset Feed. |
-| bucket\_name | Storage bucket where the source code is. |
-| function\_uri | URI of the Cloud Function. |
-| scc\_source | SCC Findings Source. |
-| topic\_name | Pub/Sub Topic for the Asset Feed. |
+| artifact\_registry\_name | Cloud Function 이미지를 저장하는 Artifact Registry 리포지토리. |
+| asset\_feed\_name | 조직 자산 피드. |
+| bucket\_name | 소스 코드가 있는 스토리지 버킷. |
+| function\_uri | Cloud Function의 URI. |
+| scc\_source | SCC 발견 사항 소스. |
+| topic\_name | 자산 피드용 Pub/Sub 토픽. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Requirements
+## 요구 사항
 
-### Software
+### 소프트웨어
 
-The following dependencies must be available:
+다음 종속성을 사용할 수 있어야 합니다:
 
 * [Terraform](https://www.terraform.io/downloads.html) >= 1.3
-* [Terraform Provider for GCP](https://github.com/terraform-providers/terraform-provider-google) >= 3.77
+* [GCP용 Terraform 프로바이더](https://github.com/terraform-providers/terraform-provider-google) >= 3.77
 
-### APIs
+### API
 
-A project with the following APIs enabled must be used to host the resources of this module:
+이 모듈의 리소스를 호스팅하려면 다음 API가 활성화된 프로젝트를 사용해야 합니다:
 
-* Project
+* 프로젝트
   * Google Cloud Key Management Service: `cloudkms.googleapis.com`
   * Cloud Resource Manager API: `cloudresourcemanager.googleapis.com`
   * Cloud Functions API: `cloudfunctions.googleapis.com`
   * Cloud Build API: `cloudbuild.googleapis.com`
   * Cloud Asset API`cloudasset.googleapis.com`
-  * Clouod Pub/Sub API: `pubsub.googleapis.com`
+  * Cloud Pub/Sub API: `pubsub.googleapis.com`
   * Identity and Access Management (IAM) API: `iam.googleapis.com`
   * Cloud Billing API: `cloudbilling.googleapis.com`

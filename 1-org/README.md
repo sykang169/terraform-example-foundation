@@ -17,82 +17,79 @@ example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주
 </tr>
 <tr>
 <td><a href="../2-environments"><span style="white-space: nowrap;">2-environments</span></a></td>
-<td>Sets up development, nonproduction, and production environments within the
-Google Cloud organization that you've created.</td>
+<td>생성한 Google Cloud 조직 내에서 개발, 비프로덕션, 프로덕션 환경을 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../3-networks-svpc">3-networks-svpc</a></td>
-<td>Sets up shared VPCs with default DNS, NAT (optional),
-Private Service networking, VPC service controls, on-premises Dedicated
-Interconnect, and baseline firewall rules for each environment. It also sets
-up the global DNS hub.</td>
+<td>기본 DNS, NAT(선택사항), Private Service 네트워킹, VPC 서비스 제어, 온프레미스 Dedicated Interconnect, 
+각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC를 설정합니다. 또한 글로벌 DNS 허브를 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../3-networks-hub-and-spoke">3-networks-hub-and-spoke</a></td>
-<td>Sets up shared VPCs with all the default configuration
-found on step 3-networks-svpc, but here the architecture will be based on the
-hub-and-spoke network model. It also sets up the global DNS hub.</td>
+<td>3-networks-svpc 단계에서 찾을 수 있는 모든 기본 구성으로 공유 VPC를 설정하지만, 
+여기서는 아키텍처가 허브-앤-스포크 네트워크 모델을 기반으로 합니다. 또한 글로벌 DNS 허브를 설정합니다.</td>
 </tr>
 </tr>
 <tr>
 <td><a href="../4-projects">4-projects</a></td>
-<td>Sets up a folder structure, projects, and application infrastructure pipeline for applications,
- which are connected as service projects to the shared VPC created in the previous stage.</td>
+<td>이전 단계에서 생성된 공유 VPC에 서비스 프로젝트로 연결되는 애플리케이션을 위한 
+폴더 구조, 프로젝트 및 애플리케이션 인프라 파이프라인을 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../5-app-infra">5-app-infra</a></td>
-<td>Deploy a <a href="https://cloud.google.com/compute/">Compute Engine</a> instance in one of the business unit projects using the infra pipeline set up in 4-projects.</td>
+<td>4-projects에서 설정한 인프라 파이프라인을 사용하여 비즈니스 유닛 프로젝트 중 하나에 
+<a href="https://cloud.google.com/compute/">Compute Engine</a> 인스턴스를 배포합니다.</td>
 </tr>
 </tbody>
 </table>
 
-For an overview of the architecture and the parts, see the
-[terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation).
+아키텍처와 부분에 대한 개요는 
+[terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation)를 참조하세요.
 
-## Purpose
+## 목적
 
-The purpose of this step is to set up top-level shared folders, networking projects, organization-level logging, and baseline security settings through organizational policies.
+이 단계의 목적은 최상위 수준 공유 폴더, 네트워킹 프로젝트, 조직 수준 로깅, 그리고 조직 정책을 통한 기준선 보안 설정을 구성하는 것입니다.
 
-## Prerequisites
+## 사전 준비사항
 
-1. Run 0-bootstrap.
-1. To enable Security Command Center notifications, choose a Security Command Center tier and create and grant permissions for the Security Command Center service account as described in [Setting up Security Command Center](https://cloud.google.com/security-command-center/docs/quickstart-security-command-center).
+1. 0-bootstrap을 실행합니다.
+1. Security Command Center 알림을 활성화하려면, Security Command Center 계층을 선택하고 [Security Command Center 설정](https://cloud.google.com/security-command-center/docs/quickstart-security-command-center)에 설명된 대로 Security Command Center 서비스 계정에 대한 권한을 생성하고 부여합니다.
 
-### Troubleshooting
+### 문제 해결
 
-See [troubleshooting](../docs/TROUBLESHOOTING.md) if you run into issues during this step.
+이 단계에서 문제가 발생하면 [문제 해결](../docs/TROUBLESHOOTING.md)을 참조하세요.
 
-## Usage
+## 사용법
 
-Consider the following:
+다음을 고려하세요:
 
-- This module creates a sink to export all logs to a Cloud Logging bucket. It also creates sinks to export a subset of security-related logs
-to Bigquery and Pub/Sub. This will result in additional charges for those copies of logs. For the log bucket destination, logs retained for the default retention period (30 days) [don't incur a storage cost](https://cloud.google.com/stackdriver/pricing#:~:text=Logs%20retained%20for%20the%20default%20retention%20period%20don%27t%20incur%20a%20storage%20cost.).
-  You can change the filters and sinks by modifying the configuration in `envs/shared/log_sinks.tf`.
+- 이 모듈은 모든 로그를 Cloud Logging 버킷으로 내보내는 싱크를 생성합니다. 또한 보안 관련 로그의 하위 집합을
+Bigquery와 Pub/Sub로 내보내는 싱크도 생성합니다. 이로 인해 해당 로그 사본에 대해 추가 요금이 발생합니다. 로그 버킷 대상의 경우, 기본 보존 기간(30일) 동안 보관된 로그는 [스토리지 비용이 발생하지 않습니다](https://cloud.google.com/stackdriver/pricing#:~:text=Logs%20retained%20for%20the%20default%20retention%20period%20don%27t%20incur%20a%20storage%20cost.).
+  `envs/shared/log_sinks.tf`의 구성을 수정하여 필터와 싱크를 변경할 수 있습니다.
 
-- This module implements but does not enable [bucket policy retention](https://cloud.google.com/storage/docs/bucket-lock) for organization logs. If needed, enable a retention policy by configuring the `log_export_storage_retention_policy` variable.
+- 이 모듈은 조직 로그에 대한 [버킷 정책 보존](https://cloud.google.com/storage/docs/bucket-lock)을 구현하지만 활성화하지는 않습니다. 필요한 경우 `log_export_storage_retention_policy` 변수를 구성하여 보존 정책을 활성화하세요.
 
-- This module implements but does not enable [object versioning](https://cloud.google.com/storage/docs/object-versioning) for organization logs. If needed, enable object versioning by setting the `log_export_storage_versioning` variable to true.
+- 이 모듈은 조직 로그에 대한 [객체 버전 관리](https://cloud.google.com/storage/docs/object-versioning)를 구현하지만 활성화하지는 않습니다. 필요한 경우 `log_export_storage_versioning` 변수를 true로 설정하여 객체 버전 관리를 활성화하세요.
 
-- Bucket policy retention and object versioning are **mutually exclusive**.
+- 버킷 정책 보존과 객체 버전 관리는 **상호 배타적**입니다.
 
-- To use the **hub-and-spoke** architecture described in the **Networking** section of the [Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke), set the `enable_hub_and_spoke` variable to `true`.
+- [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke)의 **네트워킹** 섹션에서 설명된 **허브-앤-스포크** 아키텍처를 사용하려면 `enable_hub_and_spoke` 변수를 `true`로 설정하세요.
 
-- If you are using MacOS, replace `cp -RT` with `cp -R` in the relevant
-commands. The `-T` flag is required for Linux, but causes problems for MacOS.
+- MacOS를 사용하는 경우, 관련 명령에서 `cp -RT`를 `cp -R`로 바꾸세요. 
+`-T` 플래그는 Linux에서는 필요하지만 MacOS에서는 문제를 일으킵니다.
 
-- This module manages contacts for notifications using [Essential Contacts](https://cloud.google.com/resource-manager/docs/managing-notification-contacts). Essential Contacts are assigned at the parent (organization or folder) that you configure to be inherited by all child resources. You can also assign Essential Contacts directly to projects using the project-factory [essential_contacts submodule](https://registry.terraform.io/modules/terraform-google-modules/project-factory/google/13.1.0/submodules/essential_contacts#example-usage). Billing notifications are sent to the `group_billing_admins` mandatory group. Legal and suspension notifications are sent to the `group_org_admins` mandatory group. If you provide all other groups, notifications are configured as described in the following table.
+- 이 모듈은 [Essential Contacts](https://cloud.google.com/resource-manager/docs/managing-notification-contacts)를 사용하여 알림용 연락처를 관리합니다. Essential Contacts는 모든 하위 리소스에 상속되도록 구성한 상위(조직 또는 폴더)에 할당됩니다. project-factory [essential_contacts 하위모듈](https://registry.terraform.io/modules/terraform-google-modules/project-factory/google/13.1.0/submodules/essential_contacts#example-usage)을 사용하여 프로젝트에 Essential Contacts를 직접 할당할 수도 있습니다. 청구 알림은 `group_billing_admins` 필수 그룹으로 전송됩니다. 법적 및 정지 알림은 `group_org_admins` 필수 그룹으로 전송됩니다. 다른 모든 그룹을 제공하는 경우, 다음 표에 설명된 대로 알림이 구성됩니다.
 
-| Group | Notification Category | Fallback Group |
+| 그룹 | 알림 카테고리 | 대체 그룹 |
 |-------|-----------------------|----------------|
-| gcp_network_viewer | Technical | Org Admins |
-| gcp_platform_viewer | Product updates and technical | Org Admins |
-| gcp_scc_admin | Product updates and security | Org Admins |
-| gcp_security_reviewer | Security and technical | Org Admins |
+| gcp_network_viewer | 기술적 | 조직 관리자 |
+| gcp_platform_viewer | 제품 업데이트 및 기술적 | 조직 관리자 |
+| gcp_scc_admin | 제품 업데이트 및 보안 | 조직 관리자 |
+| gcp_security_reviewer | 보안 및 기술적 | 조직 관리자 |
 
-This module creates and applies [tags](https://cloud.google.com/resource-manager/docs/tags/tags-overview) to common, network, and bootstrap folders. These tags are also applied to environment folders of step [2-environments](../2-environments/README.md). You can create your own tags by editing the `local.tags` map in `tags.tf` and following the commented template. The following table describes details about the tags that are applied to resources:
+이 모듈은 공통, 네트워크 및 부트스트랩 폴더에 [태그](https://cloud.google.com/resource-manager/docs/tags/tags-overview)를 생성하고 적용합니다. 이러한 태그는 [2-environments](../2-environments/README.md) 단계의 환경 폴더에도 적용됩니다. `tags.tf`에서 `local.tags` 맵을 편집하고 주석 처리된 템플릿을 따라 고유한 태그를 생성할 수 있습니다. 다음 표는 리소스에 적용되는 태그에 대한 세부 정보를 설명합니다:
 
-| Resource | Type | Step | Tag Key | Tag Value |
+| 리소스 | 유형 | 단계 | 태그 키 | 태그 값 |
 |----------|------|------|---------|-----------|
 | bootstrap | folder | 1-org | environment | bootstrap |
 | common | folder | 1-org | environment | production |
@@ -101,11 +98,11 @@ This module creates and applies [tags](https://cloud.google.com/resource-manager
 | enviroment nonproduction | folder | [2-environments](../2-environments/README.md) | environment | nonproduction |
 | enviroment production | folder | [2-environments](../2-environments/README.md) | environment | production |
 
-### Deploying with Cloud Build
+### Cloud Build로 배포하기
 
-1. Clone the `gcp-org` repo based on the Terraform output from the `0-bootstrap` step.
-Clone the repo at the same level of the `terraform-example-foundation` folder.
-If required, run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get the Cloud Build Project ID.
+1. `0-bootstrap` 단계의 Terraform 출력을 기반으로 `gcp-org` 리포지토리를 복제합니다.
+`terraform-example-foundation` 폴더와 같은 수준에서 리포를 복제합니다.
+필요한 경우 `0-bootstrap` 폴더에서 `terraform output cloudbuild_project_id`를 실행하여 Cloud Build 프로젝트 ID를 가져옵니다.
 
    ```bash
    export CLOUD_BUILD_PROJECT_ID=$(terraform -chdir="terraform-example-foundation/0-bootstrap/" output -raw cloudbuild_project_id)
@@ -114,12 +111,12 @@ If required, run `terraform output cloudbuild_project_id` in the `0-bootstrap` f
    gcloud source repos clone gcp-org --project=${CLOUD_BUILD_PROJECT_ID}
    ```
 
-   **Note:** The message `warning: You appear to have cloned an empty repository.` is
-   normal and can be ignored.
+   **참고:** `warning: You appear to have cloned an empty repository.` 메시지는
+   정상이며 무시할 수 있습니다.
 
-1. Navigate into the repo, change to a nonproduction branch, and copy the contents of foundation to the new repo.
-   All subsequent steps assume you are running them from the `gcp-org` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 리포지토리로 이동하고, 비프로덕션 브랜치로 변경한 다음, 기반 콘텐츠를 새 리포지토리로 복사합니다.
+   이후의 모든 단계는 `gcp-org` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-org
@@ -131,7 +128,7 @@ If required, run `terraform output cloudbuild_project_id` in the `0-bootstrap` f
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `./envs/shared/terraform.example.tfvars` to `./envs/shared/terraform.tfvars`
+1. `./envs/shared/terraform.example.tfvars`를 `./envs/shared/terraform.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv ./envs/shared/terraform.example.tfvars ./envs/shared/terraform.tfvars

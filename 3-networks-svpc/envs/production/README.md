@@ -11,7 +11,7 @@ The purpose of this step is to set up shared VPCs with default DNS, NAT (optiona
 1. Obtain the value for the access_context_manager_policy_id variable. Can be obtained by running `gcloud access-context-manager policies list --organization YOUR_ORGANIZATION_ID --format="value(name)"`.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -27,7 +27,7 @@ The purpose of this step is to set up shared VPCs with default DNS, NAT (optiona
 | target\_name\_server\_addresses | List of IPv4 address of target name servers for the forwarding zone configuration. See https://cloud.google.com/dns/docs/overview#dns-forwarding-zones for details on target name servers in the context of Cloud DNS forwarding zones. | `list(map(any))` | `[]` | no |
 | tfc\_org\_name | Name of the TFC organization | `string` | `""` | no |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

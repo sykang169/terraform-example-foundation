@@ -7,50 +7,45 @@ example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주
 <tbody>
 <tr>
 <td><a href="../0-bootstrap">0-bootstrap</a></td>
-<td>Bootstraps a Google Cloud organization, creating all the required resources
-and permissions to start using the Cloud Foundation Toolkit (CFT). This
-step also configures a <a href="../docs/GLOSSARY.md#foundation-cicd-pipeline">CI/CD Pipeline</a> for foundations code in subsequent
-stages.</td>
+<td>Google Cloud 조직을 부트스트랩하여 Cloud Foundation Toolkit(CFT) 사용을 시작하는 데 필요한 모든 리소스와
+권한을 생성합니다. 이 단계는 또한 후속 단계에서 기반 코드를 위한 <a href="../docs/GLOSSARY.md#foundation-cicd-pipeline">CI/CD 파이프라인</a>을 구성합니다.</td>
 </tr>
 <tr>
 <td><a href="../1-org">1-org</a></td>
-<td>Sets up top level shared folders, networking projects, and
-organization-level logging, and sets baseline security settings through
-organizational policy.</td>
+<td>최상위 수준 공유 폴더, 네트워킹 프로젝트 및 조직 수준 로깅을 설정하고,
+조직 정책을 통해 기준선 보안 설정을 구성합니다.</td>
 </tr>
 <tr>
-<td><span style="white-space: nowrap;">2-environments</span> (this file)</td>
-<td>Sets up development, nonproduction, and production environments within the
-Google Cloud organization that you've created.</td>
+<td><span style="white-space: nowrap;">2-environments</span> (이 파일)</td>
+<td>생성한 Google Cloud 조직 내에서 개발, 비프로덕션, 프로덕션 환경을 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../3-networks-svpc">3-networks-svpc</a></td>
-<td>Sets shared VPCs with default DNS, NAT (optional),
-Private Service networking, VPC service controls, on-premises Dedicated
-Interconnect, and baseline firewall rules for each environment. It also sets
-up the global DNS hub.</td>
+<td>기본 DNS, NAT(선택사항), Private Service 네트워킹, VPC 서비스 제어, 온프레미스 Dedicated
+Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC를 설정합니다. 또한
+글로벌 DNS 허브를 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../3-networks-hub-and-spoke">3-networks-hub-and-spoke</a></td>
-<td>Sets up shared VPCs with all the default configuration
-found on step 3-networks-svpc, but here the architecture will be based on the
-Hub and Spoke network model. It also sets up the global DNS hub</td>
+<td>3-networks-svpc 단계에서 찾을 수 있는 모든 기본 구성으로 공유 VPC를 설정하지만,
+여기서는 아키텍처가 허브 앤 스포크 네트워크 모델을 기반으로 합니다. 또한 글로벌 DNS 허브를 설정합니다.</td>
 </tr>
 </tr>
 <tr>
 <td><a href="../4-projects">4-projects</a></td>
-<td>Sets up a folder structure, projects, and application infrastructure pipeline for applications,
- which are connected as service projects to the shared VPC created in the previous stage.</td>
+<td>이전 단계에서 생성된 공유 VPC에 서비스 프로젝트로 연결되는 애플리케이션을 위한
+폴더 구조, 프로젝트 및 애플리케이션 인프라 파이프라인을 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../5-app-infra">5-app-infra</a></td>
-<td>Deploy a simple <a href="https://cloud.google.com/compute/">Compute Engine</a> instance in one of the business unit projects using the infra pipeline set up in 4-projects.</td>
+<td>4-projects에서 설정한 인프라 파이프라인을 사용하여 비즈니스 유닛 프로젝트 중 하나에
+간단한 <a href="https://cloud.google.com/compute/">Compute Engine</a> 인스턴스를 배포합니다.</td>
 </tr>
 </tbody>
 </table>
 
-For an overview of the architecture and the parts, see the
-[terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation).
+아키텍처와 부분에 대한 개요는
+[terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation)를 참조하세요.
 
 ## 목적
 
@@ -61,22 +56,22 @@ For an overview of the architecture and the parts, see the
 1. 0-bootstrap이 성공적으로 실행되었습니다.
 1. 1-org가 성공적으로 실행되었습니다.
 
-### Troubleshooting
+### 문제 해결
 
-Please refer to [troubleshooting](../docs/TROUBLESHOOTING.md) if you run into issues during this step.
+이 단계에서 문제가 발생하면 [문제 해결](../docs/TROUBLESHOOTING.md)을 참조하세요.
 
 ## Assured Workloads
 
-To enable [Assured Workloads](https://cloud.google.com/assured-workloads) in the production folder, edit the [main.tf](./envs/production/main.tf#L26) file and update `assured_workload_configuration.enable` to `true`.
+프로덕션 폴더에서 [Assured Workloads](https://cloud.google.com/assured-workloads)를 활성화하려면 [main.tf](./envs/production/main.tf#L26) 파일을 편집하고 `assured_workload_configuration.enable`을 `true`로 업데이트하세요.
 
-See the `env_baseline` module [README.md](./modules/env_baseline/README.md) file for additional information on the values that can be configured for the Workload.
+Workload에 대해 구성할 수 있는 값에 대한 추가 정보는 `env_baseline` 모듈 [README.md](./modules/env_baseline/README.md) 파일을 참조하세요.
 
-**Assured Workload is a paid service.**
-FedRAMP Moderate workloads can be deployed at no additional charge to Google Cloud products and service usage.
-For other compliance regimes, see [Assured Workloads pricing](https://cloud.google.com/assured-workloads/pricing).
+**Assured Workload는 유료 서비스입니다.**
+FedRAMP Moderate 워크로드는 Google Cloud 제품 및 서비스 사용에 대한 추가 비용 없이 배포할 수 있습니다.
+다른 준수 제도에 대해서는 [Assured Workloads 요금](https://cloud.google.com/assured-workloads/pricing)을 참조하세요.
 
-If you enable Assured Workloads, to delete the Assured workload, you will need to manually delete the resources under it.
-Use the [GCP console](https://console.cloud.google.com/compliance/assuredworkloads) to identify the resources to be deleted.
+Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려면 그 하위의 리소스를 수동으로 삭제해야 합니다.
+삭제할 리소스를 식별하려면 [GCP 콘솔](https://console.cloud.google.com/compliance/assuredworkloads)을 사용하세요.
 
 ## Usage
 

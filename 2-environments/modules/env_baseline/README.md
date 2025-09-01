@@ -1,5 +1,5 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -12,15 +12,15 @@
 | remote\_state\_bucket | Backend bucket to load Terraform Remote State Data from previous steps. | `string` | n/a | yes |
 | tfc\_org\_name | Name of the TFC organization | `string` | n/a | yes |
 
-## Outputs
+## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | assured\_workload\_id | Assured Workload ID. |
-| assured\_workload\_resources | Resources associated with the Assured Workload. |
-| env\_folder | Environment folder created under parent. |
-| env\_kms\_project\_id | Project for environment Cloud Key Management Service (KMS). |
-| env\_kms\_project\_number | Project number for envinronment Cloud Key Management Service (KMS). |
-| env\_secrets\_project\_id | Project for environment secrets. |
+| assured\_workload\_resources | Assured Workload와 연관된 리소스. |
+| env\_folder | 상위 폴더 하위에 생성된 환경 폴더. |
+| env\_kms\_project\_id | 환경 Cloud Key Management Service(KMS)용 프로젝트. |
+| env\_kms\_project\_number | 환경 Cloud Key Management Service(KMS)용 프로젝트 번호. |
+| env\_secrets\_project\_id | 환경 시크릿용 프로젝트. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

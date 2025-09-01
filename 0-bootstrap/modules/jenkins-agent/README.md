@@ -1,20 +1,20 @@
-# Overview
+# 개요
 
-The objective of this module is to deploy a Google Cloud Platform project `prj-b-cicd` to host a Jenkins Agent that can connect with your current Jenkins Controller on-prem. This module is a replica of the deprecated [cloudbuild module](https://github.com/terraform-google-modules/terraform-google-bootstrap/tree/master/modules/cloudbuild), but re-purposed to use Jenkins instead. This module creates:
+이 모듈의 목적은 온프레미스의 기존 Jenkins Controller와 연결할 수 있는 Jenkins Agent를 호스팅하기 위한 Google Cloud Platform 프로젝트 `prj-b-cicd`를 배포하는 것입니다. 이 모듈은 더 이상 사용되지 않는 [cloudbuild 모듈](https://github.com/terraform-google-modules/terraform-google-bootstrap/tree/master/modules/cloudbuild)의 복제본이지만, Jenkins를 사용하도록 재구성되었습니다. 이 모듈은 다음을 생성합니다:
 
-- The `prj-b-cicd` project, which includes:
-  - GCE Instance for the Jenkins Agent, which you will configure to connect to your current Jenkins Controller using SSH.
-  - VPC to connect the Jenkins GCE Instance to
-  - FW rules to allow communication over port 22
-  - VPN connection with on-prem (or where ever your Jenkins Controller is located)
-  - Custom service account `sa-jenkins-agent-gce@prj-b-cicd-xxxx.iam.gserviceaccount.com` for the GCE instance. This service account is granted the access to generate tokens on the provided Terraform custom service account
-Please note this module does not include an option to create a Jenkins Controller. To deploy a Jenkins Controller, you should follow one of the available user guides about [Jenkins in GCP](https://cloud.google.com/jenkins).
+- `prj-b-cicd` 프로젝트, 여기에는 다음이 포함됩니다:
+  - Jenkins Agent용 GCE 인스턴스 (SSH를 사용하여 기존 Jenkins Controller에 연결하도록 구성)
+  - Jenkins GCE 인스턴스에 연결할 VPC
+  - 포트 22를 통한 통신을 허용하는 방화벽 규칙
+  - 온프레미스(또는 Jenkins Controller가 위치한 곳)와의 VPN 연결
+  - GCE 인스턴스용 사용자 정의 서비스 계정 `sa-jenkins-agent-gce@prj-b-cicd-xxxx.iam.gserviceaccount.com`. 이 서비스 계정은 제공된 Terraform 사용자 정의 서비스 계정에서 토큰을 생성할 수 있는 권한이 부여됩니다.
+이 모듈에는 Jenkins Controller를 생성하는 옵션이 포함되어 있지 않다는 점에 유의하십시오. Jenkins Controller를 배포하려면 [GCP의 Jenkins](https://cloud.google.com/jenkins)에 대한 사용 가능한 사용자 가이드 중 하나를 따라야 합니다.
 
-**If you don't have a Jenkins implementation and don't want one**, then we recommend you to [use the Cloud Build module](../../README.md#deploying-with-cloud-build) instead.
+**Jenkins 구현이 없고 원하지 않는다면**, [Cloud Build 모듈을 사용](../../README.md#deploying-with-cloud-build)하는 것을 권장합니다.
 
-## Usage
+## 사용법
 
-Basic usage of this sub-module is as follows:
+이 하위 모듈의 기본 사용법은 다음과 같습니다:
 
 ```hcl
 module "jenkins_bootstrap" {
@@ -36,15 +36,15 @@ module "jenkins_bootstrap" {
 }
 ```
 
-## Features
+## 기능
 
-1. Creates a new GCP project using `project_prefix`
-1. Enables APIs in the project using `activate_apis`
-1. Creates a GCE Instance to run the Jenkins Agent with SSH access using the supplied public key
-1. Creates a Service Account (`jenkins_agent_sa_email`) to run the Jenkins Agent GCE instance
-1. Creates a GCS bucket for Jenkins Artifacts using `project_prefix`
-1. Allows `jenkins_agent_sa_email` service account permissions to impersonate terraform service account (which exists in the `seed` project) using `sa_enable_impersonation` and supplied value for `terraform_sa_names`
-1. Adds Cloud NAT for the Agent to be able to download updates and necessary binaries.
+1. `project_prefix`를 사용하여 새로운 GCP 프로젝트를 생성합니다
+1. `activate_apis`를 사용하여 프로젝트에서 API를 활성화합니다
+1. 제공된 공개 키를 사용하여 SSH 액세스가 가능한 Jenkins Agent를 실행할 GCE 인스턴스를 생성합니다
+1. Jenkins Agent GCE 인스턴스를 실행할 서비스 계정(`jenkins_agent_sa_email`)을 생성합니다
+1. `project_prefix`를 사용하여 Jenkins 아티팩트용 GCS 버킷을 생성합니다
+1. `sa_enable_impersonation`과 `terraform_sa_names`에 제공된 값을 사용하여 `jenkins_agent_sa_email` 서비스 계정이 terraform 서비스 계정(`seed` 프로젝트에 존재)을 가장할 수 있는 권한을 허용합니다
+1. Agent가 업데이트와 필요한 바이너리를 다운로드할 수 있도록 Cloud NAT를 추가합니다.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -99,34 +99,34 @@ module "jenkins_bootstrap" {
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Requirements
+## 요구 사항
 
-### Software
+### 소프트웨어
 
 - [gcloud sdk](https://cloud.google.com/sdk/install) >= 393.0.0
 - [Terraform](https://www.terraform.io/downloads.html) = 1.5.7
-  - The scripts in this codebase use Terraform v1.5.7. You should use the same version in the manual steps to avoid [Terraform State Snapshot Lock](https://github.com/hashicorp/terraform/issues/23290) errors caused by differences in terraform versions.
+  - 이 코드베이스의 스크립트는 Terraform v1.5.7을 사용합니다. terraform 버전 차이로 인한 [Terraform State Snapshot Lock](https://github.com/hashicorp/terraform/issues/23290) 오류를 방지하기 위해 수동 단계에서 동일한 버전을 사용해야 합니다.
 
-### Infrastructure
+### 인프라
 
-- **Jenkins Controller:** You need a Jenkins Controller, since this module does not include an option to create one. To deploy a Jenkins Controller, you should follow one of the available user guides about [Jenkins in GCP](https://cloud.google.com/jenkins). If you don't have a Jenkins implementation and don't want one, then we recommend you to [use the Cloud Build module](../../README.md#deploying-with-cloud-build) instead.
+- **Jenkins Controller:** 이 모듈에는 Jenkins Controller를 생성하는 옵션이 포함되어 있지 않으므로 Jenkins Controller가 필요합니다. Jenkins Controller를 배포하려면 [GCP의 Jenkins](https://cloud.google.com/jenkins)에 대한 사용 가능한 사용자 가이드 중 하나를 따라야 합니다. Jenkins 구현이 없고 원하지 않는다면 [Cloud Build 모듈을 사용](../../README.md#deploying-with-cloud-build)하는 것을 권장합니다.
 
-- **VPN Connectivity with on-prem:** Once you run this module, a Jenkins Agent is created in the CI/CD project in GCP. Please add VPN connectivity manually by following our user guide about [how to deploy a VPN tunnel in GCP](https://cloud.google.com/network-connectivity/docs/vpn/how-to/adding-a-tunnel). This VPN is necessary to allow communication between the Jenkins Controller (on prem or in a cloud environment) with the Jenkins Agent in the CI/CD project.
+- **온프레미스와의 VPN 연결:** 이 모듈을 실행하면 GCP의 CI/CD 프로젝트에 Jenkins Agent가 생성됩니다. [GCP에서 VPN 터널을 배포하는 방법](https://cloud.google.com/network-connectivity/docs/vpn/how-to/adding-a-tunnel)에 대한 사용자 가이드에 따라 VPN 연결을 수동으로 추가하십시오. 이 VPN은 Jenkins Controller(온프레미스 또는 클라우드 환경)와 CI/CD 프로젝트의 Jenkins Agent 간의 통신을 허용하는 데 필요합니다.
 
-- **Binaries and packages for the Jenkins Agent:** The Jenkins Agent is a new GCE instance created by this module. After creation, the startup script needs to fetch several binaries for later use, during pipelines execution. These binaries include `java`, `terraform` and any other binary you use in your own scripts. You have several options to make these binaries and libraries available to the Jenkins Agent:
-  - allow the Jenkins Agent Internet access (ideally through Cloud NAT, implemented by default).
-  - allow the Jenkins Agent access to local package repositories on your premises, ideally through the VPN connection.
-  - preparing a golden image for the Jenkins Agent (and assign the image to the `jenkins_agent_gce_instance.boot_disk.initialize_params.image` terraform variable). You can create the golden images with tools like Packer. Although, you might still need network access to download dependencies while running a pipeline.
+- **Jenkins Agent용 바이너리 및 패키지:** Jenkins Agent는 이 모듈에 의해 생성된 새로운 GCE 인스턴스입니다. 생성 후 시작 스크립트는 파이프라인 실행 중 나중에 사용할 여러 바이너리를 가져와야 합니다. 이러한 바이너리에는 `java`, `terraform` 및 사용자 자체 스크립트에서 사용하는 기타 바이너리가 포함됩니다. Jenkins Agent에서 이러한 바이너리와 라이브러리를 사용할 수 있도록 하는 몇 가지 옵션이 있습니다:
+  - Jenkins Agent의 인터넷 액세스를 허용합니다(기본적으로 구현되는 Cloud NAT를 통해 이상적으로).
+  - VPN 연결을 통해 이상적으로 온프레미스의 로컬 패키지 저장소에 대한 Jenkins Agent 액세스를 허용합니다.
+  - Jenkins Agent용 골든 이미지를 준비합니다(`jenkins_agent_gce_instance.boot_disk.initialize_params.image` terraform 변수에 이미지를 할당). Packer와 같은 도구로 골든 이미지를 생성할 수 있습니다. 하지만 파이프라인을 실행하는 동안 종속성을 다운로드하려면 여전히 네트워크 액세스가 필요할 수 있습니다.
 
-### Permissions
+### 권한
 
-An account that has the following [permissions](https://github.com/terraform-google-modules/terraform-google-bootstrap#permissions):
+다음 [권한](https://github.com/terraform-google-modules/terraform-google-bootstrap#permissions)이 있는 계정:
 
-- `roles/billing.user` on supplied billing account
-- `roles/resourcemanager.organizationAdmin` on GCP Organization
-- `roles/resourcemanager.projectCreator` on GCP Organization or folder
+- 제공된 청구 계정에 대한 `roles/billing.user`
+- GCP 조직에 대한 `roles/resourcemanager.organizationAdmin`
+- GCP 조직 또는 폴더에 대한 `roles/resourcemanager.projectCreator`
 
-This is especially important as you might face one of the errors below:
+다음과 같은 오류가 발생할 수 있으므로 이는 특히 중요합니다:
 
 ```text
 Error: google: could not find default credentials. See https://developers.google.com/accounts/docs/application-default-credentials for more information.
@@ -146,10 +146,9 @@ Error: failed pre-requisites: missing permission on "billingAccounts/aaaaaa-bbbb
   96: resource "google_project" "main" {
 ```
 
-### APIs
+### API
 
-A project with the following APIs enabled must be used to host the
-resources of this module:
+이 모듈의 리소스를 호스팅하려면 다음 API가 활성화된 프로젝트를 사용해야 합니다:
 
 - Google Cloud Resource Manager API: `cloudresourcemanager.googleapis.com`
 - Google Cloud Billing API: `cloudbilling.googleapis.com`
@@ -159,9 +158,8 @@ resources of this module:
 - Google Cloud Compute API: `compute.googleapis.com`
 - Google Cloud KMS API: `cloudkms.googleapis.com`
 
-This API can be enabled in the default project created during establishing an organization.
+이 API는 조직을 설정하는 동안 생성된 기본 프로젝트에서 활성화할 수 있습니다.
 
-## Contributing
+## 기여
 
-Refer to the [contribution guidelines](../../../CONTRIBUTING.md) for
-information on contributing to this module.
+이 모듈에 기여하는 방법에 대한 정보는 [기여 가이드라인](../../../CONTRIBUTING.md)을 참조하십시오.

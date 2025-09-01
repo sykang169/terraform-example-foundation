@@ -1,6 +1,6 @@
 # 3-networks-hub-and-spoke/development
 
-The purpose of this step is to set up shared VPCs with default DNS, NAT (optional), Private Service networking, VPC service controls, onprem Dedicated Interconnect, onprem VPN and baseline firewall rules for environment nonproduction. This version of the Network step will makes usage of the Hub and Spoke network architecture.
+이 단계의 목적은 환경 nonproduction을 위해 기본 DNS, NAT(선택사항), Private Service 네트워킹, VPC 서비스 제어, 온프레미스 Dedicated Interconnect, 온프레미스 VPN 및 기본 방화벽 규칙이 있는 공유 VPC를 설정하는 것입니다. 이 버전의 네트워크 단계에서는 Hub and Spoke 네트워크 아키텍처를 사용합니다.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ The purpose of this step is to set up shared VPCs with default DNS, NAT (optiona
 1. Obtain the value for the access_context_manager_policy_id variable. Can be obtained by running `gcloud access-context-manager policies list --organization YOUR_ORGANIZATION_ID --format="value(name)"`.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -27,7 +27,7 @@ The purpose of this step is to set up shared VPCs with default DNS, NAT (optiona
 | remote\_state\_bucket | Backend bucket to load Terraform Remote State Data from previous steps. | `string` | n/a | yes |
 | tfc\_org\_name | Name of the TFC organization | `string` | `""` | no |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

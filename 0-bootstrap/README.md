@@ -139,7 +139,7 @@ Interconnect, 기준선 방화벽 규칙이 포함된 공유 VPC를 설정합니
      gcloud organizations add-iam-policy-binding ${ORG_ID}  --member=user:$SUPER_ADMIN_EMAIL --role=roles/securitycenter.admin --quiet > /dev/null 1>&1
      ```
 
-1. Enable the following additional services on your current bootstrap project:
+1. 현재 부트스트랩 프로젝트에서 다음 추가 서비스를 활성화하세요:
 
      ```bash
      gcloud services enable cloudresourcemanager.googleapis.com
@@ -149,60 +149,55 @@ Interconnect, 기준선 방화벽 규칙이 포함된 공유 VPC를 설정합니
      gcloud services enable servicenetworking.googleapis.com
      ```
 
-### Optional - Automatic creation of Google Cloud Identity groups
+### 선택사항 - Google Cloud Identity 그룹 자동 생성
 
-In the foundation, Google Cloud Identity groups are used for [authentication and access management](https://cloud.google.com/architecture/security-foundations/authentication-authorization) .
+기반에서 Google Cloud Identity 그룹은 [인증 및 액세스 관리](https://cloud.google.com/architecture/security-foundations/authentication-authorization)에 사용됩니다.
 
-To enable automatic creation of the [groups](https://cloud.google.com/architecture/security-foundations/authentication-authorization#groups_for_access_control), complete the following actions:
+[그룹](https://cloud.google.com/architecture/security-foundations/authentication-authorization#groups_for_access_control)의 자동 생성을 활성화하려면 다음 작업을 완료하세요:
 
-- Have an existing project for Cloud Identity API billing.
-- Enable the Cloud Identity API (`cloudidentity.googleapis.com`) on the billing project.
-- Grant role `roles/serviceusage.serviceUsageConsumer` to the user running Terraform on the billing project.
-- Change the field `groups.create_required_groups` to **true** to create the required groups.
-- Change the field `groups.create_optional_groups` to **true** and fill the `groups.optional_groups` with the emails to be created.
+- Cloud Identity API 청구를 위한 기존 프로젝트가 있어야 합니다.
+- 청구 프로젝트에서 Cloud Identity API (`cloudidentity.googleapis.com`)를 활성화합니다.
+- 청구 프로젝트에서 Terraform을 실행하는 사용자에게 `roles/serviceusage.serviceUsageConsumer` 역할을 부여합니다.
+- 필수 그룹을 생성하려면 `groups.create_required_groups` 필드를 **true**로 변경합니다.
+- `groups.create_optional_groups` 필드를 **true**로 변경하고 생성할 이메일로 `groups.optional_groups`를 채웁니다.
 
-### Optional - Cloud Build access to on-prem
+### 선택사항 - 온프레미스에 대한 Cloud Build 액세스
 
-See [onprem](./onprem.md) for instructions on how to configure Cloud Build access to your on-premises environment.
+온프레미스 환경에 대한 Cloud Build 액세스를 구성하는 방법은 [onprem](./onprem.md)을 참조하세요.
 
-### Troubleshooting
+### 문제 해결
 
-See [troubleshooting](../docs/TROUBLESHOOTING.md) if you run into issues during this step.
+이 단계에서 문제가 발생하면 [문제 해결](../docs/TROUBLESHOOTING.md)을 참조하세요.
 
-## Deploying with Jenkins
+## Jenkins로 배포하기
 
-*Warning: the guidance for deploying with Jenkins is no longer actively tested or maintained. While we have left the guidance available for users who prefer Jenkins, we make no guarantees about its quality, and you might be responsible for troubleshooting and modifying the directions.*
+*경고: Jenkins로 배포하는 지침은 더 이상 적극적으로 테스트하거나 유지 관리하지 않습니다. Jenkins를 선호하는 사용자를 위해 지침을 남겨두었지만, 품질에 대한 보장은 하지 않으며 문제 해결과 지침 수정은 사용자의 책임입니다.*
 
-If you are using the `jenkins_bootstrap` sub-module, see [README-Jenkins](./README-Jenkins.md)
-for requirements and instructions on how to run the 0-bootstrap step. Using
-Jenkins requires a few manual steps, including configuring connectivity with
-your current Jenkins manager (controller) environment.
+`jenkins_bootstrap` 하위 모듈을 사용하는 경우, 0-bootstrap 단계를 실행하는 방법에 대한 요구사항과 지침은 [README-Jenkins](./README-Jenkins.md)를 참조하세요.
+Jenkins를 사용하려면 현재 Jenkins 관리자(컨트롤러) 환경과의 연결 구성을 포함한 몇 가지 수동 단계가 필요합니다.
 
-## Deploying with GitHub Actions
+## GitHub Actions로 배포하기
 
-If you are deploying using [GitHub Actions](https://docs.github.com/en/actions), see [README-GitHub.md](./README-GitHub.md)
-for requirements and instructions on how to run the 0-bootstrap step.
-Using GitHub Actions requires manual creation of the GitHub repositories used in each stage.
+[GitHub Actions](https://docs.github.com/en/actions)를 사용하여 배포하는 경우, 0-bootstrap 단계를 실행하는 방법에 대한 요구사항과 지침은 [README-GitHub.md](./README-GitHub.md)를 참조하세요.
+GitHub Actions를 사용하려면 각 단계에서 사용되는 GitHub 리포지토리를 수동으로 생성해야 합니다.
 
-## Deploying with GitLab Pipelines
+## GitLab Pipelines로 배포하기
 
-If you are deploying using [GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines/), see [README-GitLab.md](./README-GitLab.md)
-for requirements and instructions on how to run the 0-bootstrap step.
-Using GitLab Pipeline requires manual creation of the GitLab projects (repositories) used in each stage.
+[GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines/)를 사용하여 배포하는 경우, 0-bootstrap 단계를 실행하는 방법에 대한 요구사항과 지침은 [README-GitLab.md](./README-GitLab.md)를 참조하세요.
+GitLab Pipeline을 사용하려면 각 단계에서 사용되는 GitLab 프로젝트(리포지토리)를 수동으로 생성해야 합니다.
 
-## Deploying with Terraform Cloud
+## Terraform Cloud로 배포하기
 
-If you are deploying using [Terraform Cloud](https://developer.hashicorp.com/terraform/cloud-docs), see [README-Terraform-Cloud.md](./README-Terraform-Cloud.md)
-for requirements and instructions on how to run the 0-bootstrap step.
-Using Terraform Cloud requires manual creation of the GitHub repositories or GitLab projects used in each stage.
+[Terraform Cloud](https://developer.hashicorp.com/terraform/cloud-docs)를 사용하여 배포하는 경우, 0-bootstrap 단계를 실행하는 방법에 대한 요구사항과 지침은 [README-Terraform-Cloud.md](./README-Terraform-Cloud.md)를 참조하세요.
+Terraform Cloud를 사용하려면 각 단계에서 사용되는 GitHub 리포지토리 또는 GitLab 프로젝트를 수동으로 생성해야 합니다.
 
-## Deploying with Cloud Build
+## Cloud Build로 배포하기
 
-*Warning: This method has a dependency on Cloud Source Repositories, which is [no longer available to new customers](https://cloud.google.com/source-repositories/docs). If you have previously used the CSR API in your organization then you can use this method, but a newly created organization will not be able to enable CSR and cannot use this deployment method. In that case, we recommend that you follow the directions for deploying locally, Github, Gitlab, or Terraform Cloud instead.*
+*경고: 이 방법은 [신규 고객에게 더 이상 제공되지 않는](https://cloud.google.com/source-repositories/docs) Cloud Source Repositories에 대한 종속성이 있습니다. 조직에서 이전에 CSR API를 사용한 적이 있다면 이 방법을 사용할 수 있지만, 새로 생성된 조직은 CSR을 활성화할 수 없으며 이 배포 방법을 사용할 수 없습니다. 이 경우 로컬, Github, Gitlab 또는 Terraform Cloud로 배포하는 지침을 따르는 것을 권장합니다.*
 
-The following steps introduce the steps to deploy with Cloud Build Alternatively, use the [helper script](../helpers/foundation-deployer/README.md) to automate all the stages of. Use the helper script when you want to rapidly create and destroy the entire organization for demonstration or testing purposes, without much customization at each stage.
+다음 단계는 Cloud Build로 배포하는 단계를 소개합니다. 또는 모든 단계를 자동화하려면 [도우미 스크립트](../helpers/foundation-deployer/README.md)를 사용하세요. 각 단계에서 많은 사용자 정의 없이 데모 또는 테스트 목적으로 전체 조직을 빠르게 생성하고 삭제하려는 경우 도우미 스크립트를 사용하세요.
 
-1. Clone [terraform-example-foundation](https://github.com/terraform-google-modules/terraform-example-foundation) into your local environment and navigate to the `0-bootstrap` folder.
+1. [terraform-example-foundation](https://github.com/terraform-google-modules/terraform-example-foundation)을 로컬 환경에 복제하고 `0-bootstrap` 폴더로 이동합니다.
 
    ```bash
    git clone https://github.com/terraform-google-modules/terraform-example-foundation.git
@@ -210,30 +205,30 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    cd terraform-example-foundation/0-bootstrap
    ```
 
-1. Rename `terraform.example.tfvars` to `terraform.tfvars` and update the file with values from your environment:
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 변경하고 환경의 값으로 파일을 업데이트합니다:
 
    ```bash
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. Use the helper script [validate-requirements.sh](../scripts/validate-requirements.sh) to validate your environment:
+1. 도우미 스크립트 [validate-requirements.sh](../scripts/validate-requirements.sh)를 사용하여 환경을 검증합니다:
 
    ```bash
    ../scripts/validate-requirements.sh -o <ORGANIZATION_ID> -b <BILLING_ACCOUNT_ID> -u <END_USER_EMAIL>
    ```
 
-   **Note:** The script is not able to validate if the user is in a Cloud Identity or Google Workspace group with the required roles.
+   **참고:** 스크립트는 사용자가 필요한 역할이 있는 Cloud Identity 또는 Google Workspace 그룹에 있는지 검증할 수 없습니다.
 
-1. Run `terraform init` and `terraform plan` and review the output.
+1. `terraform init`과 `terraform plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    terraform init
    terraform plan -input=false -out bootstrap.tfplan
    ```
 
-1. To  validate your policies, run `gcloud beta terraform vet`. For installation instructions, see [Install Google Cloud CLI](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install).
+1. 정책을 검증하려면 `gcloud beta terraform vet`을 실행합니다. 설치 지침은 [Google Cloud CLI 설치](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)를 참조하세요.
 
-1. Run the following commands and check for violations:
+1. 다음 명령을 실행하고 위반 사항이 있는지 확인합니다:
 
    ```bash
    export VET_PROJECT_ID=A-VALID-PROJECT-ID
@@ -241,15 +236,15 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    gcloud beta terraform vet bootstrap.json --policy-library="../policy-library" --project ${VET_PROJECT_ID}
    ```
 
-   *`A-VALID-PROJECT-ID`* must be an existing project you have access to. This is necessary because `gcloud beta terraform vet` needs to link resources to a valid Google Cloud Platform project.
+   *`A-VALID-PROJECT-ID`*는 액세스 권한이 있는 기존 프로젝트여야 합니다. `gcloud beta terraform vet`이 리소스를 유효한 Google Cloud Platform 프로젝트에 연결해야 하기 때문에 필요합니다.
 
-1. Run `terraform apply`.
+1. `terraform apply`를 실행합니다.
 
    ```bash
    terraform apply bootstrap.tfplan
    ```
 
-1. Run `terraform output` to get the email address of the terraform service accounts that will be used to run manual steps for `shared` environments in steps `3-networks-svpc`, `3-networks-hub-and-spoke`, and `4-projects` and the state bucket that will be used by step 4-projects.
+1. `terraform output`을 실행하여 `3-networks-svpc`, `3-networks-hub-and-spoke`, `4-projects` 단계에서 `shared` 환경을 위한 수동 단계를 실행하는 데 사용될 terraform 서비스 계정의 이메일 주소와 4-projects 단계에서 사용될 상태 버킷을 확인합니다.
 
    ```bash
    export network_step_sa=$(terraform output -raw networks_step_terraform_service_account_email)
@@ -261,14 +256,14 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    echo "projects gcs bucket tfstate = ${projects_gcs_bucket_tfstate}"
    ```
 
-1. Run `terraform output` to get the ID of your Cloud Build project:
+1. `terraform output`을 실행하여 Cloud Build 프로젝트의 ID를 확인합니다:
 
    ```bash
    export cloudbuild_project_id=$(terraform output -raw cloudbuild_project_id)
    echo "cloud build project ID = ${cloudbuild_project_id}"
    ```
 
-1. Copy the backend and update `backend.tf` with the name of your Google Cloud Storage bucket for Terraform's state. Also update the `backend.tf` of all steps.
+1. 백엔드를 복사하고 Terraform 상태를 위한 Google Cloud Storage 버킷 이름으로 `backend.tf`를 업데이트합니다. 모든 단계의 `backend.tf`도 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform output -raw gcs_bucket_tfstate)
@@ -286,14 +281,14 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    cd 0-bootstrap
    ```
 
-1. Re-run `terraform init`. When you're prompted, agree to copy Terraform state to Cloud Storage.
+1. `terraform init`을 다시 실행합니다. 메시지가 표시되면 Terraform 상태를 Cloud Storage로 복사하는 데 동의합니다.
 
    ```bash
    terraform init
    ```
 
-1. (Optional) Run `terraform plan` to verify that state is configured correctly. You should see no changes from the previous state.
-1. Clone the policy repo and copy contents of policy-library to new repo. Clone the repo at the same level of the `terraform-example-foundation` folder.
+1. (선택사항) `terraform plan`을 실행하여 상태가 올바르게 구성되었는지 확인합니다. 이전 상태에서 변경 사항이 없어야 합니다.
+1. 정책 리포지토리를 복제하고 policy-library의 내용을 새 리포지토리에 복사합니다. `terraform-example-foundation` 폴더와 같은 수준에서 리포지토리를 복제합니다.
 
    ```bash
    cd ../..
@@ -305,7 +300,7 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    cp -RT ../terraform-example-foundation/policy-library/ .
    ```
 
-1. Commit changes and push your main branch to the policy repo.
+1. 변경 사항을 커밋하고 main 브랜치를 정책 리포지토리에 푸시합니다.
 
    ```bash
    git add .
@@ -313,13 +308,13 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    git push --set-upstream origin main
    ```
 
-1. Navigate out of the repo.
+1. 리포지토리에서 나갑니다.
 
    ```bash
    cd ..
    ```
 
-1. Save `0-bootstrap` Terraform configuration to `gcp-bootstrap` source repository:
+1. `0-bootstrap` Terraform 구성을 `gcp-bootstrap` 소스 리포지토리에 저장합니다:
 
    ```bash
    gcloud source repos clone gcp-bootstrap --project=${cloudbuild_project_id}
@@ -338,17 +333,17 @@ The following steps introduce the steps to deploy with Cloud Build Alternatively
    git push --set-upstream origin plan
    ```
 
-1. Continue with the instructions in the [1-org](../1-org/README.md) step.
+1. [1-org](../1-org/README.md) 단계의 지침으로 계속합니다.
 
-**Note 1:** The stages after `0-bootstrap` use `terraform_remote_state` data source to read common configuration like the organization ID from the output of the `0-bootstrap` stage. They will [fail](../docs/TROUBLESHOOTING.md#error-unsupported-attribute) if the state is not copied to the Cloud Storage bucket.
+**참고 1:** `0-bootstrap` 이후의 단계들은 `terraform_remote_state` 데이터 소스를 사용하여 `0-bootstrap` 단계의 출력에서 조직 ID와 같은 공통 구성을 읽습니다. 상태가 Cloud Storage 버킷에 복사되지 않으면 [실패](../docs/TROUBLESHOOTING.md#error-unsupported-attribute)합니다.
 
-**Note 2:** After the deploy, even if you did not receive the project quota error described in the [Troubleshooting guide](../docs/TROUBLESHOOTING.md#project-quota-exceeded), we recommend that you request 50 additional projects for the **projects step service account** created in this step.
+**참고 2:** 배포 후 [문제 해결 가이드](../docs/TROUBLESHOOTING.md#project-quota-exceeded)에 설명된 프로젝트 할당량 오류를 받지 않았더라도, 이 단계에서 생성된 **projects step service account**에 대해 50개의 추가 프로젝트를 요청하는 것을 권장합니다.
 
-## Running Terraform locally
+## 로컬에서 Terraform 실행하기
 
-The following steps will guide you through deploying without using Cloud Build.
+다음 단계는 Cloud Build를 사용하지 않고 배포하는 방법을 안내합니다.
 
-1. Clone [terraform-example-foundation](https://github.com/terraform-google-modules/terraform-example-foundation) into your local environment and create to the `gcp-bootstrap` folder at the same level. Copy the `0-bootstrap` content and `.gitignore` to `gcp-bootstrap`.
+1. [terraform-example-foundation](https://github.com/terraform-google-modules/terraform-example-foundation)을 로컬 환경에 복제하고 같은 수준에 `gcp-bootstrap` 폴더를 생성합니다. `0-bootstrap` 내용과 `.gitignore`를 `gcp-bootstrap`에 복사합니다.
 
    ```bash
    git clone https://github.com/terraform-google-modules/terraform-example-foundation.git
@@ -360,7 +355,7 @@ The following steps will guide you through deploying without using Cloud Build.
    cp terraform-example-foundation/.gitignore gcp-bootstrap
    ```
 
-1. Navigate to `gcp-bootstrap` and initialize a local Git repository to manage versions locally. Then, Create the environment branches.
+1. `gcp-bootstrap`로 이동하고 로컬 Git 리포지토리를 초기화하여 로컬에서 버전을 관리합니다. 그런 다음 환경 브랜치를 생성합니다.
 
    ```bash
    cd gcp-bootstrap
@@ -372,23 +367,23 @@ The following steps will guide you through deploying without using Cloud Build.
    git checkout -b shared
    ```
 
-1. Rename `terraform.example.tfvars` to `terraform.tfvars` and update the file with values from your environment:
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 변경하고 환경의 값으로 파일을 업데이트합니다:
 
    ```bash
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. Rename `cb.tf` to `cb.tf.example`:
+1. `cb.tf`를 `cb.tf.example`로 이름을 변경합니다:
 
    ```bash
    mv cb.tf cb.tf.example
    ```
 
-1. Comment Cloud Build related outputs at `outputs.tf`.
+1. `outputs.tf`에서 Cloud Build 관련 출력을 주석 처리합니다.
 
-1. In `sa.tf` file, comment out lines related to Cloud Build. Specifically, search for `cicd_project_iam_member` and comment out the corresponding module, as well as the "depends_on" meta-argument in any modules that depend on the commented module.
+1. `sa.tf` 파일에서 Cloud Build와 관련된 줄을 주석 처리합니다. 특히 `cicd_project_iam_member`를 검색하고 해당 모듈과 주석 처리된 모듈에 의존하는 모든 모듈의 "depends_on" 메타 인수를 주석 처리합니다.
 
-1. In `sa.tf` file, search for `local.cicd_project_id` and comment out the corresponding code.
+1. `sa.tf` 파일에서 `local.cicd_project_id`를 검색하고 해당 코드를 주석 처리합니다.
 
 1. Use the helper script [validate-requirements.sh](../scripts/validate-requirements.sh) to validate your environment:
 
@@ -398,7 +393,7 @@ The following steps will guide you through deploying without using Cloud Build.
 
    **Note:** The script is not able to validate if the user is in a Cloud Identity or Google Workspace group with the required roles.
 
-1. Run `terraform init` and `terraform plan` and review the output.
+1. `terraform init`과 `terraform plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout plan
@@ -406,7 +401,7 @@ The following steps will guide you through deploying without using Cloud Build.
    terraform plan -input=false -out bootstrap.tfplan
    ```
 
-1. Create a new folder called gcp-policies at the same directory level as the `terraform-example-foundation` folder. Initialize a Git repository, create a branch called `main`, and copy the contents of the `policy-library` directory from the `terraform-example-foundation` folder into the gcp-policies folder.
+1. `terraform-example-foundation` 폴더와 같은 디렉토리 수준에 gcp-policies라는 새 폴더를 만듭니다. Git 리포지토리를 초기화하고, `main`이라는 브랜치를 생성한 다음, `terraform-example-foundation` 폴더의 `policy-library` 디렉토리 내용을 gcp-policies 폴더에 복사합니다.
 
    ```bash
    cd ../
@@ -419,14 +414,14 @@ The following steps will guide you through deploying without using Cloud Build.
    cp -RT ../terraform-example-foundation/policy-library/ .
    ```
 
-1. Commit changes to the main branch of the policy repo. This way you can manage versions locally.
+1. 정책 리포지토리의 main 브랜치에 변경 사항을 커밋합니다. 이렇게 하면 로컬에서 버전을 관리할 수 있습니다.
 
    ```bash
    git add .
    git commit -m 'Initialize policy library repo'
    ```
 
-1. Navigate back to `gcp-bootstrap` repo.
+1. `gcp-bootstrap` 리포지토리로 돌아갑니다.
 
    ```bash
    cd ../gcp-bootstrap
@@ -444,14 +439,14 @@ The following steps will guide you through deploying without using Cloud Build.
 
    *`A-VALID-PROJECT-ID`* must be an existing project you have access to. This is necessary because `gcloud beta terraform vet` needs to link resources to a valid Google Cloud Platform project.
 
-1. Commit validated code in plan branch.
+1. 검증된 코드를 plan 브랜치에 커밋합니다.
 
    ```bash
    git add .
    git commit -m "Initial version os gcp-bootstrap."
    ```
 
-1. Checkout `shared` branch and merge the `plan` branch into it. Then, Run `terraform apply`.
+1. `shared` 브랜치로 체크아웃하고 `plan` 브랜치를 병합합니다. 그런 다음 `terraform apply`를 실행합니다.
 
    ```bash
    git checkout shared
@@ -460,7 +455,7 @@ The following steps will guide you through deploying without using Cloud Build.
    terraform apply bootstrap.tfplan
    ```
 
-1. Run `terraform output` to get the email address of the terraform service accounts that will be used to run steps manually and the state bucket that will be used by step `4-projects`.
+1. `terraform output`을 실행하여 수동으로 단계를 실행하는 데 사용될 terraform 서비스 계정의 이메일 주소와 `4-projects` 단계에서 사용될 상태 버킷을 확인합니다.
 
    ```bash
    export network_step_sa=$(terraform output -raw networks_step_terraform_service_account_email)
@@ -472,7 +467,7 @@ The following steps will guide you through deploying without using Cloud Build.
    echo "projects gcs bucket tfstate = ${projects_gcs_bucket_tfstate}"
    ```
 
-1. Copy the backend and update `backend.tf` with the name of your Google Cloud Storage bucket for Terraform's state. Also update the `backend.tf` of all steps.
+1. 백엔드를 복사하고 Terraform 상태를 위한 Google Cloud Storage 버킷 이름으로 `backend.tf`를 업데이트합니다. 모든 단계의 `backend.tf`도 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform output -raw gcs_bucket_tfstate)
@@ -491,13 +486,13 @@ The following steps will guide you through deploying without using Cloud Build.
    cd gcp-bootstrap
    ```
 
-1. Re-run `terraform init`. When you're prompted, agree to copy Terraform state to Cloud Storage.
+1. `terraform init`을 다시 실행합니다. 메시지가 표시되면 Terraform 상태를 Cloud Storage로 복사하는 데 동의합니다.
 
    ```bash
    terraform init
    ```
 
-1. Commit the new code version, so you can manage versions locally.
+1. 새 코드 버전을 커밋하여 로컬에서 버전을 관리할 수 있게 합니다.
 
    ```sh
    git add backend.tf
@@ -506,9 +501,9 @@ The following steps will guide you through deploying without using Cloud Build.
    ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 타입 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | attribute\_condition | Workload Identity Pool Provider attribute condition expression. [More info](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/iam_workload_identity_pool_provider#attribute_condition) | `string` | `null` | no |
 | billing\_account | The ID of the billing account to associate projects with. | `string` | n/a | yes |
@@ -530,9 +525,9 @@ The following steps will guide you through deploying without using Cloud Build.
 | project\_prefix | Name prefix to use for projects created. Should be the same in all steps. Max size is 3 characters. | `string` | `"prj"` | no |
 | workflow\_deletion\_protection | Whether Terraform will be prevented from destroying a workflow. When the field is set to true or unset in Terraform state, a `terraform apply` or `terraform destroy` that would delete the workflow will fail. When the field is set to false, deleting the workflow is allowed. | `bool` | `true` | no |
 
-## Outputs
+## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | bootstrap\_step\_terraform\_service\_account\_email | Bootstrap Step Terraform Account |
 | cloud\_build\_peered\_network\_id | The ID of the Cloud Build peered network. |

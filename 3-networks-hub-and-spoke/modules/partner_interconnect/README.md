@@ -1,6 +1,6 @@
-# Partner Interconnect module
+# Partner Interconnect 모듈
 
-This module implements the recommendation proposed in [Establishing 99.99% Availability for Partner Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/partner-creating-9999-availability).
+이 모듈은 [Partner Interconnect에 대한 99.99% 가용성 확보](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/partner-creating-9999-availability)에서 제안된 권장 사항을 구현합니다.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ This module implements the recommendation proposed in [Establishing 99.99% Avail
 1. Update the file `partner_interconnect.tf` with values that are valid for your environment for the VLAN attachments, locations.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -36,7 +36,7 @@ This module implements the recommendation proposed in [Establishing 99.99% Avail
 | region2\_router2\_name | Name of the Router 2 for Region 2 where the attachment resides | `string` | n/a | yes |
 | vpc\_name | Label to identify the VPC associated with shared VPC that will use the Interconnect. | `string` | n/a | yes |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

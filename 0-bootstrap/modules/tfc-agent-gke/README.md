@@ -1,18 +1,18 @@
-# Self Hosted Terraform Cloud agent on GKE
+# GKE에서의 자체 호스팅 Terraform Cloud 에이전트
 
-This module handles the opinionated creation of infrastructure necessary to deploy Terraform Cloud agents on a private autopilot Google Kubernetes Engine (GKE).
+이 모듈은 프라이빗 autopilot Google Kubernetes Engine(GKE)에서 Terraform Cloud 에이전트를 배포하는 데 필요한 인프라의 독단적인 생성을 처리합니다.
 
-This includes:
+여기에는 다음이 포함됩니다:
 
 - VPC
-- GKE Private Cluster with Autopilot
-- Kubernetes Secret
-- Kubernetes Deployment
+- Autopilot이 있는 GKE 프라이빗 클러스터
+- Kubernetes 시크릿
+- Kubernetes 배포
 - Kubernetes Fleet Hub
 - Private Service Connect
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -53,22 +53,22 @@ This includes:
 | tfc\_agent\_token | Terraform Cloud agent token. (Organization Settings >> Agents) | `string` | n/a | yes |
 | zones | The GCP zone to use when deploying resources | `list(string)` | <pre>[<br>  "us-central1-a"<br>]</pre> | no |
 
-## Outputs
+## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
-| cluster\_name | GKE cluster name |
-| hub\_cluster\_membership\_id | The ID of the cluster membership |
-| kubernetes\_endpoint | The GKE cluster endpoint |
-| service\_account | The default service account used for TFC agent nodes |
+| cluster\_name | GKE 클러스터 이름 |
+| hub\_cluster\_membership\_id | 클러스터 멤버십의 ID |
+| kubernetes\_endpoint | GKE 클러스터 엔드포인트 |
+| service\_account | TFC 에이전트 노드에 사용되는 기본 서비스 계정 |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Requirements
+## 요구 사항
 
-Before this module can be used on a project, you must ensure that the following pre-requisites are fulfilled:
+프로젝트에서 이 모듈을 사용하기 전에 다음 전제 조건이 충족되는지 확인해야 합니다:
 
-1. Required APIs are activated
+1. 필요한 API가 활성화됨
 
     ```text
     "iam.googleapis.com",

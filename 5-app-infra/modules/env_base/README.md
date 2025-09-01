@@ -1,5 +1,5 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -12,7 +12,7 @@
 | region | The GCP region to create and test resources in | `string` | `"us-central1"` | no |
 | remote\_state\_bucket | Backend bucket to load remote state information from previous steps. | `string` | n/a | yes |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|
