@@ -1,32 +1,31 @@
-# Contributing
+# 기여하기
 
-This document provides guidelines for contributing to the module.
+이 문서는 모듈에 기여하기 위한 가이드라인을 제공합니다.
 
-## Dependencies
+## 종속성
 
-The following dependencies must be installed on the development system:
+개발 시스템에 다음 종속성을 설치해야 합니다:
 
 - [Docker Engine][docker-engine]
 - [Google Cloud SDK][google-cloud-sdk]
 - [make]
 
-## Generating Documentation for Inputs and Outputs
+## 입력 및 출력 문서 생성
 
-The Inputs and Outputs tables in the READMEs of the root module,
-submodules, and example modules are automatically generated based on
-the `variables` and `outputs` of the respective modules. These tables
-must be refreshed if the module interfaces are changed.
+루트 모듈, 서브모듈 및 예제 모듈의 README에 있는 입력 및 출력 테이블은
+해당 모듈의 `variables`와 `outputs`를 기반으로 자동 생성됩니다.
+모듈 인터페이스가 변경되면 이러한 테이블을 새로고침해야 합니다.
 
-### Execution
+### 실행
 
-Run `make docker_generate_docs` to generate new Inputs and Outputs tables.
+새로운 입력 및 출력 테이블을 생성하려면 `make docker_generate_docs`를 실행하세요.
 
-## Integration Testing
+## 통합 테스트
 
-Integration tests are used to verify the behavior of each stage in this repo.
-Additions, changes, and fixes should be accompanied with tests.
+통합 테스트는 이 리포지토리의 각 단계의 동작을 확인하는 데 사용됩니다.
+추가, 변경 및 수정 사항에는 테스트가 함께 제공되어야 합니다.
 
-The integration tests are run using the [Blueprint test][blueprint-test] framework. The framework is packaged within a Docker image for convenience.
+통합 테스트는 [Blueprint test][blueprint-test] 프레임워크를 사용하여 실행됩니다. 프레임워크는 편의를 위해 Docker 이미지 내에 패키지되어 있습니다.
 
 Eight Blueprint tests are defined and should be executed in serial order:
 

@@ -1,25 +1,25 @@
-# Troubleshooting
+# 문제 해결
 
-## Terminology
+## 용어
 
-See [GLOSSARY.md](./GLOSSARY.md).
-
-- - -
-
-## Problems
-
-- [Common issues](#common-issues)
-- [Caller does not have permission in the Organization](#caller-does-not-have-permission-in-the-organization)
-- [Billing quota exceeded](#billing-quota-exceeded)
-- [Terraform Error acquiring the state lock](#terraform-error-acquiring-the-state-lock)
+[GLOSSARY.md](./GLOSSARY.md)를 참조하세요.
 
 - - -
 
-## Common issues
+## 문제
 
-- [Project quota exceeded](#project-quota-exceeded)
-- [Default branch setting](#default-branch-setting)
-- [Terraform State Snapshot lock](#terraform-state-snapshot-lock)
+- [일반적인 문제](#common-issues)
+- [호출자가 조직에서 권한이 없음](#caller-does-not-have-permission-in-the-organization)
+- [요금 스이 할당량 초과](#billing-quota-exceeded)
+- [Terraform 상태 잠금 획득 오류](#terraform-error-acquiring-the-state-lock)
+
+- - -
+
+## 일반적인 문제
+
+- [프로젝트 할당량 초과](#project-quota-exceeded)
+- [기본 브랜치 설정](#default-branch-setting)
+- [Terraform 상태 스냅샷 잠금](#terraform-state-snapshot-lock)
 - [Application authenticated using end user credentials](#application-authenticated-using-end-user-credentials)
 - [Cannot assign requested address error in Cloud Shell](#cannot-assign-requested-address-error-in-cloud-shell)
 - [Error: Unsupported attribute](#error-unsupported-attribute)

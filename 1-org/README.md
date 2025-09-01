@@ -1,23 +1,19 @@
 # 1-org
 
-This repo is part of a multi-part guide that shows how to configure and deploy
-the example.com reference architecture that is described in the
-[Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations). The following table lists the parts of the guide.
+이 리포지토리는 [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations)에서 설명된
+example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주는 다중 파트 가이드의 일부입니다. 다음 표는 가이드의 부분들을 나열합니다.
 
 <table>
 <tbody>
 <tr>
 <td><a href="../0-bootstrap">0-bootstrap</a></td>
-<td>Bootstraps a Google Cloud organization, creating all the required resources
-and permissions to start using the Cloud Foundation Toolkit (CFT). This
-step also configures a <a href="../docs/GLOSSARY.md#foundation-cicd-pipeline">CI/CD Pipeline</a> for foundations code in subsequent
-stages.</td>
+<td>Google Cloud 조직을 부트스트래핑하여 Cloud Foundation Toolkit(CFT) 사용을 시작하는 데 필요한 모든 리소스와
+권한을 생성합니다. 이 단계는 또한 후속 단계에서 기반 코드를 위한 <a href="../docs/GLOSSARY.md#foundation-cicd-pipeline">CI/CD 파이프라인</a>을 구성합니다.</td>
 </tr>
 <tr>
-<td>1-org (this file)</td>
-<td>Sets up top-level shared folders, networking projects, and
-organization-level logging, and sets baseline security settings through
-organizational policy.</td>
+<td>1-org (이 파일)</td>
+<td>최상위 수준 공유 폴더, 네트워킹 프로젝트 및 조직 수준 로깅을 설정하고,
+조직 정책을 통해 기준선 보안 설정을 구성합니다.</td>
 </tr>
 <tr>
 <td><a href="../2-environments"><span style="white-space: nowrap;">2-environments</span></a></td>

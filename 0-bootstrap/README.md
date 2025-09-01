@@ -1,91 +1,86 @@
 # 0-bootstrap
 
-This repo is part of a multi-part guide that shows how to configure and deploy
-the example.com reference architecture described in
-[Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations). The following table lists the stages of this deployment.
+이 리포지토리는 [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations)에서 설명된
+example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주는 다중 파트 가이드의 일부입니다. 다음 표는 이 배포의 단계들을 나열합니다.
 
 <table>
 <tbody>
 <tr>
-<td>0-bootstrap (this file)</td>
-<td>Bootstraps a Google Cloud organization, creating all the required resources
-and permissions to start using the Cloud Foundation Toolkit (CFT). This
-step also configures a <a href="../docs/GLOSSARY.md#foundation-cicd-pipeline">CI/CD pipeline</a> for foundations code in subsequent
-stages.</td>
+<td>0-bootstrap (이 파일)</td>
+<td>Google Cloud 조직을 부트스트래핑하여 Cloud Foundation Toolkit(CFT) 사용을 시작하는 데 필요한 모든 리소스와
+권한을 생성합니다. 이 단계는 또한 후속 단계에서 기반 코드를 위한 <a href="../docs/GLOSSARY.md#foundation-cicd-pipeline">CI/CD 파이프라인</a>을 구성합니다.</td>
 </tr>
 <tr>
 <td><a href="../1-org">1-org</a></td>
-<td>Sets up top-level shared folders, networking projects, and
-organization-level logging, and sets baseline security settings through
-organizational policy.</td>
+<td>최상위 수준 공유 폴더, 네트워킹 프로젝트 및 조직 수준 로깅을 설정하고, 
+조직 정책을 통해 기준선 보안 설정을 구성합니다.</td>
 </tr>
 <tr>
 <td><a href="../2-environments"><span style="white-space: nowrap;">2-environments</span></a></td>
-<td>Sets up development, nonproduction, and production environments within the
-Google Cloud organization that you've created.</td>
+<td>생성한 Google Cloud 조직 내에서 개발, 비운영, 운영 환경을 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../3-networks-svpc">3-networks-svpc</a></td>
-<td>Sets up shared VPCs with default DNS, NAT (optional),
-Private Service networking, VPC service controls, on-premises Dedicated
-Interconnect, and baseline firewall rules for each environment. It also sets
-up the global DNS hub.</td>
+<td>각 환경에 대해 기본 DNS, NAT(선택사항), 
+Private Service 네트워킹, VPC 서비스 컨트롤, 온프레미스 Dedicated
+Interconnect, 기준선 방화벽 규칙이 포함된 공유 VPC를 설정합니다. 또한
+글로벌 DNS 허브를 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../3-networks-hub-and-spoke">3-networks-hub-and-spoke</a></td>
-<td>Sets up shared VPCs with all the default configuration
-found on step 3-networks-svpc, but here the architecture will be based on the
-Hub and Spoke network model. It also sets up the global DNS hub.</td>
+<td>3-networks-svpc 단계에서 찾을 수 있는 모든 기본 구성이 포함된 공유 VPC를 설정하지만,
+여기서는 아키텍처가 Hub and Spoke 네트워크 모델을 기반으로 합니다. 또한
+글로벌 DNS 허브를 설정합니다.</td>
 </tr>
 </tr>
 <tr>
 <td><a href="../4-projects">4-projects</a></td>
-<td>Set up a folder structure, projects, and application infrastructure pipeline for applications,
- which are connected as service projects to the shared VPC created in the previous stage.</td>
+<td>이전 단계에서 생성된 공유 VPC에 서비스 프로젝트로 연결되는 애플리케이션을 위한
+폴더 구조, 프로젝트 및 애플리케이션 인프라 파이프라인을 설정합니다.</td>
 </tr>
 <tr>
 <td><a href="../5-app-infra">5-app-infra</a></td>
-<td>Deploy a <a href="https://cloud.google.com/compute/">Compute Engine</a> instance in one of the business unit projects using the infra pipeline setup in 4-projects.</td>
+<td>4-projects에서 설정한 인프라 파이프라인을 사용하여 비즈니스 유닛 프로젝트 중 하나에 <a href="https://cloud.google.com/compute/">Compute Engine</a> 인스턴스를 배포합니다.</td>
 </tr>
 </tbody>
 </table>
 
-For an overview of the architecture and the parts, see the
+아키텍처와 부분들에 대한 개요는
 [terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation)
-file.
+파일을 참조하세요.
 
-## Purpose
+## 목적
 
-The purpose of this step is to bootstrap a Google Cloud organization, creating all the required resources and permissions to start using the Cloud Foundation Toolkit (CFT). This step also configures a [CI/CD Pipeline](/docs/GLOSSARY.md#foundation-cicd-pipeline) for foundations code in subsequent stages. The [CI/CD Pipeline](/docs/GLOSSARY.md#foundation-cicd-pipeline) can use either Cloud Build and Cloud Source Repos or Jenkins and your own Git repos (which might live on-premises).
+이 단계의 목적은 Google Cloud 조직을 부트스트래핑하여 Cloud Foundation Toolkit(CFT) 사용을 시작하는 데 필요한 모든 리소스와 권한을 생성하는 것입니다. 이 단계는 또한 후속 단계에서 기반 코드를 위한 [CI/CD 파이프라인](/docs/GLOSSARY.md#foundation-cicd-pipeline)을 구성합니다. [CI/CD 파이프라인](/docs/GLOSSARY.md#foundation-cicd-pipeline)은 Cloud Build와 Cloud Source Repos 또는 Jenkins와 사용자 자체 Git 리포지토리(온프레미스에 있을 수 있음) 중 하나를 사용할 수 있습니다.
 
-## Intended usage and support
+## 사용 목적 및 지원
 
-This repository is intended as an example to be forked, tweaked, and maintained in the user's own version-control system; the modules within this repository are not intended for use as remote references.
-Though this blueprint can help accelerate your foundation design and build, we assume that you have the engineering skills and teams to deploy and customize your own foundation based on your own requirements.
+이 리포지토리는 사용자의 자체 버전 제어 시스템에서 포크, 수정 및 유지 관리할 수 있는 예제로 제공됩니다. 이 리포지토리 내의 모듈들은 원격 참조로 사용하기 위한 것이 아닙니다.
+이 블루프린트가 기반 설계 및 구축을 가속화하는 데 도움이 될 수 있지만, 사용자는 자신의 요구 사항에 따라 자체 기반을 배포하고 사용자 정의할 수 있는 엔지니어링 기술과 팀을 갖추고 있다고 가정합니다.
 
-We will support:
+지원 항목:
 
-- Code is semantically valid, pinned to known good versions, and passes terraform validate and lint checks
-- All PR to this repo must pass integration tests to deploy all resources into a test environment before being merged
-- Feature requests about ease of use of the code, or feature requests that generally apply to all users, are welcome
+- 코드는 의미적으로 유효하고, 알려진 좋은 버전에 고정되며, terraform validate 및 lint 검사를 통과합니다
+- 이 리포지토리에 대한 모든 PR은 병합되기 전에 테스트 환경에 모든 리소스를 배포하는 통합 테스트를 통과해야 합니다
+- 코드 사용 편의성에 대한 기능 요청이나 모든 사용자에게 일반적으로 적용되는 기능 요청은 환영합니다
 
-We will not support:
+지원하지 않는 항목:
 
-- In-place upgrades from a foundation deployed with an earlier version to a more recent version, even for minor version changes, might not be feasible. Repository maintainers do not have visibility to what resources a user deploys on top of their foundation or how the foundation was customized in deployment, so we make no guarantee about avoiding breaking changes.
-- Feature requests that are specific to a single user's requirement and not representative of general best practices
+- 이전 버전으로 배포된 기반에서 최신 버전으로의 제자리 업그레이드는 마이너 버전 변경의 경우에도 실현 가능하지 않을 수 있습니다. 리포지토리 관리자는 사용자가 기반 위에 배포하는 리소스나 배포 시 기반이 어떻게 사용자 정의되었는지 알 수 없으므로, 주요 변경 사항을 피한다는 보장을 하지 않습니다.
+- 단일 사용자의 요구 사항에 특화되고 일반적인 모범 사례를 대표하지 않는 기능 요청
 
-## Prerequisites
+## 전제 조건
 
-To run the commands described in this document, install the following:
+이 문서에서 설명하는 명령을 실행하려면 다음을 설치하세요:
 
-- [Google Cloud SDK](https://cloud.google.com/sdk/install) version 393.0.0 or later
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) version 2.28.0 or later
-- [Terraform](https://www.terraform.io/downloads.html) version 1.5.7
-- [jq](https://jqlang.github.io/jq/download/) version 1.6.0 or later
+- [Google Cloud SDK](https://cloud.google.com/sdk/install) 버전 393.0.0 이상
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 버전 2.28.0 이상
+- [Terraform](https://www.terraform.io/downloads.html) 버전 1.5.7
+- [jq](https://jqlang.github.io/jq/download/) 버전 1.6.0 이상
 
-**Note:** Make sure that you use the same version of [Terraform](https://www.terraform.io/downloads.html) throughout this series. Otherwise, you might experience Terraform state snapshot lock errors.
+**참고:** 이 시리즈 전체에서 동일한 [Terraform](https://www.terraform.io/downloads.html) 버전을 사용해야 합니다. 그렇지 않으면 Terraform 상태 스냅샷 잠금 오류가 발생할 수 있습니다.
 
-Version 1.5.7 is the last version before the license model change. To use a later version of Terraform, ensure that the Terraform version used in the Operational System to manually execute part of the steps in `3-networks` and `4-projects` is the same version configured in the following code
+버전 1.5.7은 라이선스 모델 변경 이전의 마지막 버전입니다. Terraform의 최신 버전을 사용하려면 `3-networks`와 `4-projects`의 일부 단계를 수동으로 실행하는 운영 체제에서 사용되는 Terraform 버전이 다음 코드에서 구성된 버전과 동일한지 확인하세요
 
 - 0-bootstrap/modules/jenkins-agent/variables.tf
 
@@ -123,21 +118,21 @@ Version 1.5.7 is the last version before the license model change. To use a late
    ARG TERRAFORM_VERSION=1.5.7
    ```
 
-Also make sure that you've done the following:
+또한 다음 사항을 완료했는지 확인하세요:
 
-1. Set up a Google Cloud
-   [organization](https://cloud.google.com/resource-manager/docs/creating-managing-organization).
-1. Set up a Google Cloud
-   [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
-1. Create Cloud Identity or Google Workspace groups as defined in [groups for access control](https://cloud.google.com/architecture/security-foundations/authentication-authorization#groups_for_access_control).
-Set the variables in **terraform.tfvars** (`groups` block) to use the specific group names you create.
-1. For the user who will run the procedures in this document, grant the following roles:
-   - The `roles/resourcemanager.organizationAdmin` role on the Google Cloud organization.
-   - The `roles/orgpolicy.policyAdmin` role on the Google Cloud organization.
-   - The `roles/resourcemanager.projectCreator` role on the Google Cloud organization.
-   - The `roles/billing.admin` role on the billing account.
-   - The `roles/resourcemanager.folderCreator` role.
-   - The `roles/securitycenter.admin` role.
+1. Google Cloud
+   [조직](https://cloud.google.com/resource-manager/docs/creating-managing-organization)을 설정합니다.
+1. Google Cloud
+   [청구 계정](https://cloud.google.com/billing/docs/how-to/manage-billing-account)을 설정합니다.
+1. [액세스 제어를 위한 그룹](https://cloud.google.com/architecture/security-foundations/authentication-authorization#groups_for_access_control)에서 정의한 대로 Cloud Identity 또는 Google Workspace 그룹을 생성합니다.
+생성한 특정 그룹 이름을 사용하도록 **terraform.tfvars**의 변수(`groups` 블록)를 설정합니다.
+1. 이 문서의 절차를 실행할 사용자에게 다음 역할을 부여합니다:
+   - Google Cloud 조직에서 `roles/resourcemanager.organizationAdmin` 역할
+   - Google Cloud 조직에서 `roles/orgpolicy.policyAdmin` 역할
+   - Google Cloud 조직에서 `roles/resourcemanager.projectCreator` 역할
+   - 청구 계정에서 `roles/billing.admin` 역할
+   - `roles/resourcemanager.folderCreator` 역할
+   - `roles/securitycenter.admin` 역할
 
      ```bash
      # example:

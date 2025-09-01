@@ -1,8 +1,7 @@
 # 3-networks-svpc
 
-This repo is part of a multi-part guide that shows how to configure and deploy
-the example.com reference architecture described in
-[Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations). The following table lists the parts of the guide.
+이 리포지토리는 [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations)에서 설명된
+example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주는 다중 파트 가이드의 일부입니다. 다음 표는 가이드의 부분들을 나열합니다.
 
 <table>
 <tbody>
@@ -53,18 +52,18 @@ Hub and Spoke network model. It also sets up the global DNS hub</td>
 For an overview of the architecture and the parts, see the
 [terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation).
 
-## Purpose
+## 목적
 
-The purpose of this step is to:
+이 단계의 목적은 다음과 같습니다:
 
-- Set up the global [DNS Hub](https://cloud.google.com/blog/products/networking/cloud-forwarding-peering-and-zones).
-- Shared VPCs with default DNS, NAT (optional), Private Service networking, VPC Service Controls (optional), on-premises Dedicated or Partner Interconnect, and baseline firewall rules for each environment.
+- 글로벌 [DNS Hub](https://cloud.google.com/blog/products/networking/cloud-forwarding-peering-and-zones)를 설정합니다.
+- 각 환경에 대해 기본 DNS, NAT(선택사항), Private Service 네트워킹, VPC Service Controls(선택사항), 온프레미스 Dedicated 또는 Partner Interconnect, 기준선 방화벽 규칙이 포함된 공유 VPC를 설정합니다.
 
-## Prerequisites
+## 전제 조건
 
-1. 0-bootstrap executed successfully.
-1. 1-org executed successfully.
-1. 2-environments executed successfully.
+1. 0-bootstrap이 성공적으로 실행되었습니다.
+1. 1-org가 성공적으로 실행되었습니다.
+1. 2-environments가 성공적으로 실행되었습니다.
 1. Obtain the value for the access_context_manager_policy_id variable. It can be obtained by running the following commands. We assume you are at the same level as directory `terraform-example-foundation`, If you run them from another directory, adjust your paths accordingly.
 
    ```bash

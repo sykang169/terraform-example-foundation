@@ -1,8 +1,7 @@
 # 5-app-infra
 
-This repo is part of a multi-part guide that shows how to configure and deploy
-the example.com reference architecture described in
-[Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations). The following table lists the parts of the guide.
+이 리포지토리는 [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations)에서 설명된
+example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주는 다중 파트 가이드의 일부입니다. 다음 표는 가이드의 부분들을 나열합니다.
 
 <table>
 <tbody>
@@ -53,10 +52,10 @@ For an overview of the architecture and the parts, see the
 [terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation)
 file.
 
-## Purpose
+## 목적
 
-The purpose of this step is to deploy a simple [Compute Engine](https://cloud.google.com/compute/) instance in one of the business unit projects using the infra pipeline set up in 4-projects.
-The infra pipeline is created in step `4-projects` within the shared env and has a [Cloud Build](https://cloud.google.com/build/docs) pipeline configured to manage infrastructure within projects.
+이 단계의 목적은 4-projects에서 설정한 인프라 파이프라인을 사용하여 비즈니스 유닛 프로젝트 중 하나에 간단한 [Compute Engine](https://cloud.google.com/compute/) 인스턴스를 배포하는 것입니다.
+인프라 파이프라인은 공유 환경 내의 `4-projects` 단계에서 생성되며, 프로젝트 내의 인프라를 관리하도록 구성된 [Cloud Build](https://cloud.google.com/build/docs) 파이프라인을 보유합니다.
 
 There is also a [Source Repository](https://cloud.google.com/source-repositories) configured with build triggers similar to the [CI/CD Pipeline](https://github.com/terraform-google-modules/terraform-example-foundation#0-bootstrap) setup in `0-bootstrap`.
 This Compute Engine instance is created using the base network from step `3-networks` and is used to access private services.

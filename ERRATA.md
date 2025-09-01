@@ -1,5 +1,5 @@
-# Errata Summary
-This is an overview of the delta between the example foundation repository and the [Google Cloud security foundations guide](https://services.google.com/fh/files/misc/google-cloud-security-foundations-guide.pdf), including code discrepancies and notes on future automation. This document will be updated as new code is merged.
+# 정정사항 요약
+코드 차이점과 향후 자동화에 대한 메모를 포함하여 예시 기반 리포지토리와 [Google Cloud 보안 기반 가이드](https://services.google.com/fh/files/misc/google-cloud-security-foundations-guide.pdf) 간의 차이점에 대한 개요입니다. 이 문서는 새로운 코드가 병합될 때마다 업데이트됩니다.
 
 ## 4.x [WIP]
 

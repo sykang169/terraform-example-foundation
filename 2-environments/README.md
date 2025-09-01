@@ -1,8 +1,7 @@
 # 2-environments
 
-This repo is part of a multi-part guide that shows how to configure and deploy
-the example.com reference architecture described in
-[Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations). The following table lists the parts of the guide.
+이 리포지토리는 [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations)에서 설명된
+example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주는 다중 파트 가이드의 일부입니다. 다음 표는 가이드의 부분들을 나열합니다.
 
 <table>
 <tbody>
@@ -53,14 +52,14 @@ Hub and Spoke network model. It also sets up the global DNS hub</td>
 For an overview of the architecture and the parts, see the
 [terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation).
 
-## Purpose
+## 목적
 
-The purpose of this step is to setup development, nonproduction, and production environments within the Google Cloud organization that you've created.
+이 단계의 목적은 생성한 Google Cloud 조직 내에서 개발, 비운영, 운영 환경을 설정하는 것입니다.
 
-## Prerequisites
+## 전제 조건
 
-1. 0-bootstrap executed successfully.
-1. 1-org executed successfully.
+1. 0-bootstrap이 성공적으로 실행되었습니다.
+1. 1-org가 성공적으로 실행되었습니다.
 
 ### Troubleshooting
 

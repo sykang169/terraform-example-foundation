@@ -1,8 +1,7 @@
 # 4-projects
 
-This repo is part of a multi-part guide that shows how to configure and deploy
-the example.com reference architecture described in
-[Google Cloud security foundations guide](https://cloud.google.com/architecture/security-foundations). The following table lists the parts of the guide.
+이 리포지토리는 [Google Cloud 보안 기반 가이드](https://cloud.google.com/architecture/security-foundations)에서 설명된
+example.com 참조 아키텍처를 구성하고 배포하는 방법을 보여주는 다중 파트 가이드의 일부입니다. 다음 표는 가이드의 부분들을 나열합니다.
 
 <table>
 <tbody>
@@ -53,9 +52,9 @@ Hub and Spoke network model. It also sets up the global DNS hub</td>
 For an overview of the architecture and the parts, see the
 [terraform-example-foundation README](https://github.com/terraform-google-modules/terraform-example-foundation).
 
-## Purpose
+## 목적
 
-The purpose of this step is to set up the folder structure, projects, and infrastructure pipelines for applications that are connected as service projects to the shared VPC created in the previous stage.
+이 단계의 목적은 이전 단계에서 생성된 공유 VPC에 서비스 프로젝트로 연결되는 애플리케이션을 위한 폴더 구조, 프로젝트 및 인프라 파이프라인을 설정하는 것입니다.
 
 For each business unit, a shared `infra-pipeline` project is created along with Cloud Build triggers, CSRs for application infrastructure code and Google Cloud Storage buckets for state storage.
 
