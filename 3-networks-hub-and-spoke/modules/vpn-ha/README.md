@@ -17,7 +17,7 @@ Dedicated Interconnect나 Partner Interconnect를 사용할 수 없는 경우, �
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | bgp\_peer\_asn | BGP ASN for cloud routes. | `number` | n/a | yes |
 | default\_region1 | Default region 1 for Cloud Routers | `string` | n/a | yes |

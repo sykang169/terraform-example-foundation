@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | app\_infra\_repos | A list of Cloud Source Repos to be created to hold app infra Terraform configs. | `list(string)` | n/a | yes |
 | billing\_account | The ID of the billing account to associated this project with. | `string` | n/a | yes |
@@ -18,7 +18,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | apply\_triggers\_id | CB apply triggers |
 | artifact\_buckets | GCS Buckets to store Cloud Build Artifacts |

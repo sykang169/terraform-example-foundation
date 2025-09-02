@@ -57,7 +57,7 @@ module "logging_logbucket" {
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | billing\_account | Billing Account ID used in case sinks are under billing account level. Format 000000-000000-000000. | `string` | `null` | no |
 | enable\_billing\_account\_sink | If true, a log router sink will be created for the billing account. The billing\_account variable cannot be null. | `bool` | `false` | no |

@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | billing\_export\_dataset\_location | The location of the dataset for billing data export. | `string` | `null` | no |
 | create\_access\_context\_manager\_access\_policy | Whether to create access context manager access policy. | `bool` | `true` | no |
@@ -28,7 +28,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | billing\_sink\_names | The name of the sinks under billing account level. |
 | cai\_monitoring\_artifact\_registry | CAI Monitoring Cloud Function Artifact Registry name. |

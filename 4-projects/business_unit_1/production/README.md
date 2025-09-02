@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | folder\_deletion\_protection | Prevent Terraform from destroying or recreating the folder. | `string` | `true` | no |
 | gcs\_custom\_placement\_config | Configuration of the bucket's custom location in a dual-region bucket setup. If the bucket is designated a single or multi-region, the variable are null. | <pre>object({<br>    data_locations = list(string)<br>  })</pre> | `null` | no |
@@ -15,7 +15,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | access\_context\_manager\_policy\_id | Access Context Manager Policy ID. |
 | bucket | The created storage bucket. |

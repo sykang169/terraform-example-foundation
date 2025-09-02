@@ -17,7 +17,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | cloud\_router\_labels | A map of suffixes for labelling vlans with four entries like "vlan\_1" => "suffix1" with keys from `vlan_1` to `vlan_4`. | `map(string)` | `{}` | no |
 | interconnect\_project\_id | Interconnect project ID. | `string` | n/a | yes |
@@ -53,7 +53,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | interconnect\_attachment1\_region1 | The interconnect attachment 1 for region 1 |
 | interconnect\_attachment1\_region1\_customer\_router\_ip\_address | IPv4 address + prefix length to be configured on the customer router subinterface for this interconnect attachment. |

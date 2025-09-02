@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | business\_unit | The business (ex. business\_unit\_1). | `string` | `"business_unit_1"` | no |
 | environment | The environment the single project belongs to | `string` | n/a | yes |
@@ -14,7 +14,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | available\_zones | List of available zones in region |
 | instances\_details | List of details for compute instances |

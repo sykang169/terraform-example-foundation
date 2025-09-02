@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | activate\_apis | The api to activate for the GCP project | `list(string)` | `[]` | no |
 | app\_infra\_pipeline\_service\_accounts | The Service Accounts from App Infra Pipeline. | `map(string)` | `{}` | no |
@@ -30,7 +30,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | enabled\_apis | VPC Service Control services. |
 | project\_id | Project sample project id. |

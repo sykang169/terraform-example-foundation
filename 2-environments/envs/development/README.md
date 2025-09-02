@@ -1,7 +1,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | folder\_deletion\_protection | Prevent Terraform from destroying or recreating the folder. | `string` | `true` | no |
 | project\_deletion\_policy | The deletion policy for the project created. | `string` | `"PREVENT"` | no |
@@ -10,7 +10,7 @@
 
 ## 출력
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | env\_folder | Environment folder created under parent. |
 | env\_kms\_project\_id | Project for environment Cloud Key Management Service (KMS). |

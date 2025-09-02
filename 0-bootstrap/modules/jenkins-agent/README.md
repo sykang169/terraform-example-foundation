@@ -47,9 +47,9 @@ module "jenkins_bootstrap" {
 1. Agent가 업데이트와 필요한 바이너리를 다운로드할 수 있도록 Cloud NAT를 추가합니다.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력 변수
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | activate\_apis | List of APIs to enable in the CICD project. | `list(string)` | <pre>[<br>  "serviceusage.googleapis.com",<br>  "servicenetworking.googleapis.com",<br>  "compute.googleapis.com",<br>  "logging.googleapis.com",<br>  "bigquery.googleapis.com",<br>  "cloudresourcemanager.googleapis.com",<br>  "cloudbilling.googleapis.com",<br>  "iam.googleapis.com",<br>  "admin.googleapis.com",<br>  "appengine.googleapis.com",<br>  "storage-api.googleapis.com",<br>  "dns.googleapis.com"<br>]</pre> | no |
 | bgp\_peer\_asn | BGP ASN for peer cloud routes. | `number` | `"64513"` | no |
@@ -86,9 +86,9 @@ module "jenkins_bootstrap" {
 | tunnel1\_bgp\_session\_range | BGP session range for tunnel 1 | `string` | n/a | yes |
 | vpn\_shared\_secret | The shared secret used in the VPN | `string` | n/a | yes |
 
-## Outputs
+## 출력 변수
 
-| Name | Description |
+| 이름 | 설명 |
 |------|-------------|
 | cicd\_project\_id | Project where the [CI/CD Pipeline](/docs/GLOSSARY.md#foundation-cicd-pipeline) (Jenkins Agents and terraform builder container image) reside. |
 | gcs\_bucket\_jenkins\_artifacts | Bucket used to store Jenkins artifacts in Jenkins project. |

@@ -540,7 +540,7 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
 [Dual Shared VPC](https://cloud.google.com/architecture/security-foundations/networking#vpcsharedvpc-id7-1-shared-vpc-) 네트워크 모드를 사용하려면 [3-networks-svpc 단계 배포](#deploying-step-3-networks-svpc)로 이동하거나,
 [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) 네트워크 모드를 사용하려면 [3-networks-hub-and-spoke 단계 배포](#deploying-step-3-networks-hub-and-spoke)로 이동하세요.
 
-## Deploying step 3-networks-svpc
+## 3-networks-svpc 단계 배포
 
 1. 저장소로 이동합니다. 이후의 모든 단계는 `gcp-networks` 디렉토리에서 실행한다고 가정합니다.
    다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
@@ -714,7 +714,7 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
 
 1. 이제 [4-projects](#deploying-step-4-projects) 단계의 지침으로 이동할 수 있습니다.
 
-## Deploying step 3-networks-hub-and-spoke
+## 3-networks-hub-and-spoke 단계 배포
 
 1. 저장소로 이동합니다. 이후의 모든 단계는 `gcp-networks` 디렉토리에서 실행한다고 가정합니다.
    다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
@@ -849,7 +849,7 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
 
 1. 이제 [4-projects](#deploying-step-4-projects) 단계의 지침으로 이동할 수 있습니다.
 
-## Deploying step 4-projects
+## 4-projects 단계 배포
 
 1. 저장소로 이동합니다. 이후의 모든 단계는 `gcp-projects` 디렉토리에서 실행한다고 가정합니다.
    다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.

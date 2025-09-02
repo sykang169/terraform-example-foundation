@@ -14,7 +14,7 @@
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
 
-| Name | Description | Type | Default | Required |
+| 이름 | 설명 | 유형 | 기본값 | 필수 |
 |------|-------------|------|---------|:--------:|
 | autopilot\_gke\_io\_warden\_version | Autopilot GKE IO Warden Version | `string` | `"2.7.41"` | no |
 | create\_service\_account | Set to true to create a new service account, false to use an existing one | `bool` | `true` | no |

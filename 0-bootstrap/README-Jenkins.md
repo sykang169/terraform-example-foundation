@@ -914,7 +914,7 @@
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
+1. (선택 사항) 별도의 비즈니스 단위 또는 엔티티에 대한 추가 하위 폴더를 원하는 경우, `business_unit_1` 폴더의 추가 복사본을 만들고 `business_code`, `business_unit` 또는 `subnet_ip_range`와 같이 비즈니스 단위마다 달라지는 값들을 수정하세요.
 
 예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
