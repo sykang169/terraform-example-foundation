@@ -245,9 +245,9 @@
 
 1. 브라우저에서 링크를 열고 수락합니다.
 
-1. Run terraform commands.
-   - After the credentials are configured, we will create the `prj-b-seed` project (which contains the GCS state bucket and Terraform custom service account) and the `prj-b-cicd` project (which contains the Jenkins Agent, its custom service account and where we will add VPN configuration)
-   - **Use Terraform 1.5.7** to run the terraform script with the commands below
+1. terraform 명령을 실행합니다.
+   - 자격 증명이 구성된 후, `prj-b-seed` 프로젝트(GCS 상태 버킷 및 Terraform 사용자 지정 서비스 계정 포함)와 `prj-b-cicd` 프로젝트(Jenkins Agent, 사용자 지정 서비스 계정 포함 및 VPN 구성을 추가할 위치)를 생성합니다
+   - 아래 명령으로 terraform 스크립트를 실행하려면 **Terraform 1.5.7을 사용**합니다
 
    ```bash
    terraform init
@@ -255,32 +255,32 @@
    terraform apply
    ```
 
-   - The Terraform script will take about 10 to 15 minutes. Once it finishes, note that communication between on-prem and the `prj-b-cicd` project won’t happen yet - you will configure the VPN network connectivity in step [III. Create VPN connection](#iii-configure-vpn-connection).
+   - Terraform 스크립트는 약 10~15분이 소요됩니다. 완료되면 온프레미스와 `prj-b-cicd` 프로젝트 간의 통신이 아직 이루어지지 않는다는 점에 유의하세요. [III. VPN 연결 구성](#iii-configure-vpn-connection) 단계에서 VPN 네트워크 연결을 구성할 것입니다.
 
-1. Move Terraform State to the GCS bucket created in the Seed Project
-   1. Get tfstate bucket name
+1. Seed 프로젝트에서 생성된 GCS 버킷으로 Terraform 상태 이동
+   1. tfstate 버킷 이름 가져오기
 
    ```bash
    export backend_bucket=$(terraform output -raw gcs_bucket_tfstate)
    echo "backend_bucket = ${backend_bucket}"
    ```
 
-   1. Rename `backend.tf.example` to `backend.tf` and update with your tfstate bucket name
+   1. `backend.tf.example`을 `backend.tf`로 이름을 변경하고 tfstate 버킷 이름으로 업데이트
 
    ```bash
    mv backend.tf.example backend.tf
    for i in `find . -name 'backend.tf'`; do sed -i'' -e "s/UPDATE_ME/${backend_bucket}/" $i; done
    ```
 
-1. Re-run `terraform init` and agree to copy state to gcs when prompted
+1. `terraform init`을 다시 실행하고 메시지가 표시되면 gcs로 상태를 복사하는 것에 동의합니다
 
    ```bash
    terraform init
    ```
 
-   - (Optional) Run `terraform apply` to verify state is configured correctly. You can confirm the terraform state is now in that bucket by visiting the bucket url in your Seed Project.
+   - (선택사항) `terraform apply`를 실행하여 상태가 올바르게 구성되었는지 확인합니다. Seed 프로젝트의 버킷 URL을 방문하여 terraform 상태가 이제 해당 버킷에 있는지 확인할 수 있습니다.
 
-1. Commit changes
+1. 변경 사항 커밋
 
    ```bash
    git add backend.tf
@@ -293,34 +293,34 @@
    git push
    ```
 
-### III. Configure VPN connection
+### III. VPN 연결 구성
 
 여기서 `prj-b-cicd` 프로젝트와 온프레미스 환경 간의 연결을 활성화하기 위해 VPN 네트워크 터널을 구성합니다. [GCP의 VPN 터널](https://cloud.google.com/network-connectivity/docs/vpn/how-to)에 대해 자세히 알아보세요.
 
-- Required information:
-  - On-prem VPN public IP Address
-  - Jenkins Controller’s network CIDR (the example code uses "10.1.0.0/24")
-  - Jenkins Agent network CIDR (the example code uses "172.16.1.0/24")
-  - VPN PSK (pre-shared secret key)
+- 필수 정보:
+  - 온프레미스 VPN 공용 IP 주소
+  - Jenkins Controller의 네트워크 CIDR (예시 코드에서는 "10.1.0.0/24" 사용)
+  - Jenkins Agent 네트워크 CIDR (예시 코드에서는 "172.16.1.0/24" 사용)
+  - VPN PSK (사전 공유 비밀 키)
 
-1. Check in the `prj-b-cicd` project for the VPN gateway static IP addresses which have been reserved. These addresses are required by the Network Administrator for the configuration of the on-prem side of the VPN tunnels to GCP.
-   1. Assuming your network administrator already configured the on-prem end of the VPN, the CI/CD end of the VPN might show the message `First Handshake` for around 5 minutes.
-   1. When the VPN is ready, the status will show `Tunnel is up and running`. At this point, your Jenkins Controller (on-prem) and Jenkins Agent (in `prj-b-cicd` project) must have network connectivity through the VPN.
+1. `prj-b-cicd` 프로젝트에서 예약된 VPN 게이트웨이 정적 IP 주소를 확인합니다. 이러한 주소는 네트워크 관리자가 온프레미스 측 VPN 터널을 GCP로 구성하는 데 필요합니다.
+   1. 네트워크 관리자가 이미 온프레미스 측 VPN을 구성했다고 가정하면, CI/CD 측 VPN은 약 5분 동안 `First Handshake` 메시지를 표시할 수 있습니다.
+   1. VPN이 준비되면 상태가 `Tunnel is up and running`으로 표시됩니다. 이 시점에서 Jenkins Controller(온프레미스)와 Jenkins Agent(`prj-b-cicd` 프로젝트)는 VPN을 통해 네트워크 연결이 가능해야 합니다.
 
-1. Test a pipeline using the Jenkins Controller Web UI:
-   1. Make sure your [SSH Agent](https://plugins.jenkins.io/ssh-agent) is online and troubleshoot network connectivity if needed.
-   1. Test that your Jenkins Controller can deploy a [pipeline](https://www.jenkins.io/doc/book/pipeline/getting-started/) to the Jenkins Agent located in the `prj-b-cicd` project (you can test this by running with a simple `echo "Hello World"` pipeline build).
+1. Jenkins Controller 웹 UI를 사용하여 파이프라인 테스트:
+   1. [SSH Agent](https://plugins.jenkins.io/ssh-agent)가 온라인 상태인지 확인하고 필요한 경우 네트워크 연결 문제를 해결합니다.
+   1. Jenkins Controller가 `prj-b-cicd` 프로젝트에 위치한 Jenkins Agent에 [파이프라인](https://www.jenkins.io/doc/book/pipeline/getting-started/)을 배포할 수 있는지 테스트합니다 (간단한 `echo "Hello World"` 파이프라인 빌드를 실행하여 테스트할 수 있음).
 
-### IV. Configure the Git repositories and Multibranch Pipelines in your Jenkins Controller
+### IV. Jenkins Controller에서 Git 저장소 및 멀티브랜치 파이프라인 구성
 
-- **Note:** this section is considered out of the scope of this document. Since there are multiple options on how to configure the Git repositories and **Multibranch Pipeline** in your Jenkins Controller, here we can only provide some guidance that you should keep in mind while completing this step. Visit the [Jenkins website](https://jenkins.io) for more information, there are plenty of Jenkins Plugins that could help with the task.
-  - You need to configure a **"Multibranch Pipeline"**. Note that the `Jenkinsfile` and `tf-wrapper.sh` files use the `$BRANCH_NAME` environment variable. **the `$BRANCH_NAME` variable is only available in Jenkins' Multibranch Pipelines**.
-- **Jenkinsfile:** A [Jenkinsfile](../build/Jenkinsfile) has been included which closely aligns with the Cloud Build pipeline. Additionally, the stage `TF wait for approval` which lets you confirm via Jenkins UI before proceeding with `terraform apply` has been disabled by default. It can be enabled by un-commenting that stage in the file.
+- **참고:** 이 섹션은 이 문서의 범위를 벗어나는 것으로 간주됩니다. Jenkins Controller에서 Git 저장소와 **멀티브랜치 파이프라인**을 구성하는 방법에는 여러 옵션이 있기 때문에, 여기서는 이 단계를 완료하는 동안 염두에 두어야 할 몇 가지 지침만 제공할 수 있습니다. 자세한 정보는 [Jenkins 웹사이트](https://jenkins.io)를 방문하십시오. 이 작업에 도움이 될 수 있는 많은 Jenkins 플러그인이 있습니다.
+  - **"멀티브랜치 파이프라인"**을 구성해야 합니다. `Jenkinsfile`과 `tf-wrapper.sh` 파일이 `$BRANCH_NAME` 환경 변수를 사용한다는 점에 주의하십시오. **`$BRANCH_NAME` 변수는 Jenkins의 멀티브랜치 파이프라인에서만 사용할 수 있습니다**.
+- **Jenkinsfile:** Cloud Build 파이프라인과 밀접하게 일치하는 [Jenkinsfile](../build/Jenkinsfile)이 포함되어 있습니다. 또한 `terraform apply`를 진행하기 전에 Jenkins UI를 통해 확인할 수 있는 `TF wait for approval` 단계는 기본적으로 비활성화되어 있습니다. 파일에서 해당 단계의 주석을 해제하여 활성화할 수 있습니다.
 
-1. Create Multibranch pipelines for your new repos (`YOUR_NEW_REPO-gcp-org, YOUR_NEW_REPO-gcp-environments, YOUR_NEW_REPO-gcp-networks, YOUR_NEW_REPO-gcp-projects`).
-   - **DO NOT configure an automatic pipeline for your `YOUR_NEW_REPO-gcp-bootstrap` repository**
+1. 새 저장소(`YOUR_NEW_REPO-gcp-org, YOUR_NEW_REPO-gcp-environments, YOUR_NEW_REPO-gcp-networks, YOUR_NEW_REPO-gcp-projects`)에 대한 멀티브랜치 파이프라인을 생성합니다.
+   - **`YOUR_NEW_REPO-gcp-bootstrap` 저장소에는 자동 파이프라인을 구성하지 마십시오**
 
-1. In your Jenkins Controller Web UI, **create Multibranch Pipelines only for the following repositories:**
+1. Jenkins Controller 웹 UI에서 **다음 저장소에만 멀티브랜치 파이프라인을 생성합니다:**
 
    ```text
    YOUR_NEW_REPO-gcp-org
@@ -329,13 +329,13 @@
    YOUR_NEW_REPO-gcp-projects
    ```
 
-1. Assuming your new Git repositories are private, you may need to configure new credentials In your Jenkins Controller web UI, so it can connect to the repositories.
+1. 새로운 Git 저장소가 비공개라고 가정하면, 저장소에 연결할 수 있도록 Jenkins Controller 웹 UI에서 새 자격 증명을 구성해야 할 수 있습니다.
 
-1. You will also want to configure automatic triggers in each one of the Jenkins Multibranch Pipelines, unless you want to run the pipelines manually from the Jenkins Web UI after each commit to your repositories.
+1. 저장소에 커밋할 때마다 Jenkins 웹 UI에서 파이프라인을 수동으로 실행하려는 경우가 아니라면, 각 Jenkins 멀티브랜치 파이프라인에서 자동 트리거를 구성하는 것이 좋습니다.
 
-1. You can now move to the instructions for step 1-org.
+1. 이제 1-org 단계 지침으로 이동할 수 있습니다.
 
-## Deploying step 1-org
+## 1-org 단계 배포
 
 1. 0-bootstrap 지침에서 수동으로 생성한 리포지토리를 복제합니다.
 
@@ -343,16 +343,14 @@
    git clone <YOUR_NEW_REPO-gcp-org> gcp-org
    ```
 
-1. Navigate into the repo and change to a nonproduction branch. All subsequent
-   steps assume you are running them from the `gcp-org` directory. If
-   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
+1. 저장소로 이동하여 비프로덕션 브랜치로 변경합니다. 모든 후속 단계는 `gcp-org` 디렉토리에서 실행한다고 가정합니다. 다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-org
    git checkout -b plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/1-org/ .
@@ -362,7 +360,7 @@
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Update the variables located in the `environment {}` section of the `Jenkinsfile` with values from gcp-bootstrap:
+1. `Jenkinsfile`의 `environment {}` 섹션에 있는 변수를 gcp-bootstrap의 값으로 업데이트합니다:
 
    ```text
    _TF_SA_EMAIL
@@ -386,27 +384,27 @@
    sed -i'' -e "s/CICD_PROJECT_ID/${CICD_PROJECT_ID}/" ./Jenkinsfile
    ```
 
-1. Rename `./envs/shared/terraform.example.tfvars` to `./envs/shared/terraform.tfvars`
+1. `./envs/shared/terraform.example.tfvars`를 `./envs/shared/terraform.tfvars`로 이름 변경
 
    ```bash
    mv ./envs/shared/terraform.example.tfvars ./envs/shared/terraform.tfvars
    ```
 
-1. Check if a Security Command Center Notification with the default name, **scc-notify**, already exists. If it exists, choose a different value for the `scc_notification_name` variable in the `./envs/shared/terraform.tfvars` file.
+1. 기본 이름인 **scc-notify**로 된 보안 명령 센터 알림이 이미 존재하는지 확인합니다. 존재하는 경우, `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 다른 값을 선택합니다.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -json common_config | jq '.org_id' --raw-output)
    gcloud scc notifications describe "scc-notify" --organization=${ORGANIZATION_ID}
    ```
 
-1. Check if your organization already has an Access Context Manager Policy.
+1. 조직에 액세스 컨텍스트 관리자 정책이 이미 있는지 확인합니다.
 
    ```bash
    export ACCESS_CONTEXT_MANAGER_ID=$(gcloud access-context-manager policies list --organization ${ORGANIZATION_ID} --format="value(name)")
    echo "access_context_manager_policy_id = ${ACCESS_CONTEXT_MANAGER_ID}"
    ```
 
-1. Update the `envs/shared/terraform.tfvars` file with values from your environment and 0-bootstrap step. If the previous step showed a numeric value, make sure to un-comment the variable `create_access_context_manager_access_policy = false`. See the shared folder [README.md](../1-org/envs/shared/README.md) for additional information on the values in the `terraform.tfvars` file.
+1. 환경과 0-bootstrap 단계의 값으로 `envs/shared/terraform.tfvars` 파일을 업데이트합니다. 이전 단계에서 숫자 값이 표시된 경우, `create_access_context_manager_access_policy = false` 변수의 주석을 해제해야 합니다. `terraform.tfvars` 파일의 값에 대한 추가 정보는 shared 폴더의 [README.md](../1-org/envs/shared/README.md)를 참조하십시오.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -417,48 +415,46 @@
    if [ ! -z "${ACCESS_CONTEXT_MANAGER_ID}" ]; then sed -i'' -e "s=//create_access_context_manager_access_policy=create_access_context_manager_access_policy=" ./envs/shared/terraform.tfvars; fi
    ```
 
-1. Commit changes.
+1. 변경 사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize org repo'
    ```
 
-1. Push your plan branch.
-   - Assuming you configured an automatic trigger in your Jenkins Controller (see [Jenkins sub-module README](./modules/jenkins-agent/README.md)), this will trigger a plan. You can also trigger a Jenkins job manually. Given the many options to do this in Jenkins, it is out of the scope of this document see [Jenkins website](https://www.jenkins.io) for more details.
+1. plan 브랜치를 푸시합니다.
+   - Jenkins Controller에서 자동 트리거를 구성했다고 가정하면([Jenkins 하위 모듈 README](./modules/jenkins-agent/README.md) 참조), 이것이 plan을 트리거합니다. Jenkins 작업을 수동으로 트리거할 수도 있습니다. Jenkins에서 이를 수행하는 옵션이 많으므로 이 문서의 범위를 벗어나며, 자세한 내용은 [Jenkins 웹사이트](https://www.jenkins.io)를 참조하십시오.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-1. Review the plan output in your Controller's web UI.
-1. Merge changes to production branch.
+1. Controller의 웹 UI에서 플랜 출력을 검토합니다.
+1. 변경 사항을 프로덕션 브랜치에 병합합니다.
 
    ```bash
    git checkout -b production
    git push --set-upstream origin production
    ```
 
-1. Review the apply output in your Controller's web UI. (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
 
-## Deploying step 2-environments
+## 2-environments 단계 배포
 
-1. Clone the repo you created manually in 0-bootstrap.
+1. 0-bootstrap에서 수동으로 생성한 저장소를 복제합니다.
 
    ```bash
    git clone <YOUR_NEW_REPO-gcp-environments> gcp-environments
    ```
 
-1. Navigate into the repo and change to a nonproduction branch. All subsequent
-   steps assume you are running them from the `gcp-environments` directory. If
-   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
+1. 저장소로 이동하여 비프로덕션 브랜치로 변경합니다. 모든 후속 단계는 `gcp-environments` 디렉토리에서 실행한다고 가정합니다. 다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-environments
    git checkout -b plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/2-environments/ .
@@ -468,7 +464,7 @@
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Update the variables located in the `environment {}` section of the `Jenkinsfile` with values from your environment:
+1. `Jenkinsfile`의 `environment {}` 섹션에 있는 변수를 환경의 값으로 업데이트합니다:
 
    ```text
    _TF_SA_EMAIL
@@ -492,13 +488,13 @@
    sed -i'' -e "s/CICD_PROJECT_ID/${CICD_PROJECT_ID}/" ./Jenkinsfile
    ```
 
-1. Rename `terraform.example.tfvars` to `terraform.tfvars` and update the file with values from your environment and 0-bootstrap.
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 변경하고 환경과 0-bootstrap의 값으로 파일을 업데이트합니다.
 
    ```bash
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다. See any of the envs folder [README.md](../2-environments/envs/production/README.md) files for additional information on the values in the `terraform.tfvars` file.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다. `terraform.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../2-environments/envs/production/README.md) 파일들을 참조하십시오.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -506,65 +502,63 @@
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./terraform.tfvars
    ```
 
-1. Commit changes.
+1. 변경 사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize environments repo'
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-   - Assuming you configured an automatic trigger in your Jenkins Controller (see [Jenkins sub-module README](./modules/jenkins-agent/README.md)), this will trigger a plan. You can also trigger a Jenkins job manually. Given the many options to do this in Jenkins, it is out of the scope of this document see [Jenkins website](https://www.jenkins.io) for more details.
-1. Review the plan output in your Controller's web UI.
-1. Merge changes to development.
+   - Jenkins Controller에서 자동 트리거를 구성했다고 가정하면([Jenkins 하위 모듈 README](./modules/jenkins-agent/README.md) 참조), 이것이 plan을 트리거합니다. Jenkins 작업을 수동으로 트리거할 수도 있습니다. Jenkins에서 이를 수행하는 옵션이 많으므로 이 문서의 범위를 벗어나며, 자세한 내용은 [Jenkins 웹사이트](https://www.jenkins.io)를 참조하십시오.
+1. Controller의 웹 UI에서 플랜 출력을 검토합니다.
+1. 변경 사항을 development에 병합합니다.
 
    ```bash
    git checkout -b development
    git push --set-upstream origin development
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. Merge changes to nonproduction with.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 변경 사항을 nonproduction에 병합합니다.
 
    ```bash
    git checkout -b nonproduction
    git push --set-upstream origin nonproduction
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. Merge changes to production branch.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 변경 사항을 프로덕션 브랜치에 병합합니다.
 
    ```bash
    git checkout -b production
    git push --set-upstream origin production
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. You can now move to the instructions in the next step, go to [Deploying step 3-networks-svpc](#deploying-step-3-networks-svpc) to use the Dual Shared VPC mode, or go to [Deploying step  3-networks-hub-and-spoke](#deploying-step-3-networks-hub-and-spoke) to use the Hub and Spoke network mode.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 이제 다음 단계의 지침으로 이동할 수 있습니다. 듀얼 공유 VPC 모드를 사용하려면 [3-networks-svpc 단계 배포](#deploying-step-3-networks-svpc)로 이동하거나, 허브 앤 스포크 네트워크 모드를 사용하려면 [3-networks-hub-and-spoke 단계 배포](#deploying-step-3-networks-hub-and-spoke)로 이동하십시오.
 
-## Deploying step 3-networks-svpc
+## 3-networks-svpc 단계 배포
 
-1. Clone the repo you created manually in 0-bootstrap.
+1. 0-bootstrap에서 수동으로 생성한 저장소를 복제합니다.
 
    ```bash
    git clone <YOUR_NEW_REPO-gcp-networks> gcp-networks
    ```
 
-1. Navigate into the repo and change to a nonproduction branch. All subsequent
-   steps assume you are running them from the `gcp-networks` directory. If
-   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
+1. 저장소로 이동하여 비프로덕션 브랜치로 변경합니다. 모든 후속 단계는 `gcp-networks` 디렉토리에서 실행한다고 가정합니다. 다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
    git checkout -b plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/3-networks-svpc/ .
@@ -574,7 +568,7 @@
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Update the variables located in the `environment {}` section of the `Jenkinsfile` with values from your environment:
+1. `Jenkinsfile`의 `environment {}` 섹션에 있는 변수를 환경의 값으로 업데이트합니다:
 
    ```text
    _TF_SA_EMAIL
@@ -598,7 +592,7 @@
    sed -i'' -e "s/CICD_PROJECT_ID/${CICD_PROJECT_ID}/" ./Jenkinsfile
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`, rename `production.auto.example.tfvars` to `production.auto.tfvars` and rename `access_context.auto.example.tfvars` to `access_context.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로, `production.auto.example.tfvars`를 `production.auto.tfvars`로, `access_context.auto.example.tfvars`를 `access_context.auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -606,10 +600,10 @@
    mv access_context.auto.example.tfvars access_context.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your environment and bootstrap. See any of the envs folder [README.md](../3-networks-svpc/envs/production/README.md) files for additional information on the values in the `common.auto.tfvars` file.
-1. Update `production.auto.tfvars` file with the `target_name_server_addresses`.
-1. Update `access_context.auto.tfvars` file with the `access_context_manager_policy_id`.
-1. Use `terraform output` to get the backend bucket and networks step Terraform Service Account values from gcp-bootstrap output.
+1. 환경과 bootstrap의 값으로 `common.auto.tfvars` 파일을 업데이트합니다. `common.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../3-networks-svpc/envs/production/README.md) 파일들을 참조하십시오.
+1. `target_name_server_addresses`로 `production.auto.tfvars` 파일을 업데이트합니다.
+1. `access_context_manager_policy_id`로 `access_context.auto.tfvars` 파일을 업데이트합니다.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 백엔드 버킷과 네트워크 단계 Terraform 서비스 계정 값을 가져옵니다.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -json common_config | jq '.org_id' --raw-output)
@@ -622,16 +616,16 @@
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes.
+1. 변경 사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize networks repo'
    ```
 
-1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
+1. `development`, `nonproduction`, `production` 환경이 이에 종속되므로 `shared` 환경을 수동으로 계획하고 적용해야 합니다(한 번만).
 1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
-1. Also update `backend.tf` with your backend bucket from gcp-bootstrap output.
+1. gcp-bootstrap 출력에서 백엔드 버킷으로 `backend.tf`도 업데이트합니다.
 
    ```bash
    for i in `find . -name 'backend.tf'`; do sed -i'' -e "s/UPDATE_ME/${backend_bucket}/" $i; done
@@ -647,77 +641,75 @@
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. `init`과 `plan`을 실행하고 shared 환경의 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/policy-library ${CICD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. `apply` shared를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-   - Assuming you configured an automatic trigger in your Jenkins Controller (see [Jenkins sub-module README](./modules/jenkins-agent/README.md)), this will trigger a plan. You can also trigger a Jenkins job manually. Given the many options to do this in Jenkins, it is out of the scope of this document see [Jenkins website](https://www.jenkins.io) for more details.
-1. Review the plan output in your Controller's web UI.
-1. Merge changes to production branch.
+   - Jenkins Controller에서 자동 트리거를 구성했다고 가정하면([Jenkins 하위 모듈 README](./modules/jenkins-agent/README.md) 참조), 이것이 plan을 트리거합니다. Jenkins 작업을 수동으로 트리거할 수도 있습니다. Jenkins에서 이를 수행하는 옵션이 많으므로 이 문서의 범위를 벗어나며, 자세한 내용은 [Jenkins 웹사이트](https://www.jenkins.io)를 참조하십시오.
+1. Controller의 웹 UI에서 플랜 출력을 검토합니다.
+1. 변경 사항을 프로덕션 브랜치에 병합합니다.
 
    ```bash
    git checkout -b production
    git push --set-upstream origin production
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. After production has been applied, apply development and nonproduction.
-1. Merge changes to development
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 프로덕션이 적용된 후, development와 nonproduction을 적용합니다.
+1. 변경 사항을 development에 병합합니다.
 
    ```bash
    git checkout -b development
    git push --set-upstream origin development
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. Merge changes to nonproduction.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 변경 사항을 nonproduction에 병합합니다.
 
    ```bash
    git checkout -b nonproduction
    git push --set-upstream origin nonproduction
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
 
-## Deploying step 3-networks-hub-and-spoke
+## 3-networks-hub-and-spoke 단계 배포
 
-1. Clone the repo you created manually in 0-bootstrap.
+1. 0-bootstrap에서 수동으로 생성한 저장소를 복제합니다.
 
    ```bash
    git clone <YOUR_NEW_REPO-gcp-networks> gcp-networks
    ```
 
-1. Navigate into the repo and change to a nonproduction branch. All subsequent
-   steps assume you are running them from the `gcp-networks` directory. If
-   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
+1. 저장소로 이동하여 비프로덕션 브랜치로 변경합니다. 모든 후속 단계는 `gcp-networks` 디렉토리에서 실행한다고 가정합니다. 다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
    git checkout -b plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/3-networks-hub-and-spoke/ .
@@ -727,7 +719,7 @@
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Update the variables located in the `environment {}` section of the `Jenkinsfile` with values from your environment:
+1. `Jenkinsfile`의 `environment {}` 섹션에 있는 변수를 환경의 값으로 업데이트합니다:
 
    ```text
    _TF_SA_EMAIL
@@ -751,7 +743,7 @@
    sed -i'' -e "s/CICD_PROJECT_ID/${CICD_PROJECT_ID}/" ./Jenkinsfile
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`, rename `shared.auto.example.tfvars` to `shared.auto.tfvars` and rename `access_context.auto.example.tfvars` to `access_context.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로, `shared.auto.example.tfvars`를 `shared.auto.tfvars`로, `access_context.auto.example.tfvars`를 `access_context.auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -759,9 +751,9 @@
    mv access_context.auto.example.tfvars access_context.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your environment and bootstrap. See any of the envs folder [README.md](../3-networks-hub-and-spoke/envs/production/README.md) files for additional information on the values in the `common.auto.tfvars` file.
-1. Update `shared.auto.tfvars` file with the `target_name_server_addresses`.
-1. Update `access_context.auto.tfvars` file with the `access_context_manager_policy_id`.
+1. 환경과 bootstrap의 값으로 `common.auto.tfvars` 파일을 업데이트합니다. `common.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../3-networks-hub-and-spoke/envs/production/README.md) 파일들을 참조하십시오.
+1. `target_name_server_addresses`로 `shared.auto.tfvars` 파일을 업데이트합니다.
+1. `access_context_manager_policy_id`로 `access_context.auto.tfvars` 파일을 업데이트합니다.
 1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 백엔드 버킷 값을 가져옵니다.
 
    ```bash
@@ -775,16 +767,16 @@
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes.
+1. 변경 사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize networks repo'
    ```
 
-1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
+1. `development`, `nonproduction`, `production` 환경이 이에 종속되므로 `shared` 환경을 수동으로 계획하고 적용해야 합니다(한 번만).
 1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
-1. Also update `backend.tf` with your backend bucket from gcp-bootstrap output.
+1. gcp-bootstrap 출력에서 백엔드 버킷으로 `backend.tf`도 업데이트합니다.
 
    ```bash
    for i in `find . -name 'backend.tf'`; do sed -i'' -e "s/UPDATE_ME/${backend_bucket}/" $i; done
@@ -800,77 +792,75 @@
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. `init`과 `plan`을 실행하고 shared 환경의 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/policy-library ${CICD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. `apply` shared를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-   - Assuming you configured an automatic trigger in your Jenkins Controller (see [Jenkins sub-module README](./modules/jenkins-agent/README.md)), this will trigger a plan. You can also trigger a Jenkins job manually. Given the many options to do this in Jenkins, it is out of the scope of this document see [Jenkins website](https://www.jenkins.io) for more details.
-1. Review the plan output in your Controller's web UI.
-1. Merge changes to production branch.
+   - Jenkins Controller에서 자동 트리거를 구성했다고 가정하면([Jenkins 하위 모듈 README](./modules/jenkins-agent/README.md) 참조), 이것이 plan을 트리거합니다. Jenkins 작업을 수동으로 트리거할 수도 있습니다. Jenkins에서 이를 수행하는 옵션이 많으므로 이 문서의 범위를 벗어나며, 자세한 내용은 [Jenkins 웹사이트](https://www.jenkins.io)를 참조하십시오.
+1. Controller의 웹 UI에서 플랜 출력을 검토합니다.
+1. 변경 사항을 프로덕션 브랜치에 병합합니다.
 
    ```bash
    git checkout -b production
    git push --set-upstream origin production
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. After production has been applied, apply development and nonproduction.
-1. Merge changes to development
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 프로덕션이 적용된 후, development와 nonproduction을 적용합니다.
+1. 변경 사항을 development에 병합합니다.
 
    ```bash
    git checkout -b development
    git push --set-upstream origin development
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. Merge changes to nonproduction.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 변경 사항을 nonproduction에 병합합니다.
 
    ```bash
    git checkout -b nonproduction
    git push --set-upstream origin nonproduction
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
 
-## Deploying step 4-projects
+## 4-projects 단계 배포
 
-1. Clone the repo you created manually in 0-bootstrap.
+1. 0-bootstrap에서 수동으로 생성한 저장소를 복제합니다.
 
    ```bash
    git clone <YOUR_NEW_REPO-gcp-projects> gcp-projects
    ```
 
-1. Navigate into the repo and change to a nonproduction branch. All subsequent
-   steps assume you are running them from the `gcp-projects` directory. If
-   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
+1. 저장소로 이동하여 비프로덕션 브랜치로 변경합니다. 모든 후속 단계는 `gcp-projects` 디렉토리에서 실행한다고 가정합니다. 다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-projects
    git checkout -b plan
    ```
 
-1. Copy contents of foundation to new repo.
+1. foundation의 내용을 새 저장소로 복사합니다.
 
    ```bash
    cp -RT ../terraform-example-foundation/4-projects/ .
@@ -880,7 +870,7 @@
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Update the variables located in the `environment {}` section of the `Jenkinsfile` with values from your environment:
+1. `Jenkinsfile`의 `environment {}` 섹션에 있는 변수를 환경의 값으로 업데이트합니다:
 
    ```text
    _TF_SA_EMAIL
@@ -904,7 +894,7 @@
    sed -i'' -e "s/CICD_PROJECT_ID/${CICD_PROJECT_ID}/" ./Jenkinsfile
    ```
 
-1. Rename `auto.example.tfvars` files to `auto.tfvars`.
+1. `auto.example.tfvars` 파일들을 `auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -929,30 +919,30 @@
 예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
    ```bash
-   #copy the business_unit_1 folder and it's contents to a new folder business_unit_2
+   # business_unit_1 폴더와 그 내용을 새로운 폴더 business_unit_2로 복사
    cp -r  business_unit_1 business_unit_2
 
-   # search all files under the folder `business_unit_2` and replace strings for business_unit_1 with strings for business_unit_2
+   # `business_unit_2` 폴더 아래의 모든 파일을 검색하여 business_unit_1의 문자열을 business_unit_2의 문자열로 대체
    grep -rl bu1 business_unit_2/ | xargs sed -i 's/bu1/bu2/g'
    grep -rl business_unit_1 business_unit_2/ | xargs sed -i 's/business_unit_1/business_unit_2/g'
    ```
 
 
-1. Commit changes.
+1. 변경 사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize projects repo'
    ```
 
-1. Also update `backend.tf` with your backend bucket from gcp-bootstrap output.
+1. gcp-bootstrap 출력에서 백엔드 버킷으로 `backend.tf`도 업데이트합니다.
 
    ```bash
    for i in `find . -name 'backend.tf'`; do sed -r -i "s/UPDATE_ME|UPDATE_PROJECTS_BACKEND/${backend_bucket}/" $i; done
    ```
 
-1. You need to manually plan and apply only once the `shared` environments since `development`, `nonproduction`, and `production` depend on it.
-1. Use `terraform output` to get the Cloud Build project ID and the projects step Terraform Service Account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `development`, `nonproduction`, `production`이 이에 종속되므로 `shared` 환경을 한 번만 수동으로 계획하고 적용해야 합니다.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 Cloud Build 프로젝트 ID와 projects 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export CICD_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw cicd_project_id)
@@ -962,61 +952,60 @@
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environments `shared`.
+1. `shared` 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/policy-library ${CICD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. `apply` shared를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-   - Assuming you configured an automatic trigger in your Jenkins Controller (see [Jenkins sub-module README](./modules/jenkins-agent/README.md)), this will trigger a plan. You can also trigger a Jenkins job manually. Given the many options to do this in Jenkins, it is out of the scope of this document see [Jenkins website](https://www.jenkins.io) for more details.
-1. Review the plan output in your Controller's web UI.
-1. Merge changes to production branch.
+   - Jenkins Controller에서 자동 트리거를 구성했다고 가정하면([Jenkins 하위 모듈 README](./modules/jenkins-agent/README.md) 참조), 이것이 plan을 트리거합니다. Jenkins 작업을 수동으로 트리거할 수도 있습니다. Jenkins에서 이를 수행하는 옵션이 많으므로 이 문서의 범위를 벗어나며, 자세한 내용은 [Jenkins 웹사이트](https://www.jenkins.io)를 참조하십시오.
+1. Controller의 웹 UI에서 플랜 출력을 검토합니다.
+1. 변경 사항을 프로덕션 브랜치에 병합합니다.
 
    ```bash
    git checkout -b production
    git push --set-upstream origin production
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. After production has been applied, apply development.
-1. Merge changes to development branch.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. 프로덕션이 적용된 후, development를 적용합니다.
+1. 변경 사항을 development 브랜치에 병합합니다.
 
    ```bash
    git checkout -b development
    git push --set-upstream origin development
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
-1. After development has been applied, apply nonproduction.
-1. Merge changes to nonproduction branch.
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
+1. development가 적용된 후, nonproduction을 적용합니다.
+1. 변경 사항을 nonproduction 브랜치에 병합합니다.
 
    ```bash
    git checkout -b nonproduction
    git push --set-upstream origin nonproduction
    ```
 
-1. Review the apply output in your Controller's web UI (you might want to use the option to "Scan Multibranch Pipeline Now" in your Jenkins Controller UI).
+1. Controller의 웹 UI에서 적용 출력을 검토합니다. (Jenkins Controller UI에서 "Scan Multibranch Pipeline Now" 옵션을 사용하는 것이 좋을 수 있습니다.)
 
-## Contributing
+## 기여
 
-Refer to the [contribution guidelines](../CONTRIBUTING.md) for
-information on contributing to this module.
+이 모듈에 기여하는 방법에 대한 정보는 [기여 가이드라인](../CONTRIBUTING.md)을 참조하십시오.

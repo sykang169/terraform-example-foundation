@@ -193,7 +193,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    ```
 
 1. `development`, `nonproduction` 및 `production` 환경이 `shared` 환경에 의존하므로, `shared` 환경을 수동으로 plan과 apply(단 한 번만)해야 합니다.
-1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [installation instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하시기 바랍니다.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [설치 지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하시기 바랍니다.
 1. 0-bootstrap 출력에서 Cloud Build 프로젝트 ID와 networks step Terraform Service Account를 가져오려면 `terraform output`을 사용합니다. 가장 기능을 활성화하기 위해 Terraform Service Account를 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
@@ -204,7 +204,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. `init`과 `plan`을 실행하고 shared 환경에 대한 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
@@ -217,7 +217,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    ./tf-wrapper.sh validate shared $(pwd)/../gcp-policies ${CLOUD_BUILD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. `apply` shared를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
@@ -229,7 +229,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    git checkout -b production
    ```
 
-1. Run `init` and `plan` and review output for environment production.
+1. `init`과 `plan`을 실행하고 production 환경에 대한 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init production
@@ -377,7 +377,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    ./tf-wrapper.sh validate shared $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. `apply` shared를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared

@@ -597,7 +597,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes
+1. 변경 사항을 커밋합니다
 
    ```bash
    git add .
@@ -671,7 +671,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    git push --set-upstream origin production
    ```
 
-1. GitLab에서 https://gitlab.com/GITLAB-OWNER/GITLAB-NETWORKS-REPO/-/merge_requests?scope=all&state=opened에서 `production` 브랜치에서 `plan` 브랜치로 병합 요청을 열고 출력을 검토합니다.
+1. GitHub에서 https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/production에서 `production` 브랜치에서 `plan` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
 
 > 참고: `3-networks-dual-svpc`의 경우 개발 및 비프로덕션 브랜치는 production 브랜치가 먼저 배포되어야 합니다.
 
@@ -682,20 +682,20 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    git push
    ```
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/plan from the `production` branch to the `development` branch and review the output.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/plan 에서 `production` 브랜치에서 `development` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
 1. 풀 리퀘스트는 `development` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub Action을 트리거합니다.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-pull-request`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
 1. GitHub 액션이 성공하면 풀 리퀘스트를 `development` 브랜치로 병합합니다.
 1. 병합은 `development` 환경에 terraform 구성을 적용하는 GitHub Action을 트리거합니다.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/development from the `development` branch to the `nonproduction` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-pull-request`.
-1. If the GitHub action is successful, merge the pull request in to the `nonproduction` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `nonproduction` environment.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/development 에서 `development` 브랜치에서 `nonproduction` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `nonproduction` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `nonproduction` 브랜치에 병합합니다.
+1. 병합은 `nonproduction` 환경에 대한 terraform 구성을 적용하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
 1. 다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 설정 해제합니다.
@@ -712,7 +712,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 
 1. 이제 [4-projects](#deploying-step-4-projects) 단계의 지침으로 이동할 수 있습니다.
 
-## Deploying step 3-networks-hub-and-spoke
+## 3-networks-hub-and-spoke 단계 배포
 
 1. `3-networks-hub-and-spoke` terraform 구성을 호스팅하기 위해 생성한 리포지토리를 `terraform-example-foundation` 폴더와 같은 수준에서 복제합니다.
 
@@ -781,7 +781,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes
+1. 변경 사항을 커밋합니다
 
    ```bash
    git add .
@@ -831,28 +831,28 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    git push --set-upstream origin plan
    ```
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/plan from the `plan` branch to the `development` branch and review the output.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/plan 에서 `plan` 브랜치에서 `development` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
 1. 풀 리퀘스트는 `development` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub Action을 트리거합니다.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-pull-request`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
 1. GitHub 액션이 성공하면 풀 리퀘스트를 `development` 브랜치로 병합합니다.
 1. 병합은 `development` 환경에 terraform 구성을 적용하는 GitHub Action을 트리거합니다.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/development from the `development` branch to the `nonproduction` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-pull-request`.
-1. If the GitHub action is successful, merge the pull request in to the `nonproduction` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `nonproduction` environment.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/development 에서 `development` 브랜치에서 `nonproduction` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `nonproduction` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `nonproduction` 브랜치에 병합합니다.
+1. 병합은 `nonproduction` 환경에 대한 terraform 구성을 적용하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/nonproduction from the `nonproduction` branch to the `production` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `production` environment.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-pull-request`.
-1. If the GitHub action is successful, merge the pull request in to the `production` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `production` environment.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/pull/new/nonproduction 에서 `nonproduction` 브랜치에서 `production` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `production` 브랜치에 병합합니다.
+1. 병합은 `production` 환경에 대한 terraform 구성을 적용하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-NETWORKS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 
 
 1. 다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 설정 해제합니다.
@@ -869,7 +869,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 
 1. 이제 [4-projects](#deploying-step-4-projects) 단계의 지침으로 이동할 수 있습니다.
 
-## Deploying step 4-projects
+## 4-projects 단계 배포
 
 1. `4-projects` terraform 구성을 호스팅하기 위해 생성한 리포지토리를 `terraform-example-foundation` 폴더와 같은 수준에서 복제합니다.
 
@@ -947,10 +947,10 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 예를 들어 business_unit_1과 유사한 새 비즈니스 단위를 생성하려면 다음을 실행하십시오:
 
    ```bash
-   #copy the business_unit_1 folder and it's contents to a new folder business_unit_2
+   # business_unit_1 폴더와 그 내용을 새로운 폴더 business_unit_2로 복사
    cp -r  business_unit_1 business_unit_2
 
-   # search all files under the folder `business_unit_2` and replace strings for business_unit_1 with strings for business_unit_2
+   # `business_unit_2` 폴더 아래의 모든 파일을 검색하여 business_unit_1의 문자열을 business_unit_2의 문자열로 대체
    grep -rl bu1 business_unit_2/ | xargs sed -i 's/bu1/bu2/g'
    grep -rl business_unit_1 business_unit_2/ | xargs sed -i 's/business_unit_1/business_unit_2/g'
    ```
@@ -1007,28 +1007,28 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    git push --set-upstream origin plan
    ```
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/pull/new/plan from the `plan` branch to the `development` branch and review the output.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/pull/new/plan 에서 `plan` 브랜치에서 `development` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
 1. 풀 리퀘스트는 `development` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub Action을 트리거합니다.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions under `tf-pull-request`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
 1. GitHub 액션이 성공하면 풀 리퀘스트를 `development` 브랜치로 병합합니다.
 1. 병합은 `development` 환경에 terraform 구성을 적용하는 GitHub Action을 트리거합니다.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/pull/new/development from the `development` branch to the `nonproduction` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions under `tf-pull-request`.
-1. If the GitHub action is successful, merge the pull request in to the `nonproduction` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `nonproduction` environment.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/pull/new/development 에서 `development` 브랜치에서 `nonproduction` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `nonproduction` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `nonproduction` 브랜치에 병합합니다.
+1. 병합은 `nonproduction` 환경에 대한 terraform 구성을 적용하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/pull/new/nonproduction from the `nonproduction` branch to the `production` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `production` environment.
-1. Review the GitHub Action output in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions under `tf-pull-request`.
-1. If the GitHub action is successful, merge the pull request in to the `production` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `production` environment.
-1. Review merge output in GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions under `tf-apply`.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/pull/new/nonproduction 에서 `nonproduction` 브랜치에서 `production` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions 의 `tf-pull-request` 아래에서 GitHub 액션 출력을 검토합니다.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `production` 브랜치에 병합합니다.
+1. 병합은 `production` 환경에 대한 terraform 구성을 적용하는 GitHub 액션을 트리거합니다.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-PROJECTS-REPO/actions 의 `tf-apply` 아래에서 병합 출력을 검토합니다.
 
 1. `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 설정 해제합니다.
 

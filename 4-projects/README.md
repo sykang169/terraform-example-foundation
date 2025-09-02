@@ -127,29 +127,29 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${remote_state_bucket}/" ./common.auto.tfvars
    ```
 
-1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
+1. (선택사항) 별도의 비즈니스 유닛이나 엔터티에 대한 추가 하위 폴더를 원하는 경우, `business_unit_1` 폴더의 사본을 추가로 만들고 `business_code`, `business_unit`, 또는 `subnet_ip_range`와 같이 비즈니스 유닛마다 다른 값들을 수정하세요.
 
 예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
 ```bash
-#copy the business_unit_1 folder and it's contents to a new folder business_unit_2
+# business_unit_1 디렉토리와 그 내용을 business_unit_2라는 새 디렉토리로 복사
 cp -r  business_unit_1 business_unit_2
 
-# search all files under the folder `business_unit_2` and replace strings for business_unit_1 with strings for business_unit_2
+# `business_unit_2` 디렉토리 아래에 있는 모든 파일에서 business_unit_1 문자열을 business_unit_2로 전환
 grep -rl bu1 business_unit_2/ | xargs sed -i 's/bu1/bu2/g'
 grep -rl business_unit_1 business_unit_2/ | xargs sed -i 's/business_unit_1/business_unit_2/g'
-# search subnet_ip_range 10.3.64.0 and replace for the new range 10.4.64.0
+# subnet_ip_range 10.3.64.0을 새로운 범위 10.4.64.0으로 바꾸기
 grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
 ```
 
-1. Commit changes.
+1. 변경사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize projects repo'
    ```
 
-1. You need to manually plan and apply only once the `business_unit_1/shared` and `business_unit_2/shared` environments since `development`, `nonproduction`, and `production` depend on them.
+1. `development`, `nonproduction`, `production`이 이들에 의존하므로 `business_unit_1/shared`와 `business_unit_2/shared` 환경을 한 번만 수동으로 계획하고 적용해야 합니다.
 1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 1. `terraform output`을 사용하여 0-bootstrap 출력에서 Cloud Build 프로젝트 ID와 프로젝트 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
@@ -161,20 +161,20 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment shared.
+1. shared 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init shared
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/../gcp-policies ${CLOUD_BUILD_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. shared에 대해 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
@@ -196,7 +196,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    git push origin production
    ```
 
-1. After production has been applied, apply development.
+1. production이 적용된 후 development를 적용합니다.
 1. development로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
    이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
@@ -205,7 +205,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    git push origin development
    ```
 
-1. After development has been applied, apply nonproduction.
+1. development가 적용된 후 nonproduction을 적용합니다.
 1. nonproduction으로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
    이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다. https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
@@ -289,22 +289,22 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
+1. (선택사항) 별도의 비즈니스 유닛이나 엔터티에 대한 추가 하위 폴더를 원하는 경우, `business_unit_1` 폴더의 사본을 추가로 만들고 `business_code`, `business_unit`, 또는 `subnet_ip_range`와 같이 비즈니스 유닛마다 다른 값들을 수정하세요.
 
 예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
 ```bash
-#copy the business_unit_1 folder and it's contents to a new folder business_unit_2
+# business_unit_1 디렉토리와 그 내용을 business_unit_2라는 새 디렉토리로 복사
 cp -r  business_unit_1 business_unit_2
 
-# search all files under the folder `business_unit_2` and replace strings for business_unit_1 with strings for business_unit_2
+# `business_unit_2` 디렉토리 아래에 있는 모든 파일에서 business_unit_1 문자열을 business_unit_2로 전환
 grep -rl bu1 business_unit_2/ | xargs sed -i 's/bu1/bu2/g'
 grep -rl business_unit_1 business_unit_2/ | xargs sed -i 's/business_unit_1/business_unit_2/g'
-# search subnet_ip_range 10.3.64.0 and replace for the new range 10.4.64.0
+# subnet_ip_range 10.3.64.0을 새로운 범위 10.4.64.0으로 바꾸기
 grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
 ```
 
-1. Checkout `shared` branch. Run `init` and `plan` and review output for environment shared.
+1. `shared` 브랜치를 체크아웃합니다. shared 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout shared
@@ -312,13 +312,13 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` shared.
+1. shared에 대해 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply shared
@@ -326,7 +326,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    git commit -m "Initial shared commit."
    ```
 
-1. Checkout `development` branch and merge `shared` into it. Run `init` and `plan` and review output for environment production.
+1. `development` 브랜치를 체크아웃하고 `shared`를 병합합니다. production 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout development
@@ -335,13 +335,13 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ./tf-wrapper.sh plan development
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate development $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` development.
+1. development에 대해 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply development
@@ -349,7 +349,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    git commit -m "Initial development commit."
    ```
 
-1. Checkout `nonproduction` and merge `development` into it. Run `init` and `plan` and review output for environment nonproduction.
+1. `nonproduction`을 체크아웃하고 `development`를 병합합니다. nonproduction 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout nonproduction
@@ -358,13 +358,13 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ./tf-wrapper.sh plan nonproduction
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate nonproduction $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` nonproduction.
+1. nonproduction에 대해 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply nonproduction
@@ -372,7 +372,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    git commit -m "Initial nonproduction commit."
    ```
 
-1. Checkout shared `production`. Run `init` and `plan` and review output for environment development.
+1. `production`을 체크아웃합니다. development 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout production
@@ -381,13 +381,13 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate production $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` production.
+1. production에 대해 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply production
