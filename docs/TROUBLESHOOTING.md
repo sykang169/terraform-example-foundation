@@ -20,189 +20,185 @@
 - [프로젝트 할당량 초과](#project-quota-exceeded)
 - [기본 브랜치 설정](#default-branch-setting)
 - [Terraform 상태 스냅샷 잠금](#terraform-state-snapshot-lock)
-- [Application authenticated using end user credentials](#application-authenticated-using-end-user-credentials)
-- [Cannot assign requested address error in Cloud Shell](#cannot-assign-requested-address-error-in-cloud-shell)
-- [Error: Unsupported attribute](#error-unsupported-attribute)
-- [Error: Error adding network peering](#error-error-adding-network-peering)
-- [Error: Terraform deploy fails due to GitLab repositories not found](#terraform-deploy-fails-due-to-gitlab-repositories-not-found)
-- [Error: Gitlab pipelines access denied](#gitlab-pipelines-access-denied)
-- [Error: Unknown project id on 4-project step context](#error-unknown-project-id-on-4-project-step-context)
-- [Error: Error getting operation for committing purpose for TagValue](#error-error-getting-operation-for-committing-purpose-for-tagvalue)
-- [The user does not have permission to access Project or it may not exist](#the-user-does-not-have-permission-to-access-project-or-it-may-not-exist)
+- [최종 사용자 자격 증명을 사용한 애플리케이션 인증](#application-authenticated-using-end-user-credentials)
+- [Cloud Shell에서 요청된 주소를 할당할 수 없음 오류](#cannot-assign-requested-address-error-in-cloud-shell)
+- [오류: 지원되지 않는 속성](#error-unsupported-attribute)
+- [오류: 네트워크 피어링 추가 오류](#error-error-adding-network-peering)
+- [오류: GitLab 리포지토리를 찾을 수 없어 Terraform 배포 실패](#terraform-deploy-fails-due-to-gitlab-repositories-not-found)
+- [오류: GitLab 파이프라인 액세스 거부](#gitlab-pipelines-access-denied)
+- [오류: 4-project 단계 컨텍스트에서 알 수 없는 프로젝트 ID](#error-unknown-project-id-on-4-project-step-context)
+- [오류: TagValue 커밋 목적으로 작업 가져오기 오류](#error-error-getting-operation-for-committing-purpose-for-tagvalue)
+- [사용자가 프로젝트에 액세스할 권한이 없거나 프로젝트가 존재하지 않을 수 있습니다](#the-user-does-not-have-permission-to-access-project-or-it-may-not-exist)
 - - -
 
-### Project quota exceeded
+### 프로젝트 할당량 초과
 
-**Error message:**
+**오류 메시지:**
 
 ```text
 Error code 8, message: The project cannot be created because you have exceeded your allotted project quota
 ```
 
-**Cause:**
+**원인:**
 
-This message means you have reached your [project creation quota](https://support.google.com/cloud/answer/6330231).
+이 메시지는 [프로젝트 생성 할당량](https://support.google.com/cloud/answer/6330231)에 도달했음을 의미합니다.
 
-**Solution:**
+**해결 방법:**
 
-In this case, you can use the [Request Project Quota Increase](https://support.google.com/code/contact/project_quota_increase)
-form to request a quota increase.
+이 경우 [프로젝트 할당량 증가 요청](https://support.google.com/code/contact/project_quota_increase) 양식을 사용하여 할당량 증가를 요청할 수 있습니다.
 
-In the support form,
-for the field **Email addresses that will be used to create projects**,
-use the email address of `projects_step_terraform_service_account_email` that is created by the Terraform Example Foundation 0-bootstrap step.
+지원 양식에서 **프로젝트 생성에 사용될 이메일 주소** 필드에는 Terraform Example Foundation 0-bootstrap 단계에서 생성된 `projects_step_terraform_service_account_email`의 이메일 주소를 사용하세요.
 
-**Notes:**
+**참고:**
 
-- If you see other quota errors, see the [Quota documentation](https://cloud.google.com/docs/quota).
+- 다른 할당량 오류가 나타나면 [할당량 문서](https://cloud.google.com/docs/quota)를 참조하세요.
 
-### Default branch setting
+### 기본 브랜치 설정
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-error: src refspec master does not match any
+오류: 소스 참조 사양 master가 어떤 것과도 일치하지 않습니다
 ```
 
-**Cause:**
+**원인:**
 
-This could be due to init.defaultBranch being set to something other than
-`main`.
+init.defaultBranch가 `main`이 아닌 다른 값으로 설정되어 있기 때문일 수 있습니다.
 
-**Solution:**
+**해결 방법:**
 
-1. Determine your default branch:
+1. 기본 브랜치를 확인합니다:
 
    ```bash
    git config init.defaultBranch
    ```
 
-   Outputs `main` if you are in the main branch.
-1. If your default branch is not set to `main`, set it:
+   main 브랜치에 있는 경우 `main`을 출력합니다.
+1. 기본 브랜치가 `main`으로 설정되어 있지 않으면 설정합니다:
 
    ```bash
    git config --global init.defaultBranch main
    ```
 
-### Terraform State Snapshot lock
+### Terraform 상태 스냅샷 잠금
 
-**Error message:**
+**오류 메시지:**
 
-When running the build for the branch `production` in step 3-networks in your **Foundation CI/CD Pipeline** the build fails with:
+**Foundation CI/CD 파이프라인**의 3-networks 단계에서 `production` 브랜치에 대한 빌드를 실행할 때 다음과 같이 빌드가 실패합니다:
 
 ```
 state snapshot was created by Terraform v1.x.x, which is newer than current v1.5.7; upgrade to Terraform v1.x.x or greater to work with this state
 ```
 
-**Cause:**
+**원인:**
 
-The manual deploy step for the shared environment in [3-networks](../3-networks#deploying-with-cloud-build) was executed with a Terraform version newer than version v1.5.7 used in the **Foundation CI/CD Pipeline**.
+[3-networks](../3-networks#deploying-with-cloud-build)의 shared 환경에 대한 수동 배포 단계가 **Foundation CI/CD 파이프라인**에서 사용되는 v1.5.7보다 더 새로운 Terraform 버전으로 실행되었습니다.
 
-**Solution:**
+**해결 방법:**
 
-You have two options:
+두 가지 옵션이 있습니다:
 
-#### Downgrade your local Terraform version
+#### 로컬 Terraform 버전 다운그레이드
 
-You will need to re-run the deploy of the 3-networks shared environment with Terraform v1.5.7.
+Terraform v1.5.7로 3-networks shared 환경의 배포를 다시 실행해야 합니다.
 
-Steps:
+단계:
 
-- Go to folder `gcp-networks/envs/shared/`.
-- Update `backend.tf` with your bucket name from the 0-bootstrap step.
-- Run `terraform destroy` in the folder using the Terraform v1.x.x version.
-- Delete the Terraform state file in `gs://YOUR-TF-STATE-BUCKET/terraform/networks/envs/shared/default.tfstate`. This bucket is in your **Seed Project**.
-- Install Terraform v1.5.7.
-- Re-run the manual deploy of 3-networks shared environment using Terraform v1.5.7.
+- `gcp-networks/envs/shared/` 폴더로 이동합니다.
+- 0-bootstrap 단계에서 가져온 버킷 이름으로 `backend.tf`를 업데이트합니다.
+- Terraform v1.x.x 버전을 사용하여 폴더에서 `terraform destroy`를 실행합니다.
+- `gs://YOUR-TF-STATE-BUCKET/terraform/networks/envs/shared/default.tfstate`의 Terraform 상태 파일을 삭제합니다. 이 버킷은 **Seed Project**에 있습니다.
+- Terraform v1.5.7을 설치합니다.
+- Terraform v1.5.7을 사용하여 3-networks shared 환경의 수동 배포를 다시 실행합니다.
 
-#### Upgrade your 0-bootstrap runner image Terraform version
+#### 0-bootstrap 러너 이미지 Terraform 버전 업그레이드
 
-Replace `1.x.x` with the actual version of your local Terraform version in the following instructions:
+다음 지침에서 `1.x.x`를 로컬 Terraform 버전의 실제 버전으로 바꿉니다:
 
-- Go to folder `0-bootstrap`.
-- Edit the local `terraform_version` in the Terraform [cb.tf](../0-bootstrap/cb.tf) file:
-  - Upgrade local `terraform_version` from `"1.5.7"` to `"1.x.x"`
-- Run `terraform init`.
-- Run `terraform plan` and review the output.
-- Run `terraform apply`.
+- `0-bootstrap` 폴더로 이동합니다.
+- Terraform [cb.tf](../0-bootstrap/cb.tf) 파일의 로컬 `terraform_version`을 편집합니다:
+  - 로컬 `terraform_version`을 `"1.5.7"`에서 `"1.x.x"`로 업그레이드
+- `terraform init`을 실행합니다.
+- `terraform plan`을 실행하고 출력을 검토합니다.
+- `terraform apply`를 실행합니다.
 
-### Application authenticated using end user credentials
+### 최종 사용자 자격 증명을 사용한 애플리케이션 인증
 
-**Error message:**
+**오류 메시지:**
 
-When running `gcloud` commands in Cloud Shell like
+Cloud Shell에서 다음과 같이 `gcloud` 명령을 실행할 때
 
 ```bash
 gcloud scc notifications describe <scc_notification_name> --organization YOUR_ORGANIZATION_ID
 ```
 
-or
+또는
 
 ```bash
 gcloud access-context-manager policies list --organization YOUR_ORGANIZATION_ID --format="value(name)"
 ```
 
-you receive the error:
+다음 오류가 발생합니다:
 
 ```text
 Error 403: Your application has authenticated using end user credentials from the Google Cloud SDK or Google Cloud Shell which are not supported by the X.googleapis.com.
 We recommend configuring the billing/quota_project setting in gcloud or using a service account through the auth/impersonate_service_account setting.
-For more information about service accounts and how to use them in your application, see https://cloud.google.com/docs/authentication/.
+서비스 계정과 애플리케이션에서 사용하는 방법에 대한 자세한 내용은 https://cloud.google.com/docs/authentication/을 참조하세요.
 ```
 
-**Cause:**
+**원인:**
 
-When using application default credentials in Cloud Shell a billing project is not available for APIs like `securitycenter.googleapis.com` or `accesscontextmanager.googleapis.com`.
+Cloud Shell에서 애플리케이션 기본 자격 증명을 사용할 때 `securitycenter.googleapis.com` 또는 `accesscontextmanager.googleapis.com`과 같은 API에 대한 청구 프로젝트를 사용할 수 없습니다.
 
-**Solution:**
+**해결 방법:**
 
-you can re-run the command using impersonation or providing a billing project:
+가장 또는 청구 프로젝트를 제공하여 명령을 다시 실행할 수 있습니다:
 
-- Impersonate the Terraform Service Account
+- Terraform 서비스 계정 가장
 
 ```bash
 --impersonate-service-account=terraform-org-sa@<SEED_PROJECT_ID>.iam.gserviceaccount.com
 ```
 
-- Provide a billing project
+- 청구 프로젝트 제공
 
 ```bash
 --billing-project=<A-VALID-PROJECT-ID>
 ```
 
-If you provide a billing project, you must have the `serviceusage.services.use` permission on the billing_project.
+청구 프로젝트를 제공하는 경우 billing_project에 대한 `serviceusage.services.use` 권한이 있어야 합니다.
 
-### Cannot assign requested address error in Cloud Shell
+### Cloud Shell에서 요청된 주소를 할당할 수 없음 오류
 
-**Error message:**
+**오류 메시지:**
 
-When using [Google Cloud Shell](https://cloud.google.com/shell/docs) to deploy the code in ths repository, you may face an error like
+이 리포지토리의 코드를 배포하기 위해 [Google Cloud Shell](https://cloud.google.com/shell/docs)을 사용할 때
 
 ```text
 dial tcp [2607:f8b0:400c:c15::5f]:443: connect: cannot assign requested address
 ```
 
-when Terraform calls the Google APIs.
+Terraform이 Google API를 호출할 때 위와 같은 오류가 발생할 수 있습니다.
 
-**Cause:**
+**원인:**
 
-This is a [known terraform issue](https://github.com/hashicorp/terraform-provider-google/issues/6782) regrading IPv6.
+이는 IPv6에 관련된 [알려진 terraform 문제](https://github.com/hashicorp/terraform-provider-google/issues/6782)입니다.
 
-**Solution:**
+**해결 방법:**
 
-At this time the alternatives are:
+현재 대안은 다음과 같습니다:
 
-1. To use a [workaround](https://stackoverflow.com/a/62827358) to force Google API calls in Cloud Shell to use an IP from the `private.googleapis.com` range (199.36.153.8/30 ) or
-1. To deploy the foundation code from a local machine that supports IPv6.
+1. Cloud Shell에서 Google API 호출이 `private.googleapis.com` 범위(199.36.153.8/30)의 IP를 사용하도록 강제하는 [해결 방법](https://stackoverflow.com/a/62827358)을 사용하거나
+1. IPv6을 지원하는 로컬 머신에서 foundation 코드를 배포하는 것입니다.
 
-If you use the workaround, the API list should include the ones that are [allowed](../policy-library/policies/constraints/serviceusage_allow_basic_apis.yaml) in the terraform-example-foundation policy library.
+해결 방법을 사용하는 경우 API 목록에는 terraform-example-foundation 정책 라이브러리에서 [허용된](../policy-library/policies/constraints/serviceusage_allow_basic_apis.yaml) API가 포함되어야 합니다.
 
-### Error: Unsupported attribute
+### 오류: 지원되지 않는 속성
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: Unsupported attribute
+오류: 지원되지 않는 속성
 
   on main.tf line 22, in locals:
   22:   org_id               = data.terraform_remote_state.bootstrap.outputs.common_config.org_id
@@ -212,21 +208,21 @@ Error: Unsupported attribute
 This object does not have an attribute named "common_config".
 ```
 
-**Cause:**
+**원인:**
 
-The stages after `0-bootstrap` use `terraform_remote_state` data source to read common configuration like the organization ID from the output of the `0-bootstrap` stage.
-The error means that the Terraform state of the `0-bootstrap` stage was not copied to the Terraform state bucket created in stage `0-bootstrap`.
+`0-bootstrap` 이후의 단계들은 `terraform_remote_state` 데이터 소스를 사용하여 `0-bootstrap` 단계의 출력에서 조직 ID와 같은 공통 구성을 읽습니다.
+이 오류는 `0-bootstrap` 단계의 Terraform 상태가 `0-bootstrap` 단계에서 생성된 Terraform 상태 버킷으로 복사되지 않았음을 의미합니다.
 
-**Solution:**
+**해결 방법:**
 
-Follow the instructions at the end of the [Deploying with Cloud Build](../0-bootstrap/README.md#deploying-with-cloud-build) section in the `0-bootstrap` README to copy the Terraform state to the Cloud Storage bucket created in stage `0-bootstrap` and retry planning/applying the stage you are deploying.
+`0-bootstrap` README의 [Cloud Build로 배포](../0-bootstrap/README.md#deploying-with-cloud-build) 섹션 끝에 있는 지침을 따라 Terraform 상태를 `0-bootstrap` 단계에서 생성된 Cloud Storage 버킷으로 복사하고 배포 중인 단계의 계획/적용을 다시 시도하세요.
 
-### Error: Error adding network peering
+### 오류: 네트워크 피어링 추가 오류
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: Error adding network peering: googleapi: Error 403: Rate Limit Exceeded
+오류: 네트워크 피어링 추가 오류: googleapi: 오류 403: 속도 제한 초과
 Details:
 [
   {
@@ -244,63 +240,63 @@ Details:
 
 ```
 
-**Cause:**
+**원인:**
 
-In a deploy using the [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) network mode, an error occurs when adding the network peering between the Hub network and the Spoke network due to too many peering operations.
+[Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) 네트워크 모드를 사용하는 배포에서 피어링 작업이 너무 많아 Hub 네트워크와 Spoke 네트워크 간의 네트워크 피어링을 추가할 때 오류가 발생합니다.
 
-**Solution:**
+**해결 방법:**
 
-This is a transient error and the deploy can be retried. Wait for at least a minute and retry the deploy.
+이는 일시적인 오류이므로 배포를 다시 시도할 수 있습니다. 최소 1분 대기하고 배포를 다시 시도하세요.
 
 
-### Error: Unknown project id on 4-project step context
+### 오류: 4-project 단계 컨텍스트에서 알 수 없는 프로젝트 ID
 
-**Error message:**
+**오류 메시지:**
 
 ```text
 Error 400: Unknown project id: 'prj-<business-unity>-<environment>-svpc-<random-suffix>', invalid
 ```
 
-**Cause:**
+**원인:**
 
-When you try to run 4-projects step without requesting additional project quota for **project service account created in 0-bootstrap step** you may face the error above, even after the project quota issue is resolved, due to an inconsistency in terraform state.
+**0-bootstrap 단계에서 생성된 프로젝트 서비스 계정**에 대한 추가 프로젝트 할당량을 요청하지 않고 4-projects 단계를 실행하려고 할 때, 프로젝트 할당량 문제가 해결된 후에도 terraform 상태의 뺈일치로 인해 위와 같은 오류가 발생할 수 있습니다.
 
-**Solution:**
+**해결 방법:**
 
-- Make sure you [have requested the additional project quota](#project-quota-exceeded) for the **project SA e-mail** before running the following steps.
+- 다음 단계를 실행하기 전에 **프로젝트 SA 이메일**에 대한 [추가 프로젝트 할당량을 요청](#project-quota-exceeded)했는지 확인하세요.
 
-You will need to mark some Terraform resources as **tainted** in order to trigger the recreation of the missing projects to fix the inconsistent in the terraform state.
+terraform 상태의 뺈일치를 수정하기 위해 누락된 프로젝트의 재생성을 트리거하도록 일부 Terraform 리소스를 **tainted**로 표시해야 합니다.
 
-1. In a terminal, navigate to the path where the error is being reported.
+1. 터미널에서 오류가 보고되는 경로로 이동합니다.
 
-   For example, if the unknown project ID is `prj-bu1-p-svpc`, you should go to ./gcp-projects/business_unit_1/production (`business_unit_1` due to `bu1` and `production` due to `p`, see [naming conventions](https://cloud.google.com/architecture/security-foundations/using-example-terraform#naming_conventions) for more information on the projects naming guideline).
+   예를 들어, 알 수 없는 프로젝트 ID가 `prj-bu1-p-svpc`인 경우 ./gcp-projects/business_unit_1/production으로 이동해야 합니다(`bu1`로 인한 `business_unit_1`과 `p`로 인한 `production`, 프로젝트 이름 지정 가이드라인에 대한 자세한 정보는 [명명 규칙](https://cloud.google.com/architecture/security-foundations/using-example-terraform#naming_conventions)을 참조하세요).
 
    ```bash
    cd ./gcp-projects/<business_unit>/<environment>
    ```
 
-1. Run the `terraform init` command so you can pull the remote state.
+1. 원격 상태를 가져올 수 있도록 `terraform init` 명령을 실행합니다.
 
    ```bash
    terraform init
    ```
 
-1. Run the `terraform state list` command, filtering by `random_project_id_suffix`.
-This command will give you all the expected projects that should be created for this BU and environment that uses a random suffix.
+1. `random_project_id_suffix`로 필터링하여 `terraform state list` 명령을 실행합니다.
+이 명령은 랜덤 접미사를 사용하는 이 BU 및 환경에 대해 생성되어야 하는 모든 예상 프로젝트를 제공합니다.
 
    ```bash
    terraform state list | grep random_project_id_suffix
    ```
 
-1. Identify the folder which is the parent of the projects of the environment.
-If the Terraform Example Foundation is deployed directly under the organization use `--organization`, if the Terraform Example Foundation is deployed under a folder use `--folder`. The "ORGANIZATION_ID" and "PARENT_FOLDER" are the input values provided for the 0-bootstrap step.
+1. 환경의 프로젝트 부모인 폴더를 식별합니다.
+Terraform Example Foundation이 조직 하에 직접 배포된 경우 `--organization`을 사용하고, Terraform Example Foundation이 폴더 하에 배포된 경우 `--folder`를 사용합니다. "ORGANIZATION_ID"와 "PARENT_FOLDER"는 0-bootstrap 단계에 제공된 입력 값입니다.
 
    ```bash
    gcloud resource-manager folders list [ --organization=ORGANIZATION_ID ][ --folder=PARENT_FOLDER ]
    ```
 
-1. The result of the `gcloud` command will look like the following output.
-Using the `production` environment for this example, the folder ID for the environment would be `333333333333`.
+1. `gcloud` 명령의 결과는 다음 출력과 같아 보입니다.
+이 예에서 `production` 환경을 사용하면 환경의 폴더 ID는 `333333333333`이 됩니다.
 
    ```
    DISPLAY_NAME         PARENT_NAME                     ID
@@ -311,161 +307,161 @@ Using the `production` environment for this example, the folder ID for the envir
    fldr-development     folders/PARENT_FOLDER  555555555555
    ```
 
-1. Run the `gcloud projects list` command to.
-Replace `id_of_the_environment_folder` with the proper ID of the folder retrieved in the previous step.
-This command will give you all the projects that were actually created.
+1. `gcloud projects list` 명령을 실행합니다.
+이전 단계에서 검색된 폴더의 적절한 ID로 `id_of_the_environment_folder`를 바꿉니다.
+이 명령은 실제로 생성된 모든 프로젝트를 제공합니다.
 
    ```bash
    gcloud projects list --filter="parent=<id_of_the_environment_folder>"
    ```
 
-1. For each resource listed in the `terraform state` step for a project that is **not** returned by the `gcloud projects list` step, we should mark that resource as tainted to force it to be recreated in order to fix the inconsistency in the terraform state.
+1. `gcloud projects list` 단계에서 반환되지 **않은** 프로젝트에 대한 `terraform state` 단계에 나열된 각 리소스에 대해 terraform 상태의 뺈일치를 수정하기 위해 해당 리소스를 tainted로 표시하여 재생성을 강제해야 합니다.
 
    ```bash
    terraform taint <resource>[index]
    ```
 
-   For example, in the following command we are marking as tainted the env secrets project. You may need to run the `terraform taint` command multiple times, depending on how many missing projects you have.
+   예를 들어, 다음 명령에서는 env secrets 프로젝트를 tainted로 표시하고 있습니다. 누락된 프로젝트 수에 따라 `terraform taint` 명령을 여러 번 실행해야 할 수 있습니다.
 
    ```bash
    terraform taint module.env.module.env_secrets_project.module.project.module.project-factory.random_string.random_project_id_suffix[0]
    ```
 
-1. After running the `terraform taint` command for all the non-matching items, go to Cloud Build and trigger a retry action for the failed job.
-This should complete successfully, if you encounter another similar error for another BU/environment that will require you to follow this guide again but instead changing paths according to the BU/environment reported in the error log.
+1. 일치하지 않는 모든 항목에 대해 `terraform taint` 명령을 실행한 후 Cloud Build로 이동하여 실패한 작업에 대한 재시도 작업을 트리거합니다.
+이는 성공적으로 완료되어야 하며, 다른 BU/환경에 대해 유사한 다른 오류가 발생하면 오류 로그에 보고된 BU/환경에 따라 경로를 변경하여 이 가이드를 다시 따라야 합니다.
 
-**Notes:**
+**참고:**
 
-   - Make sure you run the taint command just for the resources that contain the [number] at the end of the line returned by terraform state list step. You don't need to run for the groups (the resources that don't have the [] at the end).
+   - terraform state list 단계에서 반환된 줄 끝에 [number]를 포함하는 리소스에대해서만 taint 명령을 실행해야 합니다. 그룹(끝에 []가 없는 리소스)에 대해서는 실행할 필요가 없습니다.
 
-### Error: Error getting operation for committing purpose for TagValue
+### 오류: TagValue 커밋 목적으로 작업 가져오기 오류
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: Error waiting to create TagValue: Error waiting for Creating TagValue: Error code 13, message: Error getting operation for committing purpose for TagValue: tagValues/{tag_value_id}
+오류: TagValue 생성 대기 오류: TagValue 생성 대기 오류: 오류 코드 13, 메시지: TagValue 커밋 목적 작업 가져오기 오류: tagValues/{tag_value_id}
 ```
 
-**Cause:**
+**원인:**
 
-Sometimes when deploying a [google_tags_tag_value](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/tags_tag_value) the error occurs and Terraform is not able to finish the execution.
+[google_tags_tag_value](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/tags_tag_value)를 배포할 때 때때로 오류가 발생하여 Terraform이 실행을 완료할 수 없습니다.
 
-**Solution:**
+**해결 방법:**
 
-1. This is a transient error and the deploy can be retried.
-1. A retry policy was added to prevent this error during the integration test.
+1. 이는 일시적인 오류이므로 배포를 다시 시도할 수 있습니다.
+1. 통합 테스트 중에 이 오류를 방지하기 위해 재시도 정책이 추가되었습니다.
 - - -
 
-### Caller does not have permission in the Organization
+### 호출자가 조직에서 권한이 없음
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: Error when reading or editing Organization Not Found : <organization-id>: googleapi: Error 403: The caller does not have permission, forbidden
+오류: 조직 읽기 또는 편집 시 오류 조직을 찾을 수 없습니다 : <organization-id>: googleapi: 오류 403: 호출자에게 권한이 없습니다, 금지됨
 ```
 
-**Cause:**
+**원인:**
 
-User running Terraform is missing [Organization Administrator](https://cloud.google.com/iam/docs/understanding-roles#resource-manager-roles) predefined role at the Organization level.
+Terraform을 실행하는 사용자가 조직 수준에서 [조직 관리자](https://cloud.google.com/iam/docs/understanding-roles#resource-manager-roles) 미리 정의된 역할을 갖고 있지 않습니다.
 
-**Solution:**
+**해결 방법:**
 
-- If the user **does not have the role Organization Administrator** try the following:
+- 사용자가 **조직 관리자 역할을 갖고 있지 않다면** 다음을 시도하세요:
 
-You will need to request the roles to be granted to your user by your organization administration team.
+조직 관리 팀에 사용자에게 역할을 부여하도록 요청해야 합니다.
 
-- If the user **does have the role Organization Administrator** try the following:
+- 사용자가 **조직 관리자 역할을 갖고 있다면** 다음을 시도하세요:
 
 ```bash
 gcloud auth application-default login
-gcloud auth list # <- confirm that correct account has a star next to it
+gcloud auth list # <- 올바른 계정 옆에 별표가 있는지 확인
 ```
 
-Re-run `terraform` after.
+후에 `terraform`을 다시 실행하세요.
 
-### Billing quota exceeded
+### 청구 할당량 초과
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: Error setting billing account "XXXXXX-XXXXXX-XXXXXX" for project "projects/some-project": googleapi: Error 400: Precondition check failed., failedPrecondition
+오류: 프로젝트 "projects/some-project"에 대한 청구 계정 "XXXXXX-XXXXXX-XXXXXX" 설정 오류: googleapi: 오류 400: 전제 조건 확인 실패., 전제조건실패
 ```
 
-**Cause:**
+**원인:**
 
-Most likely this is related to a billing quota issue.
+대부분 이는 청구 할당량 문제와 관련이 있습니다.
 
-**Solution:**
+**해결 방법:**
 
-try
+다음을 시도해 보세요
 
 ```bash
 gcloud alpha billing projects link projects/some-project --billing-account XXXXXX-XXXXXX-XXXXXX
 ```
 
-If output states `Cloud billing quota exceeded`, you can use the [Request Billing Quota Increase](https://support.google.com/code/contact/billing_quota_increase) form to request a billing quota increase.
+출력에 `Cloud billing quota exceeded`가 표시되면 [청구 할당량 증가 요청](https://support.google.com/code/contact/billing_quota_increase) 양식을 사용하여 청구 할당량 증가를 요청할 수 있습니다.
 
-### Terraform Error acquiring the state lock
+### Terraform 상태 잠금 획득 오류
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: Error acquiring the state lock
+오류: 상태 잠금 획득 오류
 ```
 
-**Cause:**
+**원인:**
 
-This message means that you are trying to apply a Terraform configuration with a remote backend that is in a [locked state](https://www.terraform.io/language/state/locking).
+이 메시지는 [잠금 상태](https://www.terraform.io/language/state/locking)에 있는 원격 백엔드를 사용하여 Terraform 구성을 적용하려고 하고 있음을 의미합니다.
 
-If the Terraform process was unable to finish due to an unexpected event, i.e build timeout or terraform process killed. It will keep the Terraform State **locked**.
+Terraform 프로세스가 빌드 시간 초과 또는 terraform 프로세스 종료와 같은 예상치 못한 이벤트로 인해 완료할 수 없는 경우 Terraform 상태가 **잠김** 상태로 유지됩니다.
 
-**Solution:**
+**해결 방법:**
 
-The following commands are an example of how to unlock the **development environment** from step 2-environments that is one part of the Foundation Example.
-It can also be applied in the same way to the other parts.
+다음 명령은 Foundation Example의 한 부분인 2-environments 단계의 **development 환경** 잠금을 해제하는 방법의 예시입니다.
+다른 부분에도 동일하게 적용할 수 있습니다.
 
-1. Clone the repository where you got the Terraform State lock. The following example assumes **development environment** from step 2-environments:
+1. Terraform 상태 잠금을 받은 리포지토리를 복제합니다. 다음 예시는 2-environments 단계의 **development 환경**을 가정합니다:
 
    ```bash
    gcloud source repos clone gcp-environments --project=YOUR_CLOUD_BUILD_PROJECT_ID
    ```
 
-1. Navigate into the repo and change to the development branch:
+1. 리포지토리로 이동하고 development 브랜치로 변경합니다:
 
    ```bash
    cd gcp-environments
    git checkout development
    ```
 
-1. If your project does not have a remote backend you can jump skip the next 2 commands and jump to `terraform init` command.
-1. If your project has a remote backend you will have to update `backend.tf` with the remote state backend bucket.
-You can get this information from step `0-bootstrap` by running the following command:
+1. 프로젝트에 원격 백엔드가 없는 경우 다음 2개 명령을 건너뛰고 `terraform init` 명령으로 바로 이동할 수 있습니다.
+1. 프로젝트에 원격 백엔드가 있는 경우 원격 상태 백엔드 버킷으로 `backend.tf`를 업데이트해야 합니다.
+다음 명령을 실행하여 `0-bootstrap` 단계에서 이 정보를 가져올 수 있습니다:
 
    ```bash
    terraform output gcs_bucket_tfstate
    ```
 
-1. Update `backend.tf` with the remote state backend bucket you got on previously inside `<YOUR-REMOTE-STATE-BACKEND-BUCKET>`:
+1. 이전에 받은 원격 상태 백엔드 버킷으로 `<YOUR-REMOTE-STATE-BACKEND-BUCKET>` 내의 `backend.tf`를 업데이트합니다:
 
    ```bash
    for i in `find . -name 'backend.tf'`; do sed -i'' -e 's/UPDATE_ME/<YOUR-REMOTE-STATE-BACKEND-BUCKET>/' $i; done
    ```
 
-1. Navigate into `envs/development` where your terraform config files are in and run terraform init:
+1. terraform 구성 파일이 있는 `envs/development`로 이동하고 terraform init을 실행합니다:
 
    ```bash
    cd envs/development
    terraform init
    ```
 
-1. At this point, you will be able to get Terraform State lock information and unlock your state.
-1. After running terraform apply you should get an error message like the following:
+1. 이 시점에서 Terraform 상태 잠금 정보를 가져오고 상태를 잠금 해제할 수 있습니다.
+1. terraform apply를 실행한 후 다음과 같은 오류 메시지가 나타납니다:
 
    ```text
    terraform apply
    Acquiring state lock. This may take a few moments...
    ╷
-   │ Error: Error acquiring the state lock
+   │ 오류: 상태 잠금 획득 오류
    │
    │ Error message: writing "gs://<YOUR-REMOTE-STATE-BACKEND-BUCKET>/<PATH-TO-TERRAFORM-STATE>/<tf state file name>.tflock" failed: googleapi: Error 412: At least one
    │ of the pre-conditions you specified did not hold., conditionNotMet
@@ -480,96 +476,96 @@ You can get this information from step `0-bootstrap` by running the following co
    │
    │
    │ Terraform acquires a state lock to protect the state from being written
-   │ by multiple users at the same time. Please resolve the issue above and try
-   │ again. For most commands, you can disable locking with the "-lock=false"
-   │ flag, but this is not recommended.
+   │ 여러 사용자가 동시에 사용하고 있습니다. 위의 문제를 해결한 후 다시
+   │ 시도하세요. 대부분의 명령에서는 "-lock=false"로 잠금을 비활성화할 수 있습니다
+   │ 플래그로, 하지만 이는 권장되지 않습니다.
    ```
 
-1. With the lock `ID` you will be able to remove the Terraform State lock using `terraform force-unlock` command. It is a **strong recommendation** to review the official documentation regarding [terraform force-unlock](https://www.terraform.io/language/state/locking#force-unlock) command before executing it.
-1. After unlocking the Terraform State you will be able to execute a `terraform plan` for review of the state. The following links can help you to recover the Terraform State for your configuration and move on:
-    1. [Manipulating Terraform State](https://developer.hashicorp.com/terraform/cli/state)
-    1. [Moving Resources](https://developer.hashicorp.com/terraform/cli/state/move)
-    1. [Importing Infrastructure](https://developer.hashicorp.com/terraform/cli/import)
+1. 잠금 `ID`를 사용하여 `terraform force-unlock` 명령을 사용하여 Terraform 상태 잠금을 제거할 수 있습니다. 실행하기 전에 [terraform force-unlock](https://www.terraform.io/language/state/locking#force-unlock) 명령에 관한 공식 문서를 검토할 것을 **강력히 권장**합니다.
+1. Terraform 상태를 잠금 해제한 후 상태를 검토하기 위해 `terraform plan`을 실행할 수 있습니다. 다음 링크는 구성에 대한 Terraform 상태를 복구하고 계속 진행하는 데 도움이 될 수 있습니다:
+    1. [Terraform 상태 조작](https://developer.hashicorp.com/terraform/cli/state)
+    1. [리소스 이동](https://developer.hashicorp.com/terraform/cli/state/move)
+    1. [인프라 가져오기](https://developer.hashicorp.com/terraform/cli/import)
 
-**Terraform State lock possible causes:**
+**Terraform 상태 잠금 가능한 원인:**
 
-- If you realize that the Terraform State lock was due to a build timeout increase the build timeout on [build configuration](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/build/cloudbuild-tf-apply.yaml#L15).
+- Terraform 상태 잠금이 빌드 시간 초과로 인한 것임을 인식한 경우 [빌드 구성](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/build/cloudbuild-tf-apply.yaml#L15)에서 빌드 시간 초과 시간을 늘리세요.
 
-### Terraform deploy fails due to GitLab repositories not found
+### GitLab 리포지토리를 찾을 수 없어 Terraform 배포 실패
 
-**Error message:**
+**오류 메시지:**
 
 ```text
-Error: POST https://gitlab.com/api/v4/projects/<GITLAB-ACCOUNT>/<GITLAB-REPOSITORY>/variables: 404 {message: 404 Project Not Found}
+오류: POST https://gitlab.com/api/v4/projects/<GITLAB-ACCOUNT>/<GITLAB-REPOSITORY>/variables: 404 {메시지: 404 프로젝트를 찾을 수 없습니다}
 
 ```
 
-**Cause:**
+**원인:**
 
-This message means that you are using a wrong Access Token or you have Access Token created in both Gitlab Account/Group and GitLab Repository.
+이 메시지는 잘못된 액세스 토큰을 사용하고 있거나 GitLab 계정/그룹과 GitLab 리포지토리 모두에 액세스 토큰이 생성되었음을 의미합니다.
 
-Only Personal Access Token under GitLab Account/Group should exist.
+GitLab 계정/그룹 하의 개인 액세스 토큰만 존재해야 합니다.
 
-**Solution:**
+**해결 방법:**
 
-Remove any Access Token from the GitLab repositories used by Google Secure Foundation Blueprint.
+Google Secure Foundation Blueprint에서 사용하는 GitLab 리포지토리에서 모든 액세스 토큰을 제거하세요.
 
-### Gitlab pipelines access denied
+### GitLab 파이프라인 액세스 거부
 
-**Error message:**
+**오류 메시지:**
 
-From the logs of your Pipeline job:
+파이프라인 작업 로그에서:
 
 ```text
 Error response from daemon: pull access denied for registry.gitlab.com/<YOUR-GITLAB-ACCOUNT>/<YOUR-GITLAB-CICD-REPO>/terraform-gcloud, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
 ```
 
-**Cause:**
+**원인:**
 
-The cause of this message is that the CI/CD repository has "Limit access to this project" enabled in the Token Access settings.
+이 메시지의 원인은 CI/CD 리포지토리의 토큰 액세스 설정에서 "이 프로젝트에 대한 액세스 제한"이 활성화되어 있기 때문입니다.
 
-**Solution:**
+**해결 방법:**
 
-Add all the projects/repositories to be used in the Terraform Example Foundation to the allow list available in
+Terraform Example Foundation에서 사용될 모든 프로젝트/리포지토리를 다음 단계의 허용 목록에 추가하세요:
 `CI/CD Repo -> Settings -> CI/CD -> Token Access -> Allow CI job tokens from the following projects to access this project`.
 
-### The user does not have permission to access Project or it may not exist
+### 사용자가 프로젝트에 액세스할 권한이 없거나 프로젝트가 존재하지 않을 수 있습니다
 
-**Error message:**
+**오류 메시지:**
 
 ```text
 Error when reading or editing GCS service account not found: googleapi: Error 400: Unknown project id: <PROJECT-ID>, invalid.
 The user does not have permission to access Project <PROJECT-ID> or it may not exist.
 ```
 
-**Cause:**
+**원인:**
 
-Terraform is trying to fetch or manipulate resources associated with the given project **PROJECT-ID** but the project was not created in the first execution.
+Terraform이 주어진 프로젝트 **PROJECT-ID**와 관련된 리소스를 가져오거나 조작하려고 하지만 첫 번째 실행에서 프로젝트가 생성되지 않았습니다.
 
-What was created in the first execution was the project id that will be used to create the project. The project id is a composition of a fixed prefix and a random suffix.
+첫 번째 실행에서 생성된 것은 프로젝트를 만드는 데 사용될 프로젝트 ID입니다. 프로젝트 ID는 고정 접두사와 랜덤 접미사의 조합입니다.
 
-Possible causes of the project creation failure in the first execution are:
+첫 번째 실행에서 프로젝트 생성 실패의 가능한 원인은 다음과 같습니다:
 
-- The user does not have Billing Account User role in the billing account
-- The user does not have Project Creator role in the Google Cloud organization
-- The user has reached the project creation quota
-- Terraform apply failed midway due to a timeout or an interruption, leaving the project ID generated in the state but not creating the project itself
+- 사용자가 청구 계정에서 청구 계정 사용자 역할을 가지고 있지 않음
+- 사용자가 Google Cloud 조직에서 프로젝트 작성자 역할을 가지고 있지 않음
+- 사용자가 프로젝트 생성 할당량에 도달함
+- 시간 초과 또는 중단으로 인해 Terraform apply가 중간에 실패하여 상태에 프로젝트 ID는 생성되었지만 프로젝트 자체는 생성되지 않음
 
-**Solution:**
+**해결 방법:**
 
-If the cause is the project creation quota issue. Follow instruction in the Terraform Example Foundation [troubleshooting](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/docs/TROUBLESHOOTING.md#billing-quota-exceeded)
+원인이 프로젝트 생성 할당량 문제인 경우 Terraform Example Foundation [문제 해결](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/docs/TROUBLESHOOTING.md#billing-quota-exceeded)의 지침을 따르세요.
 
-After doing this fixes you need to force the recreation of the random suffix used in the project ID.
-To force the creation run
+이러한 수정을 수행한 후 프로젝트 ID에 사용되는 랜덤 접미사의 재생성을 강제해야 합니다.
+재생성을 강제하려면 다음을 실행하세요
 
 ```bash
 terraform taint <RESOURCE-ID>
 ```
 
-For example
+예를 들어
 
 ```
 terraform taint module.seed_bootstrap.module.seed_project.module.project-factory.random_id.random_project_id_suffix
 ```
 
-And try again to do the deployment.
+그리고 배포를 다시 시도하세요.

@@ -167,7 +167,7 @@ Cloud Build 및 Cloud Source 저장소를 사용하여 Terraform example foundat
     $HOME/go/bin/foundation-deployer -tfvars_file <'global.tfvars' 파일 경로> -destroy
     ```
 
-- After deployment:
+- 배포 후:
 
     ```text
     deploy-directory/

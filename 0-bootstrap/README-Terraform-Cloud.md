@@ -340,7 +340,7 @@ OAuth 토큰 ID를 환경 변수로 내보냅니다:
 1. 알림이 존재하지 않는 경우 출력은 다음과 같습니다:
 
     ```text
-    ERROR: (gcloud.scc.notifications.describe) NOT_FOUND: Requested entity was not found.
+    \uc624\ub958: (gcloud.scc.notifications.describe) NOT_FOUND: \uc694\uccad\ud55c \uc5d4\ud130\ud2f0\ub97c \ucc3e\uc744 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.
     ```
 
 1. 알림이 존재하는 경우 `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 다른 값을 선택합니다.
@@ -551,7 +551,7 @@ OAuth 토큰 ID를 환경 변수로 내보냅니다:
 
    **참고:** TFC 워크스페이스 대신 로컬에서 apply를 실행하고 있기 때문에, shared에 대한 이 apply는 `3-production` TFC 워크스페이스에 대한 [TFC Run Trigger](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/run-triggers)를 트리거하지 않습니다.
 
-1. In order to set the TFC backend for shared workspace we now can rename `envs/shared/backend.tf.temporary_disabled` to `envs/shared/backend.tf` and run `terraform init`. When you're prompted, agree to copy Terraform state to Terraform Cloud.
+1. shared 워크스페이스에 대한 TFC 백엔드를 설정하기 위해 이제 `envs/shared/backend.tf.temporary_disabled`를 `envs/shared/backend.tf`로 이름을 변경하고 `terraform init`을 실행할 수 있습니다. 프롬프트가 표시되면 Terraform 상태를 Terraform Cloud로 복사하는 것에 동의합니다.
 
    ```bash
    cd envs/shared/
@@ -560,14 +560,14 @@ OAuth 토큰 ID를 환경 변수로 내보냅니다:
    cd ../..
    ```
 
-1. Commit changes
+1. 변경사항을 커밋합니다
 
    ```bash
    git add .
    git commit -m 'Initialize networks repo'
    ```
 
-1. Push your plan branch.
+1. plan 브랜치를 푸시합니다.
 
    ```bash
    git push --set-upstream origin plan

@@ -87,31 +87,31 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
 
 [Dedicated Interconnect README](./modules/dedicated_interconnect/README.md)에 나열된 전제 조건을 프로비저닝한 경우, 다음 단계를 따라 Dedicated Interconnect를 활성화하여 온프레미스 리소스에 액세스할 수 있습니다.
 
-1. Rename `interconnect.tf.example` to `interconnect.tf` in the shared envs folder in `3-networks-svpc/envs/shared`
-1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
-1. Rename `interconnect.tf.example` to `interconnect.tf` in base_env folder in `3-networks-svpc/modules/base_env`.
-1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
-1. Set variable `enable_dedicated_interconnect` to `true`
-1. The candidate subnetworks and vlan_tag8021q variables can be set to `null` to allow the interconnect module to auto generate these values.
+1. `3-networks-svpc/envs/shared`의 공유 envs 폴더에서 `interconnect.tf.example`을 `interconnect.tf`로 이름을 바꿉니다
+1. interconnects, locations, candidate subnetworks, vlan_tag8021q 및 peer 정보에 대해 사용자 환경에 유효한 값으로 `interconnect.tf` 파일을 업데이트합니다.
+1. `3-networks-svpc/modules/base_env`의 base_env 폴더에서 `interconnect.tf.example`을 `interconnect.tf`로 이름을 바꿉니다.
+1. interconnects, locations, candidate subnetworks, vlan_tag8021q 및 peer 정보에 대해 사용자 환경에 유효한 값으로 `interconnect.tf` 파일을 업데이트합니다.
+1. `enable_dedicated_interconnect` 변수를 `true`로 설정합니다
+1. candidate subnetworks와 vlan_tag8021q 변수는 interconnect 모듈이 이러한 값을 자동으로 생성하도록 `null`로 설정할 수 있습니다.
 
 ### Partner Interconnect 사용하기
 
 [Partner Interconnect README](./modules/partner_interconnect/README.md)에 나열된 전제 조건을 프로비저닝한 경우, 다음 단계를 따라 Partner Interconnect를 활성화하여 온프레미스 리소스에 액세스할 수 있습니다.
 
-1. Rename `partner_interconnect.tf.example` to `partner_interconnect.tf` in the shared envs folder in `3-networks-svpc/envs/shared`
-1. Rename `partner_interconnect.auto.tfvars.example` to `partner_interconnect.auto.tfvars` in the shared envs folder in `3-networks-svpc/envs/shared`
-1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
-1. Rename `partner_interconnect.tf.example` to `partner_interconnect.tf` in the base-env folder in `3-networks-svpc/modules/base_env` .
-1. Update the `enable_partner_interconnect` to `true` in each `main.tf` file in the environment folder in `3-networks-svpc/envs/<environment>` .
-1. Update the file `partner_interconnect.tf` with values that are valid for your environment for the VLAN attachments, locations, and candidate subnetworks.
-1. The candidate subnetworks variable can be set to `null` to allow the interconnect module to auto generate this value.
+1. `3-networks-svpc/envs/shared`의 공유 envs 폴더에서 `partner_interconnect.tf.example`을 `partner_interconnect.tf`로 이름을 바꿉니다
+1. `3-networks-svpc/envs/shared`의 공유 envs 폴더에서 `partner_interconnect.auto.tfvars.example`을 `partner_interconnect.auto.tfvars`로 이름을 바꿉니다
+1. interconnects, locations, candidate subnetworks, vlan_tag8021q 및 peer 정보에 대해 사용자 환경에 유효한 값으로 `interconnect.tf` 파일을 업데이트합니다.
+1. `3-networks-svpc/modules/base_env`의 base-env 폴더에서 `partner_interconnect.tf.example`을 `partner_interconnect.tf`로 이름을 바꿉니다.
+1. `3-networks-svpc/envs/<environment>`의 환경 폴더에 있는 각 `main.tf` 파일에서 `enable_partner_interconnect`를 `true`로 업데이트합니다.
+1. VLAN 연결, 위치 및 후보 서브네트워크에 대해 사용자 환경에 유효한 값으로 `partner_interconnect.tf` 파일을 업데이트합니다.
+1. candidate subnetworks 변수는 interconnect 모듈이 이 값을 자동으로 생성하도록 `null`로 설정할 수 있습니다.
 
 ### 선택사항 - 고가용성 VPN 사용하기
 
 Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud VPN을 사용하여 온프레미스 리소스에 액세스할 수도 있습니다.
 
-1. Rename `vpn.tf.example` to `vpn.tf` in base-env folder in `3-networks-svpc/modules/base_env`.
-1. Create secret for VPN private pre-shared key and grant required roles to Networks terraform service account.
+1. `3-networks-svpc/modules/base_env`의 base-env 폴더에서 `vpn.tf.example`을 `vpn.tf`로 이름을 바꿉니다.
+1. VPN private pre-shared key에 대한 시크릿을 생성하고 Networks terraform 서비스 계정에 필요한 역할을 부여합니다.
 
    ```bash
    echo '<YOUR-PRESHARED-KEY-SECRET>' | gcloud secrets create <VPN_PRIVATE_PSK_SECRET_NAME> --project <ENV_SECRETS_PROJECT> --replication-policy=automatic --data-file=-
@@ -120,7 +120,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    gcloud secrets add-iam-policy-binding <VPN_PRIVATE_PSK_SECRET_NAME> --member='serviceAccount:<NETWORKS_TERRAFORM_SERVICE_ACCOUNT>' --role='roles/secretmanager.secretAccessor' --project <ENV_SECRETS_PROJECT>
    ```
 
-1. Create secret for VPN restricted pre-shared key and grant required roles to Networks terraform service account.
+1. VPN restricted pre-shared key에 대한 시크릿을 생성하고 Networks terraform 서비스 계정에 필요한 역할을 부여합니다.
 
    ```bash
    echo '<YOUR-PRESHARED-KEY-SECRET>' | gcloud secrets create <VPN_RESTRICTED_PSK_SECRET_NAME> --project <ENV_SECRETS_PROJECT> --replication-policy=automatic --data-file=-
@@ -129,8 +129,8 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    gcloud secrets add-iam-policy-binding <VPN_RESTRICTED_PSK_SECRET_NAME> --member='serviceAccount:<NETWORKS_TERRAFORM_SERVICE_ACCOUNT>' --role='roles/secretmanager.secretAccessor' --project <ENV_SECRETS_PROJECT>
    ```
 
-1. In the file `vpn.tf`, update the values for `environment`, `vpn_psk_secret_name`, `on_prem_router_ip_address1`, `on_prem_router_ip_address2` and `bgp_peer_asn`.
-1. Verify other default values are valid for your environment.
+1. `vpn.tf` 파일에서 `environment`, `vpn_psk_secret_name`, `on_prem_router_ip_address1`, `on_prem_router_ip_address2` 및 `bgp_peer_asn`의 값을 업데이트합니다.
+1. 다른 기본값이 사용자 환경에 유효한지 확인합니다.
 
 ### Cloud Build로 배포하기
 
@@ -157,7 +157,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`, rename `production.auto.example.tfvars` to `production.auto.tfvars` and rename `access_context.auto.example.tfvars` to `access_context.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로, `production.auto.example.tfvars`를 `production.auto.tfvars`로, `access_context.auto.example.tfvars`를 `access_context.auto.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -165,10 +165,10 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    mv access_context.auto.example.tfvars access_context.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your environment and bootstrap. See any of the envs folder [README.md](./envs/production/README.md) files for additional information on the values in the `common.auto.tfvars` file.
-   Update `production.auto.tfvars` file with the `target_name_server_addresses`.
-   Update `access_context.auto.tfvars` file with the `access_context_manager_policy_id`.
-   Use `terraform output` to get the backend bucket value from 0-bootstrap output.
+1. 사용자 환경과 bootstrap의 값으로 `common.auto.tfvars` 파일을 업데이트합니다. `common.auto.tfvars` 파일의 값에 대한 추가 정보는 어떤 envs 폴더 [README.md](./envs/production/README.md) 파일에서 확인할 수 있습니다.
+   `target_name_server_addresses`로 `production.auto.tfvars` 파일을 업데이트합니다.
+   `access_context_manager_policy_id`로 `access_context.auto.tfvars` 파일을 업데이트합니다.
+   0-bootstrap 출력에서 backend bucket 값을 가져오려면 `terraform output`을 사용합니다.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -json common_config | jq '.org_id' --raw-output)
@@ -183,18 +183,18 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" ./common.auto.tfvars
    ```
 
-   **Note:** Make sure that you update the `perimeter_additional_members` variable with your user identity in order to be able to view/access resources in the project protected by the VPC Service Controls.
+   **참고:** VPC Service Controls로 보호되는 프로젝트의 리소스를 보거나 액세스하려면 사용자 ID로 `perimeter_additional_members` 변수를 업데이트해야 합니다.
 
-1. Commit changes
+1. 변경 사항 커밋
 
    ```bash
    git add .
    git commit -m 'Initialize networks repo'
    ```
 
-1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
-1. Use `terraform output` to get the Cloud Build project ID and the networks step Terraform Service Account from 0-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `development`, `nonproduction` 및 `production` 환경이 `shared` 환경에 의존하므로, `shared` 환경을 수동으로 plan과 apply(단 한 번만)해야 합니다.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [installation instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하시기 바랍니다.
+1. 0-bootstrap 출력에서 Cloud Build 프로젝트 ID와 networks step Terraform Service Account를 가져오려면 `terraform output`을 사용합니다. 가장 기능을 활성화하기 위해 Terraform Service Account를 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export CLOUD_BUILD_PROJECT_ID=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw cloudbuild_project_id)
@@ -211,7 +211,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/../gcp-policies ${CLOUD_BUILD_PROJECT_ID}
@@ -223,7 +223,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    ./tf-wrapper.sh apply shared
    ```
 
-1. You must manually plan and apply the `production` environment since the `development`, `nonproduction` and `plan` environments depend on it.
+1. `development`, `nonproduction` 및 `plan` 환경이 `production` 환경에 의존하므로, `production` 환경을 수동으로 plan과 apply해야 합니다.
 
    ```bash
    git checkout -b production
@@ -236,55 +236,50 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `apply` production.
+1. production을 `apply`로 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply production
    ```
 
-   1. Push your production branch since development and nonproduction depends it.  Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+   1. development와 nonproduction이 production에 의존하므로 production 브랜치를 푸시합니다. 이것은 [named environment branch](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_ 모두가 실행됩니다. Cloud Build 프로젝트에서 apply 출력을 검토하세요 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
-*Note:** The Production envrionment must be the first branch to be pushed as it includes the DNS Hub communication that will be used by other environments.
+**참고:** Production 환경에는 다른 환경에서 사용될 DNS Hub 통신이 포함되어 있으므로, 가장 먼저 푸시되어야 하는 브랜치입니다.
 
    ```bash
    git push --set-upstream origin production
    ```
 
-1. Push your plan branch to trigger a plan for all environments. Because the
-   _plan_ branch is not a [named environment branch](../docs/FAQ.md#what-is-a-named-branch), pushing your _plan_
-   branch triggers _terraform plan_ but not _terraform apply_. Review the plan output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. 모든 환경에 대한 plan을 실행하려면 plan 브랜치를 푸시합니다. _plan_ 브랜치는 [named environment branch](../docs/FAQ.md#what-is-a-named-branch)가 아니므로, _plan_ 브랜치를 푸시하면 _terraform plan_만 실행되고 _terraform apply_는 실행되지 않습니다. Cloud Build 프로젝트에서 plan 출력을 검토하세요 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout plan
    git push --set-upstream origin plan
    ```
 
-1. After plan has been applied, apply development.
-1. Merge changes to development. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. plan이 적용된 후 development를 apply합니다.
+1. development에 변경 사항을 병합합니다. 이것은 [named environment branch](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_ 모두가 실행됩니다. Cloud Build 프로젝트에서 apply 출력을 검토하세요 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b development
    git push origin development
    ```
 
-1. After development has been applied, apply nonproduction.
-1. Merge changes to nonproduction. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. development가 적용된 후 nonproduction을 apply합니다.
+1. nonproduction에 변경 사항을 병합합니다. 이것은 [named environment branch](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_ 모두가 실행됩니다. Cloud Build 프로젝트에서 apply 출력을 검토하세요 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b nonproduction
    git push origin nonproduction
    ```
 
-1. Before executing the next steps, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+1. 다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
    ```bash
    unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT
    ```
 
-1. You can now move to the instructions in the [4-projects](../4-projects/README.md) step.
+1. 이제 [4-projects](../4-projects/README.md) 단계의 지침으로 이동할 수 있습니다.
 
 ### Jenkins로 배포하기
 
@@ -318,7 +313,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    git checkout -b nonproduction
    ```
 
-1. The next instructions assume that you are at the same level of the `terraform-example-foundation` folder. Change into `3-networks-svpc` folder, copy the Terraform wrapper script and ensure it can be executed.
+1. 다음 지침은 `terraform-example-foundation` 폴더와 같은 수준에 있다고 가정합니다. `3-networks-svpc` 폴더로 이동하고, Terraform 래퍼 스크립트를 복사하여 실행할 수 있도록 설정합니다.
 
    ```bash
    cd terraform-example-foundation/3-networks-svpc
@@ -326,7 +321,7 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`, rename `production.auto.example.tfvars` to `production.auto.tfvars` and rename `access_context.auto.example.tfvars` to `access_context.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로, `production.auto.example.tfvars`를 `production.auto.tfvars`로, `access_context.auto.example.tfvars`를 `access_context.auto.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
@@ -334,10 +329,10 @@ Dedicated 또는 Partner Interconnect를 사용할 수 없는 경우, HA Cloud V
    mv access_context.auto.example.tfvars access_context.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your environment and bootstrap. See any of the envs folder [README.md](./envs/production/README.md) files for additional information on the values in the `common.auto.tfvars` file.
-1. Update `production.auto.tfvars` file with the `target_name_server_addresses`.
-1. Update `access_context.auto.tfvars` file with the `access_context_manager_policy_id`.
-1. Use `terraform output` to get the backend bucket value from gcp-bootstrap output.
+1. 사용자 환경과 bootstrap의 값으로 `common.auto.tfvars` 파일을 업데이트합니다. `common.auto.tfvars` 파일의 값에 대한 추가 정보는 어떤 envs 폴더 [README.md](./envs/production/README.md) 파일에서 확인할 수 있습니다.
+1. `target_name_server_addresses`로 `production.auto.tfvars` 파일을 업데이트합니다.
+1. `access_context_manager_policy_id`로 `access_context.auto.tfvars` 파일을 업데이트합니다.
+1. gcp-bootstrap 출력에서 backend bucket 값을 가져오려면 `terraform output`을 사용합니다.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/" output -json common_config | jq '.org_id' --raw-output)
@@ -358,7 +353,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
 
 `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
-1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from 0-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. 0-bootstrap 출력에서 Seed 프로젝트 ID와 organization step Terraform 서비스 계정을 가져오려면 `terraform output`을 사용합니다. 가장 기능을 활성화하기 위해 Terraform Service Account를 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export SEED_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/" output -raw seed_project_id)
@@ -368,7 +363,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Checkout `shared` branch. Run `init` and `plan` and review output for environment shared.
+1. `shared` 브랜치로 체크아웃합니다. shared 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout shared
@@ -376,7 +371,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    ./tf-wrapper.sh plan shared
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate shared $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
@@ -388,7 +383,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    ./tf-wrapper.sh apply shared
    ```
 
-1. Checkout shared `production`. Run `init` and `plan` and review output for environment production.
+1. `production` 브랜치로 체크아웃합니다. production 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout production
@@ -397,13 +392,13 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate production $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` production.
+1. production을 `apply`로 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply production
@@ -412,7 +407,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    cd ../
    ```
 
-1. Run `git commit` shared.
+1. shared를 `git commit`으로 실행합니다.
 
    ```bash
    git checkout shared
@@ -420,7 +415,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    git commit -m "Initial shared commit."
    ```
 
-1. Checkout `development` branch and merge `shared` into it. Run `init` and `plan` and review output for environment production.
+1. `development` 브랜치로 체크아웃하고 `shared`를 병합합니다. development 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout development
@@ -429,13 +424,13 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    ./tf-wrapper.sh plan development
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate development $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` development.
+1. development를 `apply`로 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply development
@@ -443,7 +438,7 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    git commit -m "Initial development commit."
    ```
 
-1. Checkout `nonproduction` and merge `development` into it. Run `init` and `plan` and review output for environment nonproduction.
+1. `nonproduction`으로 체크아웃하고 `development`를 병합합니다. nonproduction 환경에 대해 `init`과 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    git checkout nonproduction
@@ -452,13 +447,13 @@ Cloud Build 또는 Jenkins를 CI/CD 도구로 사용할 때, 각 환경은 3-net
    ./tf-wrapper.sh plan nonproduction
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate nonproduction $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` nonproduction.
+1. nonproduction을 `apply`로 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply nonproduction

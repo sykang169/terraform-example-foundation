@@ -1,22 +1,22 @@
-# Partner Interconnect module
+# Partner Interconnect 모듈
 
-This module implements the recommendation proposed in [Establishing 99.99% Availability for Partner Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/partner-creating-9999-availability).
+이 모듈은 [Partner Interconnect에 대한 99.99% 가용성 확보](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/partner-creating-9999-availability)에서 제안된 권장 사항을 구현합니다.
 
-## Prerequisites
+## 전제 조건
 
-1. Provisioning of four [VLAN attachments](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/partner-overview) in the Hub project in the specified environment. That would be the `prj-{p|n|d}-shared-svpc` under corresponding environment's folder and `prj-net-dns` under the folder `fldr-common`.
+1. 지정된 환경의 허브 프로젝트에서 4개의 [VLAN 연결](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/partner-overview)을 프로비저닝합니다. 이는 해당 환경의 폴더 아래 `prj-{p|n|d}-shared-svpc`와 `fldr-common` 폴더 아래 `prj-net-dns`에 해당합니다.
 
-## Usage
+## 사용법
 
-1. Rename `partner_interconnect.tf.example` to `partner_interconnect.tf` in the shared envs folder in `3-networks-svpc/envs/shared`
-1. Rename `partner_interconnect.auto.tfvars.example` to `partner_interconnect.auto.tfvars` in the shared envs folder in `3-networks-svpc/envs/shared`
-1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
-1. Rename `partner_interconnect.tf.example` to `partner_interconnect.tf` in the base-env folder in `3-networks-svpc/modules/base_env` .
-1. Update the `enable_partner_interconnect` to `true` in each `main.tf` file in the environment folder in `3-networks-svpc/envs/<environment>` .
-1. Update the file `partner_interconnect.tf` with values that are valid for your environment for the VLAN attachments, locations.
+1. `3-networks-svpc/envs/shared`의 shared envs 폴더에서 `partner_interconnect.tf.example`을 `partner_interconnect.tf`로 이름을 바꿉니다.
+1. `3-networks-svpc/envs/shared`의 shared envs 폴더에서 `partner_interconnect.auto.tfvars.example`을 `partner_interconnect.auto.tfvars`로 이름을 바꿉니다.
+1. interconnect, 위치, 후보 서브네트워크, vlan_tag8021q 및 피어 정보에 대해 사용자 환경에 유효한 값으로 `interconnect.tf` 파일을 업데이트합니다.
+1. `3-networks-svpc/modules/base_env`의 base-env 폴더에서 `partner_interconnect.tf.example`을 `partner_interconnect.tf`로 이름을 바꿉니다.
+1. `3-networks-svpc/envs/<environment>`의 환경 폴더에 있는 각 `main.tf` 파일에서 `enable_partner_interconnect`를 `true`로 업데이트합니다.
+1. VLAN 연결 및 위치에 대해 사용자 환경에 유효한 값으로 `partner_interconnect.tf` 파일을 업데이트합니다.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -39,7 +39,7 @@ This module implements the recommendation proposed in [Establishing 99.99% Avail
 | region2\_router2\_name | Name of the Router 2 for Region 2 where the attachment resides | `string` | n/a | yes |
 | vpc\_name | Label to identify the VPC associated with shared VPC that will use the Interconnect. | `string` | n/a | yes |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

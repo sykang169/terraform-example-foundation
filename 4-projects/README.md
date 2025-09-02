@@ -53,38 +53,38 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
 
 각 비즈니스 유닛에 대해 Cloud Build 트리거, 애플리케이션 인프라 코드용 CSR, 상태 저장을 위한 Google Cloud Storage 버킷과 함께 공유 `infra-pipeline` 프로젝트가 생성됩니다.
 
-This step follows the same [conventions](https://github.com/terraform-google-modules/terraform-example-foundation#branching-strategy) as the Foundation pipeline deployed in [0-bootstrap](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/0-bootstrap/README.md).
-A custom [workspace](https://github.com/terraform-google-modules/terraform-google-bootstrap/blob/master/modules/tf_cloudbuild_workspace/README.md) (`bu1-example-app`) is created by this pipeline and necessary roles are granted to the Terraform Service Account of this workspace by enabling variable `sa_roles` as shown in this [example](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/4-projects/modules/base_env/example_shared_vpc_project.tf).
+이 단계는 [0-bootstrap](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/0-bootstrap/README.md)에서 배포된 Foundation 파이프라인과 동일한 [규칙](https://github.com/terraform-google-modules/terraform-example-foundation#branching-strategy)을 따릅니다.
+이 파이프라인에 의해 사용자 정의 [워크스페이스](https://github.com/terraform-google-modules/terraform-google-bootstrap/blob/master/modules/tf_cloudbuild_workspace/README.md) (`bu1-example-app`)가 생성되고, 이 [예시](https://github.com/terraform-google-modules/terraform-example-foundation/blob/master/4-projects/modules/base_env/example_shared_vpc_project.tf)에 표시된 대로 `sa_roles` 변수를 활성화하여 이 워크스페이스의 Terraform 서비스 계정에 필요한 역할이 부여됩니다.
 
-This pipeline is utilized to deploy resources in projects across development/nonproduction/production in step [5-app-infra](../5-app-infra/README.md).
-Other Workspaces can also be created to isolate deployments if needed.
+이 파이프라인은 [5-app-infra](../5-app-infra/README.md) 단계에서 development/nonproduction/production 전반의 프로젝트에 리소스를 배포하는 데 사용됩니다.
+필요한 경우 배포를 격리하기 위해 다른 워크스페이스도 생성할 수 있습니다.
 
-## Prerequisites
+## 전제 조건
 
-1. 0-bootstrap executed successfully.
-1. 1-org executed successfully.
-1. 2-environments executed successfully.
-1. 3-networks executed successfully.
+1. 0-bootstrap이 성공적으로 실행되었습니다.
+1. 1-org가 성공적으로 실행되었습니다.
+1. 2-environments가 성공적으로 실행되었습니다.
+1. 3-networks가 성공적으로 실행되었습니다.
 
-1. For the manual step described in this document, you need to use the same [Terraform](https://www.terraform.io/downloads.html) version used on the build pipeline.
-   Otherwise, you might experience Terraform state snapshot lock errors.
+1. 이 문서에서 설명하는 수동 단계에서는 빌드 파이프라인에서 사용되는 동일한 [Terraform](https://www.terraform.io/downloads.html) 버전을 사용해야 합니다.
+   그렇지 않으면 Terraform 상태 스냅샷 잠금 오류가 발생할 수 있습니다.
 
-   **Note:** As mentioned in 0-bootstrap [README note 2](../0-bootstrap/README.md#deploying-with-cloud-build) at the end of Cloud Build deploy section, make sure that you have requested at least 50 additional projects for the **projects step service account**, otherwise you may face a project quota exceeded error message during the following steps and you will need to apply the fix from [this entry](../docs/TROUBLESHOOTING.md#attempt-to-run-4-projects-step-without-enough-project-quota) of the Troubleshooting guide in order to continue.
+   **참고:** Cloud Build 배포 섹션 끝의 0-bootstrap [README 참고 2](../0-bootstrap/README.md#deploying-with-cloud-build)에서 언급된 바와 같이, **projects step service account**에 대해 최소 50개의 추가 프로젝트를 요청했는지 확인하세요. 그렇지 않으면 다음 단계에서 프로젝트 할당량 초과 오류 메시지가 발생할 수 있으며, 계속하려면 문제 해결 가이드의 [이 항목](../docs/TROUBLESHOOTING.md#attempt-to-run-4-projects-step-without-enough-project-quota)에서 수정 사항을 적용해야 합니다.
 
-### Troubleshooting
+### 문제 해결
 
-Please refer to [troubleshooting](../docs/TROUBLESHOOTING.md) if you run into issues during this step.
+이 단계에서 문제가 발생하면 [문제 해결](../docs/TROUBLESHOOTING.md)을 참조하세요.
 
-## Usage
+## 사용법
 
-**Note:** If you are using MacOS, replace `cp -RT` with `cp -R` in the relevant
-commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
+**참고:** MacOS를 사용하는 경우, 관련 명령에서 `cp -RT`를 `cp -R`로 바꾸세요.
+`-T` 플래그는 Linux에서는 필요하지만 MacOS에서는 문제를 일으킵니다.
 
-### Deploying with Cloud Build
+### Cloud Build로 배포하기
 
-1. Clone the `gcp-projects` repo based on the Terraform output from the `0-bootstrap` step.
-   Clone the repo at the same level of the `terraform-example-foundation` folder, the following instructions assume this layout.
-   Run `terraform output cloudbuild_project_id` in the `0-bootstrap` folder to get the Cloud Build Project ID.
+1. `0-bootstrap` 단계의 Terraform 출력을 기반으로 `gcp-projects` 리포지토리를 복제합니다.
+   `terraform-example-foundation` 폴더와 같은 수준에서 리포지토리를 복제하고, 다음 지침은 이 레이아웃을 가정합니다.
+   Cloud Build 프로젝트 ID를 가져오기 위해 `0-bootstrap` 폴더에서 `terraform output cloudbuild_project_id`를 실행합니다.
 
    ```bash
    export CLOUD_BUILD_PROJECT_ID=$(terraform -chdir="terraform-example-foundation/0-bootstrap/" output -raw cloudbuild_project_id)
@@ -93,7 +93,7 @@ commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
    gcloud source repos clone gcp-projects --project=${CLOUD_BUILD_PROJECT_ID}
    ```
 
-1. Change to the freshly cloned repo, change to the non-main branch and copy contents of foundation to new repo.
+1. 새로 복제된 리포지토리로 변경하고, main이 아닌 브랜치로 변경한 다음, 기반의 콘텐츠를 새 리포지토리로 복사합니다.
 
    ```bash
    cd gcp-projects
@@ -115,10 +115,10 @@ commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
    mv production.auto.example.tfvars production.auto.tfvars
    ```
 
-1. See any of the envs folder [README.md](./business_unit_1/production/README.md) files for additional information on the values in the `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, and `production.auto.tfvars` files.
-1. See any of the shared folder [README.md](./business_unit_1/shared/README.md) files for additional information on the values in the `shared.auto.tfvars` file.
+1. `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, `production.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](./business_unit_1/production/README.md) 파일들을 참조하세요.
+1. `shared.auto.tfvars` 파일의 값에 대한 추가 정보는 shared 폴더의 [README.md](./business_unit_1/shared/README.md) 파일들을 참조하세요.
 
-1. Use `terraform output` to get the backend bucket value from 0-bootstrap output.
+1. `terraform output`을 사용하여 0-bootstrap 출력에서 백엔드 버킷 값을 가져옵니다.
 
    ```bash
    export remote_state_bucket=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw gcs_bucket_tfstate)
@@ -129,7 +129,7 @@ commands. The `-T` flag is needed for Linux, but causes problems for MacOS.
 
 1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
 
-For example, to create a new business unit similar to business_unit_1, run the following:
+예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
 ```bash
 #copy the business_unit_1 folder and it's contents to a new folder business_unit_2
@@ -150,8 +150,8 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ```
 
 1. You need to manually plan and apply only once the `business_unit_1/shared` and `business_unit_2/shared` environments since `development`, `nonproduction`, and `production` depend on them.
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
-1. Use `terraform output` to get the Cloud Build project ID and the projects step Terraform Service Account from 0-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
+1. `terraform output`을 사용하여 0-bootstrap 출력에서 Cloud Build 프로젝트 ID와 프로젝트 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export CLOUD_BUILD_PROJECT_ID=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw cloudbuild_project_id)
@@ -180,16 +180,16 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ./tf-wrapper.sh apply shared
    ```
 
-1. Push your plan branch to trigger a plan for all environments. Because the
-   _plan_ branch is not a [named environment branch](../docs/FAQ.md#what-is-a-named-branch)), pushing your _plan_
-   branch triggers _terraform plan_ but not _terraform apply_. Review the plan output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. plan 브랜치를 푸시하여 모든 환경에 대한 계획을 트리거합니다. _plan_ 브랜치는
+   [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)가 아니므로, _plan_
+   브랜치를 푸시하면 _terraform plan_이 트리거되지만 _terraform apply_는 트리거되지 않습니다. Cloud Build 프로젝트에서 계획 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-1. Merge changes to production. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project. https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. production으로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
+   이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다. https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b production
@@ -197,8 +197,8 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ```
 
 1. After production has been applied, apply development.
-1. Merge changes to development. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. development로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
+   이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b development
@@ -206,21 +206,21 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    ```
 
 1. After development has been applied, apply nonproduction.
-1. Merge changes to nonproduction. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project. https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. nonproduction으로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
+   이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다. https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b nonproduction
    git push origin nonproduction
    ```
 
-1. Before executing the next step, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+1. 다음 단계를 실행하기 전에 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
    ```bash
    unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT
    ```
 
-1. You can now move to the instructions in the [5-app-infra](../5-app-infra/README.md) step.
+1. 이제 [5-app-infra](../5-app-infra/README.md) 단계의 지침으로 이동할 수 있습니다.
 
 ### Jenkins로 배포하기
 
@@ -264,9 +264,9 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
    mv production.auto.example.tfvars production.auto.tfvars
    ```
 
-1. See any of the envs folder [README.md](./business_unit_1/production/README.md) files for additional information on the values in the `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, and `production.auto.tfvars` files.
-   See any of the shared folder [README.md](./business_unit_1/shared/README.md) files for additional information on the values in the `shared.auto.tfvars` file.
-   Use `terraform output` to get the remote state bucket (the backend bucket used by previous steps) value from `gcp-bootstrap` output.
+1. `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, `production.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](./business_unit_1/production/README.md) 파일들을 참조하세요.
+   `shared.auto.tfvars` 파일의 값에 대한 추가 정보는 shared 폴더의 [README.md](./business_unit_1/shared/README.md) 파일들을 참조하세요.
+   `terraform output`을 사용하여 `gcp-bootstrap` 출력에서 원격 상태 버킷(이전 단계에서 사용한 백엔드 버킷) 값을 가져옵니다.
 
    ```bash
    export remote_state_bucket=$(terraform -chdir="../gcp-bootstrap/" output -raw gcs_bucket_tfstate)
@@ -279,7 +279,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
 
 `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
-1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 시드 프로젝트 ID와 조직 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export SEED_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/" output -raw seed_project_id)
@@ -291,7 +291,7 @@ grep -rl 10.3.64.0 business_unit_2/ | xargs sed -i 's/10.3.64.0/10.4.64.0/g'
 
 1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
 
-For example, to create a new business unit similar to business_unit_1, run the following:
+예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
 ```bash
 #copy the business_unit_1 folder and it's contents to a new folder business_unit_2

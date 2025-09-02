@@ -132,13 +132,13 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `common.auto.example.tfvars` to `common.auto.tfvars`.
+1. `common.auto.example.tfvars`를 `common.auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
    ```
 
-1. Update the file with values from your environment and 0-bootstrap. See any of the business unit 1 envs folders [README.md](./business_unit_1/production/README.md) files for additional information on the values in the `common.auto.tfvars` file.
+1. 환경과 0-bootstrap의 값으로 파일을 업데이트합니다. `common.auto.tfvars` 파일의 값에 대한 추가 정보는 business unit 1 envs 폴더의 [README.md](./business_unit_1/production/README.md) 파일을 참조하세요.
 
    ```bash
    export remote_state_bucket=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw projects_gcs_bucket_tfstate)
@@ -146,48 +146,48 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${remote_state_bucket}/" ./common.auto.tfvars
    ```
 
-1. Commit changes.
+1. 변경사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize bu1 example app repo'
    ```
 
-1. Push your plan branch to trigger a plan for all environments. Because the
-   _plan_ branch is not a [named environment branch](../docs/FAQ.md#what-is-a-named-branch), pushing your _plan_
-   branch triggers _terraform plan_ but not _terraform apply_. Review the plan output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
+1. plan 브랜치를 푸시하여 모든 환경에 대한 계획을 트리거합니다. _plan_ 브랜치는
+   [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)가 아니므로, _plan_
+   브랜치를 푸시하면 _terraform plan_이 트리거되지만 _terraform apply_는 트리거되지 않습니다. Cloud Build 프로젝트에서 계획 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-1. Merge changes to development. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
+1. development로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
+   이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
 
    ```bash
    git checkout -b development
    git push origin development
    ```
 
-1. Merge changes to nonproduction. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
+1. nonproduction으로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
+   이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
 
    ```bash
    git checkout -b nonproduction
    git push origin nonproduction
    ```
 
-1. Merge changes to production branch. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-      pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your Cloud Build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
+1. production 브랜치로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로,
+      이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_INFRA_PIPELINE_PROJECT_ID
 
    ```bash
    git checkout -b production
    git push origin production
    ```
 
-### Run Terraform locally
+### 로컬에서 Terraform 실행하기
 
-1. The next instructions assume that you are at the same level of the `terraform-example-foundation` folder. Change into `5-app-infra` folder, copy the Terraform wrapper script and ensure it can be executed.
+1. 다음 지침은 `terraform-example-foundation` 폴더와 같은 수준에 있다고 가정합니다. `5-app-infra` 폴더로 이동하고, Terraform 래퍼 스크립트를 복사한 다음, 실행 가능하도록 설정합니다.
 
    ```bash
    cd terraform-example-foundation/5-app-infra
@@ -195,14 +195,14 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `common.auto.example.tfvars` files to `common.auto.tfvars`.
+1. `common.auto.example.tfvars` 파일을 `common.auto.tfvars`로 이름을 변경합니다.
 
    ```bash
    mv common.auto.example.tfvars common.auto.tfvars
    ```
 
-1. Update `common.auto.tfvars` file with values from your environment.
-1. Use `terraform output` to get the project backend bucket value from 0-bootstrap.
+1. `common.auto.tfvars` 파일을 환경의 값으로 업데이트합니다.
+1. `terraform output`을 사용하여 0-bootstrap에서 프로젝트 백엔드 버킷 값을 가져옵니다.
 
    ```bash
    export remote_state_bucket=$(terraform -chdir="../0-bootstrap/" output -raw projects_gcs_bucket_tfstate)
@@ -210,8 +210,8 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${remote_state_bucket}/" ./common.auto.tfvars
    ```
 
-1. Provide the user that will be running `./tf-wrapper.sh` the Service Account Token Creator role to the bu1 Terraform service account.
-1. Provide the user permissions to run the terraform locally with the `serviceAccountTokenCreator` permission.
+1. `./tf-wrapper.sh`를 실행할 사용자에게 bu1 Terraform 서비스 계정에 대한 Service Account Token Creator 역할을 제공합니다.
+1. 사용자에게 `serviceAccountTokenCreator` 권한으로 로컬에서 terraform을 실행할 수 있는 권한을 제공합니다.
 
    ```bash
    member="user:$(gcloud auth list --filter="status=ACTIVE" --format="value(account)")"
@@ -226,7 +226,7 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    gcloud iam service-accounts add-iam-policy-binding ${terraform_sa} --project ${project_id} --member="${member}" --role="roles/iam.serviceAccountTokenCreator"
    ```
 
-1. Update `backend.tf` with your bucket from the infra pipeline output.
+1. 인프라 파이프라인 출력에서 버킷 정보로 `backend.tf`를 업데이트합니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../4-projects/business_unit_1/shared/" output -json state_buckets | jq '."bu1-example-app"' --raw-output)
@@ -235,10 +235,10 @@ Interconnect, 각 환경에 대한 기준 방화벽 규칙이 있는 공유 VPC�
    for i in `find . -name 'backend.tf'`; do sed -i'' -e "s/UPDATE_APP_INFRA_BUCKET/${backend_bucket}/" $i; done
    ```
 
-We will now deploy each of our environments (development/production/nonproduction) using this script.
-When using Cloud Build or Jenkins as your CI/CD tool, each environment corresponds to a branch in the repository for the `5-app-infra` step. Only the corresponding environment is applied.
+이제 이 스크립트를 사용하여 각 환경(development/production/nonproduction)을 배포합니다.
+CI/CD 도구로 Cloud Build나 Jenkins를 사용할 때, 각 환경은 `5-app-infra` 단계의 리포지토리에 있는 브랜치에 대응됩니다. 해당하는 환경만 적용됩니다.
 
-To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+`tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
 1. `terraform output`을 사용하여 4-projects 출력에서 인프라 파이프라인 프로젝트 ID를 가져옵니다.
 
@@ -250,66 +250,66 @@ To use the `validate` option of the `tf-wrapper.sh` script, please follow the [i
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Run `init` and `plan` and review output for environment production.
+1. production 환경에 대해 `init` 및 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init production
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate production $(pwd)/../policy-library ${INFRA_PIPELINE_PROJECT_ID}
    ```
 
-1. Run `apply` production.
+1. production에 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply production
    ```
 
-1. Run `init` and `plan` and review output for environment nonproduction.
+1. nonproduction 환경에 대해 `init` 및 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init nonproduction
    ./tf-wrapper.sh plan nonproduction
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate nonproduction $(pwd)/../policy-library ${INFRA_PIPELINE_PROJECT_ID}
    ```
 
-1. Run `apply` nonproduction.
+1. nonproduction에 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply nonproduction
    ```
 
-1. Run `init` and `plan` and review output for environment development.
+1. development 환경에 대해 `init` 및 `plan`을 실행하고 출력을 검토합니다.
 
    ```bash
    ./tf-wrapper.sh init development
    ./tf-wrapper.sh plan development
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate development $(pwd)/../policy-library ${INFRA_PIPELINE_PROJECT_ID}
    ```
 
-1. Run `apply` development.
+1. development에 `apply`를 실행합니다.
 
    ```bash
    ./tf-wrapper.sh apply development
    ```
 
-If you received any errors or made any changes to the Terraform config or `common.auto.tfvars` you must re-run `./tf-wrapper.sh plan <env>` before running `./tf-wrapper.sh apply <env>`.
+오류가 발생하거나 Terraform 구성 또는 `common.auto.tfvars`에 변경사항을 적용한 경우, `./tf-wrapper.sh apply <env>`를 실행하기 전에 `./tf-wrapper.sh plan <env>`를 다시 실행해야 합니다.
 
-After executing this stage, unset the `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` environment variable.
+이 단계를 실행한 후 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` 환경 변수를 해제합니다.
 
 ```bash
 unset GOOGLE_IMPERSONATE_SERVICE_ACCOUNT

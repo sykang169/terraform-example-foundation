@@ -385,13 +385,13 @@ Terraform Cloud를 사용하려면 각 단계에서 사용되는 GitHub 리포�
 
 1. `sa.tf` 파일에서 `local.cicd_project_id`를 검색하고 해당 코드를 주석 처리합니다.
 
-1. Use the helper script [validate-requirements.sh](../scripts/validate-requirements.sh) to validate your environment:
+1. 도우미 스크립트 [validate-requirements.sh](../scripts/validate-requirements.sh)를 사용하여 환경을 검증합니다:
 
    ```bash
    ../terraform-example-foundation/scripts/validate-requirements.sh -o <ORGANIZATION_ID> -b <BILLING_ACCOUNT_ID> -u <END_USER_EMAIL>
    ```
 
-   **Note:** The script is not able to validate if the user is in a Cloud Identity or Google Workspace group with the required roles.
+   **참고:** 스크립트는 사용자가 필요한 역할이 있는 Cloud Identity 또는 Google Workspace 그룹에 있는지 검증할 수 없습니다.
 
 1. `terraform init`과 `terraform plan`을 실행하고 출력을 검토합니다.
 
@@ -427,9 +427,9 @@ Terraform Cloud를 사용하려면 각 단계에서 사용되는 GitHub 리포�
    cd ../gcp-bootstrap
    ```
 
-1. To  validate your policies, run `gcloud beta terraform vet`. For installation instructions, see [Install Google Cloud CLI](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install).
+1. 정책을 검증하려면 `gcloud beta terraform vet`을 실행합니다. 설치 지침은 [Google Cloud CLI 설치](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)를 참조하세요.
 
-1. Run the following commands and check for violations:
+1. 다음 명령을 실행하고 위반 사항이 있는지 확인합니다:
 
    ```bash
    export VET_PROJECT_ID=A-VALID-PROJECT-ID
@@ -437,7 +437,7 @@ Terraform Cloud를 사용하려면 각 단계에서 사용되는 GitHub 리포�
    gcloud beta terraform vet bootstrap.json --policy-library="$(pwd)/../gcp-policies" --project ${VET_PROJECT_ID}
    ```
 
-   *`A-VALID-PROJECT-ID`* must be an existing project you have access to. This is necessary because `gcloud beta terraform vet` needs to link resources to a valid Google Cloud Platform project.
+   *`A-VALID-PROJECT-ID`*는 액세스 권한이 있는 기존 프로젝트여야 합니다. `gcloud beta terraform vet`이 리소스를 유효한 Google Cloud Platform 프로젝트에 연결해야 하기 때문에 필요합니다.
 
 1. 검증된 코드를 plan 브랜치에 커밋합니다.
 
@@ -507,47 +507,47 @@ Terraform Cloud를 사용하려면 각 단계에서 사용되는 GitHub 리포�
 |------|-------------|------|---------|:--------:|
 | attribute\_condition | Workload Identity Pool Provider attribute condition expression. [More info](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/iam_workload_identity_pool_provider#attribute_condition) | `string` | `null` | no |
 | billing\_account | The ID of the billing account to associate projects with. | `string` | n/a | yes |
-| bucket\_force\_destroy | When deleting a bucket, this boolean option will delete all contained objects. If false, Terraform will fail to delete buckets which contain objects. | `bool` | `false` | no |
-| bucket\_prefix | Name prefix to use for state bucket created. | `string` | `"bkt"` | no |
-| bucket\_tfstate\_kms\_force\_destroy | When deleting a bucket, this boolean option will delete the KMS keys used for the Terraform state bucket. | `bool` | `false` | no |
-| default\_region | Default region to create resources where applicable. | `string` | `"us-central1"` | no |
-| default\_region\_2 | Secondary default region to create resources where applicable. | `string` | `"us-west1"` | no |
-| default\_region\_gcs | Case-Sensitive default region to create gcs resources where applicable. | `string` | `"US"` | no |
-| default\_region\_kms | Secondary default region to create kms resources where applicable. | `string` | `"us"` | no |
-| folder\_deletion\_protection | Prevent Terraform from destroying or recreating the folder. | `string` | `true` | no |
-| folder\_prefix | Name prefix to use for folders created. Should be the same in all steps. | `string` | `"fldr"` | no |
-| groups | Contain the details of the Groups to be created. | <pre>object({<br>    create_required_groups = optional(bool, false)<br>    create_optional_groups = optional(bool, false)<br>    billing_project        = optional(string, null)<br>    required_groups = object({<br>      group_org_admins     = string<br>      group_billing_admins = string<br>      billing_data_users   = string<br>      audit_data_users     = string<br>    })<br>    optional_groups = optional(object({<br>      gcp_security_reviewer    = optional(string, "")<br>      gcp_network_viewer       = optional(string, "")<br>      gcp_scc_admin            = optional(string, "")<br>      gcp_global_secrets_admin = optional(string, "")<br>      gcp_kms_admin            = optional(string, "")<br>    }), {})<br>  })</pre> | n/a | yes |
-| initial\_group\_config | Define the group configuration when it is initialized. Valid values are: WITH\_INITIAL\_OWNER, EMPTY and INITIAL\_GROUP\_CONFIG\_UNSPECIFIED. | `string` | `"WITH_INITIAL_OWNER"` | no |
+| bucket\_force\_destroy | 버킷을 삭제할 때 이 부울 옵션은 포함된 모든 객체를 삭제합니다. false인 경우 Terraform은 객체가 포함된 버킷 삭제에 실패합니다. | `bool` | `false` | no |
+| bucket\_prefix | 상태 버킷 생성에 사용할 이름 접두사입니다. | `string` | `"bkt"` | no |
+| bucket\_tfstate\_kms\_force\_destroy | 버킷을 삭제할 때 이 부울 옵션은 Terraform 상태 버킷에 사용된 KMS 키를 삭제합니다. | `bool` | `false` | no |
+| default\_region | 해당하는 경우 리소스를 생성할 기본 지역입니다. | `string` | `"us-central1"` | no |
+| default\_region\_2 | 해당하는 경우 리소스를 생성할 보조 기본 지역입니다. | `string` | `"us-west1"` | no |
+| default\_region\_gcs | 해당하는 경우 GCS 리소스를 생성할 대소문자 구분 기본 지역입니다. | `string` | `"US"` | no |
+| default\_region\_kms | 해당하는 경우 KMS 리소스를 생성할 보조 기본 지역입니다. | `string` | `"us"` | no |
+| folder\_deletion\_protection | Terraform이 폴더를 삭제하거나 재생성하는 것을 방지합니다. | `string` | `true` | no |
+| folder\_prefix | 폴더 생성에 사용할 이름 접두사입니다. 모든 단계에서 동일해야 합니다. | `string` | `"fldr"` | no |
+| groups | 생성할 그룹의 세부 정보를 포함합니다. | <pre>object({<br>    create_required_groups = optional(bool, false)<br>    create_optional_groups = optional(bool, false)<br>    billing_project        = optional(string, null)<br>    required_groups = object({<br>      group_org_admins     = string<br>      group_billing_admins = string<br>      billing_data_users   = string<br>      audit_data_users     = string<br>    })<br>    optional_groups = optional(object({<br>      gcp_security_reviewer    = optional(string, "")<br>      gcp_network_viewer       = optional(string, "")<br>      gcp_scc_admin            = optional(string, "")<br>      gcp_global_secrets_admin = optional(string, "")<br>      gcp_kms_admin            = optional(string, "")<br>    }), {})<br>  })</pre> | n/a | yes |
+| initial\_group\_config | 그룹이 초기화될 때의 그룹 구성을 정의합니다. 유효한 값: WITH\_INITIAL\_OWNER, EMPTY, INITIAL\_GROUP\_CONFIG\_UNSPECIFIED. | `string` | `"WITH_INITIAL_OWNER"` | no |
 | org\_id | GCP Organization ID | `string` | n/a | yes |
-| org\_policy\_admin\_role | Additional Org Policy Admin role for admin group. You can use this for testing purposes. | `bool` | `false` | no |
-| parent\_folder | Optional - for an organization with existing projects or for development/validation. It will place all the example foundation resources under the provided folder instead of the root organization. The value is the numeric folder ID. The folder must already exist. | `string` | `""` | no |
-| project\_deletion\_policy | The deletion policy for the project created. | `string` | `"PREVENT"` | no |
-| project\_prefix | Name prefix to use for projects created. Should be the same in all steps. Max size is 3 characters. | `string` | `"prj"` | no |
-| workflow\_deletion\_protection | Whether Terraform will be prevented from destroying a workflow. When the field is set to true or unset in Terraform state, a `terraform apply` or `terraform destroy` that would delete the workflow will fail. When the field is set to false, deleting the workflow is allowed. | `bool` | `true` | no |
+| org\_policy\_admin\_role | 관리자 그룹을 위한 추가 조직 정책 관리자 역할입니다. 테스트 목적으로 사용할 수 있습니다. | `bool` | `false` | no |
+| parent\_folder | 선택사항 - 기존 프로젝트가 있는 조직 또는 개발/검증용입니다. 루트 조직 대신 제공된 폴더 아래에 모든 예제 기반 리소스를 배치합니다. 값은 숫자 폴더 ID입니다. 폴더는 이미 존재해야 합니다. | `string` | `""` | no |
+| project\_deletion\_policy | 생성된 프로젝트의 삭제 정책입니다. | `string` | `"PREVENT"` | no |
+| project\_prefix | 프로젝트 생성에 사용할 이름 접두사입니다. 모든 단계에서 동일해야 합니다. 최대 크기는 3자입니다. | `string` | `"prj"` | no |
+| workflow\_deletion\_protection | Terraform이 워크플로우 삭제를 방지할지 여부입니다. 이 필드가 true로 설정되거나 Terraform 상태에서 설정되지 않은 경우, 워크플로우를 삭제하는 `terraform apply` 또는 `terraform destroy`가 실패합니다. 이 필드가 false로 설정되면 워크플로우 삭제가 허용됩니다. | `bool` | `true` | no |
 
 ## 출력
 
 | 이름 | 설명 |
 |------|-------------|
-| bootstrap\_step\_terraform\_service\_account\_email | Bootstrap Step Terraform Account |
-| cloud\_build\_peered\_network\_id | The ID of the Cloud Build peered network. |
-| cloud\_build\_private\_worker\_pool\_id | ID of the Cloud Build private worker pool. |
-| cloud\_build\_worker\_peered\_ip\_range | The IP range of the peered service network. |
-| cloud\_build\_worker\_range\_id | The Cloud Build private worker IP range ID. |
-| cloud\_builder\_artifact\_repo | Artifact Registry (AR) Repository created to store TF Cloud Builder images. |
-| cloudbuild\_project\_id | Project where Cloud Build configuration and terraform container image will reside. |
-| common\_config | Common configuration data to be used in other steps. |
-| csr\_repos | List of Cloud Source Repos created by the module, linked to Cloud Build triggers. |
-| environment\_step\_terraform\_service\_account\_email | Environment Step Terraform Account |
-| gcs\_bucket\_cloudbuild\_artifacts | Bucket used to store Cloud Build artifacts in cicd project. |
-| gcs\_bucket\_cloudbuild\_logs | Bucket used to store Cloud Build logs in cicd project. |
-| gcs\_bucket\_tfstate | Bucket used for storing terraform state for Foundations Pipelines in Seed Project. |
-| networks\_step\_terraform\_service\_account\_email | Networks Step Terraform Account |
-| optional\_groups | List of Google Groups created that are optional to the Example Foundation steps. |
-| organization\_step\_terraform\_service\_account\_email | Organization Step Terraform Account |
-| projects\_gcs\_bucket\_tfstate | Bucket used for storing terraform state for stage 4-projects foundations pipelines in seed project. |
-| projects\_step\_terraform\_service\_account\_email | Projects Step Terraform Account |
-| required\_groups | List of Google Groups created that are required by the Example Foundation steps. |
-| seed\_project\_id | Project where service accounts and core APIs will be enabled. |
+| bootstrap\_step\_terraform\_service\_account\_email | 부트스트랩 단계 Terraform 계정 |
+| cloud\_build\_peered\_network\_id | Cloud Build 피어링 네트워크의 ID입니다. |
+| cloud\_build\_private\_worker\_pool\_id | Cloud Build 비공개 워커 풀 ID입니다. |
+| cloud\_build\_worker\_peered\_ip\_range | 피어링 서비스 네트워크의 IP 범위입니다. |
+| cloud\_build\_worker\_range\_id | Cloud Build 비공개 워커 IP 범위 ID입니다. |
+| cloud\_builder\_artifact\_repo | TF Cloud Builder 이미지를 저장하기 위해 생성된 Artifact Registry (AR) 리포지토리입니다. |
+| cloudbuild\_project\_id | Cloud Build 구성과 terraform 컴테이너 이미지가 위치할 프로젝트입니다. |
+| common\_config | 다른 단계에서 사용할 공통 구성 데이터입니다. |
+| csr\_repos | 모듈에서 생성한 Cloud Source Repos 목록으로, Cloud Build 트리거와 연결되어 있습니다. |
+| environment\_step\_terraform\_service\_account\_email | 환경 단계 Terraform 계정 |
+| gcs\_bucket\_cloudbuild\_artifacts | CICD 프로젝트에서 Cloud Build 아티팩트를 저장하는 데 사용되는 버킷입니다. |
+| gcs\_bucket\_cloudbuild\_logs | CICD 프로젝트에서 Cloud Build 로그를 저장하는 데 사용되는 버킷입니다. |
+| gcs\_bucket\_tfstate | 시드 프로젝트의 기반 파이프라인에 대한 terraform 상태를 저장하는 데 사용되는 버킷입니다. |
+| networks\_step\_terraform\_service\_account\_email | 네트워크 단계 Terraform 계정 |
+| optional\_groups | 예제 기반 단계에 선택사항인 Google 그룹 목록입니다. |
+| organization\_step\_terraform\_service\_account\_email | 조직 단계 Terraform 계정 |
+| projects\_gcs\_bucket\_tfstate | 시드 프로젝트의 4단계 프로젝트 기반 파이프라인에 대한 terraform 상태를 저장하는 데 사용되는 버킷입니다. |
+| projects\_step\_terraform\_service\_account\_email | 프로젝트 단계 Terraform 계정 |
+| required\_groups | 예제 기반 단계에서 필수인 Google 그룹 목록입니다. |
+| seed\_project\_id | 서비스 계정과 핵심 API가 활성화될 프로젝트입니다. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

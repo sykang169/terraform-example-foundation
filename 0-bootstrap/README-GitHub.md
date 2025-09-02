@@ -370,7 +370,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 1. 알림이 존재하지 않으면 출력은 다음과 같습니다:
 
     ```text
-    ERROR: (gcloud.scc.notifications.describe) NOT_FOUND: Requested entity was not found.
+    오류: (gcloud.scc.notifications.describe) NOT_FOUND: 요청한 엔터티를 찾을 수 없습니다.
     ```
 
 1. 알림이 존재하면 `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 대해 다른 값을 선택합니다.
@@ -490,19 +490,19 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/actions의 `tf-apply`에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/pull/new/development from the `development` branch to the `nonproduction` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/pull/new/development에서 `development` 브랜치에서 `nonproduction` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `nonproduction` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub Action을 트리거합니다.
 1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/actions의 `tf-pull-request`에서 GitHub Action 출력을 검토합니다.
-1. If the GitHub action is successful, merge the pull request in to the `nonproduction` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `nonproduction` environment.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `nonproduction` 브랜치로 병합합니다.
+1. 병합은 `nonproduction` 환경에 terraform 구성을 적용하는 GitHub Action을 트리거합니다.
 1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/actions의 `tf-apply`에서 병합 출력을 검토합니다.
 1. GitHub 액션이 성공하면 다음 환경을 적용합니다.
 
-1. Open a pull request in GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/pull/new/nonproduction from the `nonproduction` branch to the `production` branch and review the output.
-1. The Pull request will trigger a GitHub Action that will run Terraform `init`/`plan`/`validate` in the `production` environment.
+1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/pull/new/nonproduction에서 `nonproduction` 브랜치에서 `production` 브랜치로 풀 리퀘스트를 열고 출력을 검토합니다.
+1. 풀 리퀘스트는 `production` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitHub Action을 트리거합니다.
 1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/actions의 `tf-pull-request`에서 GitHub Action 출력을 검토합니다.
-1. If the GitHub action is successful, merge the pull request in to the `production` branch.
-1. The merge will trigger a GitHub Action that will apply the terraform configuration for the `production` environment.
+1. GitHub 액션이 성공하면 풀 리퀘스트를 `production` 브랜치로 병합합니다.
+1. 병합은 `production` 환경에 terraform 구성을 적용하는 GitHub Action을 트리거합니다.
 1. GitHub https://github.com/GITHUB-OWNER/GITHUB-ENVIRONMENTS-REPO/actions의 `tf-apply`에서 병합 출력을 검토합니다.
 
 1. 이제 네트워크 단계의 지침으로 이동할 수 있습니다.
@@ -515,16 +515,16 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
    cd ..
    ```
 
-## Deploying step 3-networks-svpc
+## 3-networks-svpc 단계 배포
 
-1. Clone the repository you created to host the `3-networks-svpc` terraform configuration at the same level of the `terraform-example-foundation` folder.
+1. `terraform-example-foundation` 폴더와 같은 수준에서 `3-networks-svpc` terraform 구성을 호스팅하기 위해 생성한 저장소를 복제합니다.
 
    ```bash
    git clone git@github.com:<GITHUB-OWNER>/<GITHUB-NETWORKS-REPO>.git gcp-networks
    ```
 
-1. Navigate into the repo. All subsequent steps assume you are running them from the `gcp-networks` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 저장소로 이동합니다. 이후의 모든 단계는 `gcp-networks` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우 복사 경로를 적절히 조정하십시오.
 
    ```bash
    cd gcp-networks
@@ -714,14 +714,14 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 
 ## Deploying step 3-networks-hub-and-spoke
 
-1. Clone the repository you created to host the `3-networks-hub-and-spoke` terraform configuration at the same level of the `terraform-example-foundation` folder.
+1. `3-networks-hub-and-spoke` terraform 구성을 호스팅하기 위해 생성한 리포지토리를 `terraform-example-foundation` 폴더와 같은 수준에서 복제합니다.
 
    ```bash
    git clone git@github.com:<GITHUB-OWNER>/<GITHUB-NETWORKS-REPO>.git gcp-networks
    ```
 
-1. Navigate into the repo. All subsequent steps assume you are running them from the `gcp-networks` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 리포지토리로 이동합니다. 후속 단계들은 모두 `gcp-networks` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
@@ -871,15 +871,15 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 
 ## Deploying step 4-projects
 
-1. Clone the repository you created to host the `4-projects` terraform configuration at the same level of the `terraform-example-foundation` folder.
+1. `4-projects` terraform 구성을 호스팅하기 위해 생성한 리포지토리를 `terraform-example-foundation` 폴더와 같은 수준에서 복제합니다.
 
    ```bash
    git clone git@github.com:<GITHUB-OWNER>/<GITHUB-PROJECTS-REPO>.git gcp-projects
    ```
 
-1. Navigate into the repo. All subsequent
-   steps assume you are running them from the `gcp-projects` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 리포지토리로 이동합니다. 후속
+   단계들은 모두 `gcp-projects` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-projects
@@ -965,7 +965,7 @@ GitHub 세분화된 액세스 토큰을 환경 변수로 내보냅니다:
 
 1. `development`, `nonproduction`, `production`이 종속되어 있으므로 `business_unit_1/shared` 및 `business_unit_2/shared` 환경을 한 번만 수동으로 계획하고 적용해야 합니다.
 
-1. Use `terraform output` to get the CI/CD project ID and the projects step Terraform Service Account from gcp-bootstrap output.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 CI/CD 프로젝트 ID와 프로젝트 단계 Terraform 서비스 계정을 가져옵니다.
 1. CI/CD 프로젝트 ID는 Terraform 구성의 [검증](https://cloud.google.com/docs/terraform/policy-validation/quickstart)에 사용됩니다
 
    ```bash

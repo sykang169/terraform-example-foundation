@@ -428,7 +428,7 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
 1. 알림이 존재하지 않으면 출력은 다음과 같습니다:
 
     ```text
-    ERROR: (gcloud.scc.notifications.describe) NOT_FOUND: Requested entity was not found.
+    오류: (gcloud.scc.notifications.describe) NOT_FOUND: 요청한 엔터티를 찾을 수 없습니다.
     ```
 
 1. 알림이 존재하면 `./envs/shared/terraform.tfvars` 파일의 `scc_notification_name` 변수에 대해 다른 값을 선택합니다.
@@ -455,11 +455,10 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
    cd ..
    ```
 
-## Deploying step 2-environments
+## 2-environments 단계 배포
 
-1. 저장소로 이동합니다. 이후의 모든
-   steps assume you are running them from the `gcp-environments` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+1. 저장소로 이동합니다. 이후의 모든 단계는 `gcp-environments` 디렉토리에서 실행한다고 가정합니다.
+   다른 디렉토리에서 실행하는 경우 복사 경로를 적절히 조정하십시오.
 
    ```bash
    cd gcp-environments
@@ -508,20 +507,20 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
    git push
    ```
 
-1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened from the `plan` branch to the `development` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `development` environment.
-1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `development` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `development` environment.
-1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines under `tf-apply`.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened에서 `plan` 브랜치에서 `development` 브랜치로 병합 요청을 열고 출력을 검토합니다.
+1. 병합 요청은 `development` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines에서 GitLab 파이프라인 출력을 검토합니다.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `development` 브랜치로 병합합니다.
+1. 병합은 `development` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines의 `tf-apply`에서 병합 출력을 검토합니다.
 1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
-1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened from the `development` branch to the `nonproduction` branch and review the output.
-1. The merge request will trigger a GitLab pipelines that will run Terraform `init`/`plan`/`validate` in the `nonproduction` environment.
-1. Review the GitLab pipelines output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines.
-1. If the GitLab pipelines is successful, merge the merge request in to the `nonproduction` branch.
-1. The merge will trigger a GitLab pipelines that will apply the terraform configuration for the `nonproduction` environment.
-1. Review merge output in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines under `tf-apply`.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened에서 `development` 브랜치에서 `nonproduction` 브랜치로 병합 요청을 열고 출력을 검토합니다.
+1. 병합 요청은 `nonproduction` 환경에서 Terraform `init`/`plan`/`validate`를 실행하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines에서 GitLab 파이프라인 출력을 검토합니다.
+1. GitLab 파이프라인이 성공하면 병합 요청을 `nonproduction` 브랜치로 병합합니다.
+1. 병합은 `nonproduction` 환경에 terraform 구성을 적용하는 GitLab 파이프라인을 트리거합니다.
+1. GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/pipelines의 `tf-apply`에서 병합 출력을 검토합니다.
 1. GitLab 파이프라인이 성공하면 다음 환경을 적용합니다.
 
 1. Open a merge request in GitLab https://gitlab.com/GITLAB-OWNER/GITLAB-ENVIRONMENTS-REPO/-/merge_requests?scope=all&state=opened from the `nonproduction` branch to the `production` branch and review the output.
@@ -537,14 +536,14 @@ GitLab 개인 또는 그룹 액세스 토큰을 환경 변수로 내보냅니다
    cd ..
    ```
 
-1. You can now move to the instructions in the network stage.
-To use the [Dual Shared VPC](https://cloud.google.com/architecture/security-foundations/networking#vpcsharedvpc-id7-1-shared-vpc-) network mode go to [Deploying step 3-networks-svpc](#deploying-step-3-networks-svpc),
-or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hub-and-spoke) to use the [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) network mode.
+1. 이제 네트워크 단계의 지침으로 이동할 수 있습니다.
+[Dual Shared VPC](https://cloud.google.com/architecture/security-foundations/networking#vpcsharedvpc-id7-1-shared-vpc-) 네트워크 모드를 사용하려면 [3-networks-svpc 단계 배포](#deploying-step-3-networks-svpc)로 이동하거나,
+[Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) 네트워크 모드를 사용하려면 [3-networks-hub-and-spoke 단계 배포](#deploying-step-3-networks-hub-and-spoke)로 이동하세요.
 
 ## Deploying step 3-networks-svpc
 
 1. 저장소로 이동합니다. 이후의 모든 steps assume you are running them from the `gcp-networks` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
@@ -718,7 +717,7 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
 ## Deploying step 3-networks-hub-and-spoke
 
 1. 저장소로 이동합니다. 이후의 모든 steps assume you are running them from the `gcp-networks` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
@@ -854,7 +853,7 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
 
 1. 저장소로 이동합니다. 이후의 모든
    steps assume you are running them from the `gcp-projects` directory.
-   If you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-projects
@@ -922,7 +921,7 @@ or go to [Deploying step 3-networks-hub-and-spoke](#deploying-step-3-networks-hu
 
 1. `development`, `nonproduction`, `production`이 종속되어 있으므로 `business_unit_1/shared` 및 `business_unit_2/shared` 환경을 한 번만 수동으로 계획하고 적용해야 합니다.
 
-1. Use `terraform output` to get the CI/CD project ID and the projects step Terraform Service Account from gcp-bootstrap output.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 CI/CD 프로젝트 ID와 프로젝트 단계 Terraform 서비스 계정을 가져옵니다.
 1. CI/CD 프로젝트 ID는 Terraform 구성의 [검증](https://cloud.google.com/docs/terraform/policy-validation/quickstart)에 사용됩니다
 
    ```bash

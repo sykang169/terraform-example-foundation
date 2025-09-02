@@ -295,7 +295,7 @@
 
 ### III. Configure VPN connection
 
-Here you will configure a VPN Network tunnel to enable connectivity between the `prj-b-cicd` project and your on-prem environment. Learn more about [a VPN tunnel in GCP](https://cloud.google.com/network-connectivity/docs/vpn/how-to).
+여기서 `prj-b-cicd` 프로젝트와 온프레미스 환경 간의 연결을 활성화하기 위해 VPN 네트워크 터널을 구성합니다. [GCP의 VPN 터널](https://cloud.google.com/network-connectivity/docs/vpn/how-to)에 대해 자세히 알아보세요.
 
 - Required information:
   - On-prem VPN public IP Address
@@ -337,7 +337,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 ## Deploying step 1-org
 
-1. Clone the repo you created manually in 0-bootstrap instructions.
+1. 0-bootstrap 지침에서 수동으로 생성한 리포지토리를 복제합니다.
 
    ```bash
    git clone <YOUR_NEW_REPO-gcp-org> gcp-org
@@ -345,7 +345,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 1. Navigate into the repo and change to a nonproduction branch. All subsequent
    steps assume you are running them from the `gcp-org` directory. If
-   you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-org
@@ -370,7 +370,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    _PROJECT_ID (the CI/CD project ID)
    ```
 
-1. You can re-run `terraform output` in the gcp-bootstrap directory to find these values.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다.
 
    ```bash
    BACKEND_STATE_BUCKET_NAME=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -451,7 +451,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 1. Navigate into the repo and change to a nonproduction branch. All subsequent
    steps assume you are running them from the `gcp-environments` directory. If
-   you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-environments
@@ -476,7 +476,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    _PROJECT_ID (the CI/CD project ID)
    ```
 
-1. You can re-run `terraform output` in the gcp-bootstrap directory to find these values.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다.
 
    ```bash
    BACKEND_STATE_BUCKET_NAME=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -498,7 +498,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. You can re-run `terraform output` in the gcp-bootstrap directory to find these values. See any of the envs folder [README.md](../2-environments/envs/production/README.md) files for additional information on the values in the `terraform.tfvars` file.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다. See any of the envs folder [README.md](../2-environments/envs/production/README.md) files for additional information on the values in the `terraform.tfvars` file.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -557,7 +557,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 1. Navigate into the repo and change to a nonproduction branch. All subsequent
    steps assume you are running them from the `gcp-networks` directory. If
-   you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
@@ -582,7 +582,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    _PROJECT_ID (the CI/CD project ID)
    ```
 
-1. You can re-run `terraform output` in the gcp-bootstrap directory to find these values.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다.
 
    ```bash
    BACKEND_STATE_BUCKET_NAME=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -630,14 +630,14 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    ```
 
 1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 1. Also update `backend.tf` with your backend bucket from gcp-bootstrap output.
 
    ```bash
    for i in `find . -name 'backend.tf'`; do sed -i'' -e "s/UPDATE_ME/${backend_bucket}/" $i; done
    ```
 
-1. Use `terraform output` to get the Cloud Build project ID and the networks step Terraform Service Account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 Cloud Build 프로젝트 ID와 네트워크 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export CICD_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw cicd_project_id)
@@ -710,7 +710,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 1. Navigate into the repo and change to a nonproduction branch. All subsequent
    steps assume you are running them from the `gcp-networks` directory. If
-   you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-networks
@@ -735,7 +735,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    _PROJECT_ID (the CI/CD project ID)
    ```
 
-1. You can re-run `terraform output` in the gcp-bootstrap directory to find these values.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다.
 
    ```bash
    BACKEND_STATE_BUCKET_NAME=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -762,7 +762,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 1. Update `common.auto.tfvars` file with values from your environment and bootstrap. See any of the envs folder [README.md](../3-networks-hub-and-spoke/envs/production/README.md) files for additional information on the values in the `common.auto.tfvars` file.
 1. Update `shared.auto.tfvars` file with the `target_name_server_addresses`.
 1. Update `access_context.auto.tfvars` file with the `access_context_manager_policy_id`.
-1. Use `terraform output` to get the backend bucket value from gcp-bootstrap output.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 백엔드 버킷 값을 가져옵니다.
 
    ```bash
    export ORGANIZATION_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -json common_config | jq '.org_id' --raw-output)
@@ -783,14 +783,14 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    ```
 
 1. You must manually plan and apply the `shared` environment (only once) since the `development`, `nonproduction` and `production` environments depend on it.
-1. To use the `validate` option of the `tf-wrapper.sh` script, please follow the [instructions](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install) to install the terraform-tools component.
+1. `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 1. Also update `backend.tf` with your backend bucket from gcp-bootstrap output.
 
    ```bash
    for i in `find . -name 'backend.tf'`; do sed -i'' -e "s/UPDATE_ME/${backend_bucket}/" $i; done
    ```
 
-1. Use `terraform output` to get the Cloud Build project ID and the networks step Terraform Service Account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 Cloud Build 프로젝트 ID와 네트워크 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export CICD_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw cicd_project_id)
@@ -863,7 +863,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 1. Navigate into the repo and change to a nonproduction branch. All subsequent
    steps assume you are running them from the `gcp-projects` directory. If
-   you run them from another directory, adjust your copy paths accordingly.
+   다른 디렉토리에서 실행하는 경우, 복사 경로를 적절히 조정하세요.
 
    ```bash
    cd gcp-projects
@@ -888,7 +888,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    _PROJECT_ID (the CI/CD project ID)
    ```
 
-1. You can re-run `terraform output` in the gcp-bootstrap directory to find these values.
+1. gcp-bootstrap 디렉토리에서 `terraform output`을 다시 실행하여 이러한 값들을 찾을 수 있습니다.
 
    ```bash
    BACKEND_STATE_BUCKET_NAME=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -914,9 +914,9 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
    mv production.auto.example.tfvars production.auto.tfvars
    ```
 
-1. See any of the envs folder [README.md](../4-projects/business_unit_1/production/README.md) files for additional information on the values in the `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, and `production.auto.tfvars` files.
-1. See any of the shared folder [README.md](../4-projects/business_unit_1/shared/README.md) files for additional information on the values in the `shared.auto.tfvars` file.
-1. Use `terraform output` to get the backend bucket value from gcp-bootstrap output.
+1. `common.auto.tfvars`, `development.auto.tfvars`, `nonproduction.auto.tfvars`, `production.auto.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더의 [README.md](../4-projects/business_unit_1/production/README.md) 파일들을 참조하세요.
+1. `shared.auto.tfvars` 파일의 값에 대한 추가 정보는 shared 폴더의 [README.md](../4-projects/business_unit_1/shared/README.md) 파일들을 참조하세요.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 백엔드 버킷 값을 가져옵니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/envs/shared" output -raw gcs_bucket_tfstate)
@@ -926,7 +926,7 @@ Here you will configure a VPN Network tunnel to enable connectivity between the 
 
 1. (Optional) If you want additional subfolders for separate business units or entities, make additional copies of the folder `business_unit_1` and modify any values that vary across business unit like `business_code`, `business_unit`, or `subnet_ip_range`.
 
-For example, to create a new business unit similar to business_unit_1, run the following:
+예를 들어, business_unit_1과 비슷한 새로운 비즈니스 유닛을 생성하려면 다음을 실행하세요:
 
    ```bash
    #copy the business_unit_1 folder and it's contents to a new folder business_unit_2

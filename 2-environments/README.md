@@ -105,13 +105,13 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    chmod 755 ./tf-wrapper.sh
    ```
 
-1. Rename `terraform.example.tfvars` to `terraform.tfvars`.
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. Update the file with values from your environment and bootstrap (you can re-run `terraform output` in the 0-bootstrap directory to find these values). See any of the envs folder [README.md](./envs/production/README.md#inputs) files for additional information on the values in the `terraform.tfvars` file.
+1. 환경과 부트스트랩의 값으로 파일을 업데이트합니다(이러한 값을 찾기 위해 0-bootstrap 디렉토리에서 `terraform output`을 다시 실행할 수 있습니다). `terraform.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더 [README.md](./envs/production/README.md#inputs) 파일을 참조하세요.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../terraform-example-foundation/0-bootstrap/" output -raw gcs_bucket_tfstate)
@@ -120,48 +120,43 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    sed -i'' -e "s/REMOTE_STATE_BUCKET/${backend_bucket}/" terraform.tfvars
    ```
 
-1. Commit changes.
+1. 변경사항을 커밋합니다.
 
    ```bash
    git add .
    git commit -m 'Initialize environments repo'
    ```
 
-1. Push your plan branch to trigger a plan for all environments. Because the
-   _plan_ branch is not a [named environment branch](../docs/FAQ.md#what-is-a-named-branch), pushing your _plan_
-   branch triggers _terraform plan_ but not _terraform apply_.
+1. plan 브랜치를 푸시하여 모든 환경에 대한 계획을 트리거합니다. _plan_ 브랜치는 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)가 아니므로, _plan_ 브랜치를 푸시하면 _terraform plan_이 트리거되지만 _terraform apply_는 트리거되지 않습니다.
 
    ```bash
    git push --set-upstream origin plan
    ```
 
-1. Review the plan output in your cloud build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
-1. Merge changes to development branch. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_.
+1. Cloud Build 프로젝트에서 계획 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. development 브랜치로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다.
 
    ```bash
    git checkout -b development
    git push origin development
    ```
 
-1. Review the apply output in your cloud build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
-1. Merge changes to nonproduction. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your cloud build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. nonproduction으로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b nonproduction
    git push origin nonproduction
    ```
 
-1. Merge changes to production branch. Because this is a [named environment branch](../docs/FAQ.md#what-is-a-named-branch),
-   pushing to this branch triggers both _terraform plan_ and _terraform apply_. Review the apply output in your cloud build project https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
+1. production 브랜치로 변경사항을 병합합니다. 이것은 [명명된 환경 브랜치](../docs/FAQ.md#what-is-a-named-branch)이므로, 이 브랜치에 푸시하면 _terraform plan_과 _terraform apply_가 모두 트리거됩니다. Cloud Build 프로젝트에서 apply 출력을 검토합니다 https://console.cloud.google.com/cloud-build/builds;region=DEFAULT_REGION?project=YOUR_CLOUD_BUILD_PROJECT_ID
 
    ```bash
    git checkout -b production
    git push origin production
    ```
 
-1. You can now move to the instructions in the network step. To use the [Dual Shared VPC](https://cloud.google.com/architecture/security-foundations/networking#vpcsharedvpc-id7-1-shared-vpc-) network mode go to [3-networks-svpc](../3-networks-svpc/README.md), or go to [3-networks-hub-and-spoke](../3-networks-hub-and-spoke/README.md) to use the [Hub and Spoke](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) network mode.
+1. 이제 네트워크 단계의 지침으로 이동할 수 있습니다. [듀얼 공유 VPC](https://cloud.google.com/architecture/security-foundations/networking#vpcsharedvpc-id7-1-shared-vpc-) 네트워크 모드를 사용하려면 [3-networks-svpc](../3-networks-svpc/README.md)로 이동하고, [허브 앤 스포크](https://cloud.google.com/architecture/security-foundations/networking#hub-and-spoke) 네트워크 모드를 사용하려면 [3-networks-hub-and-spoke](../3-networks-hub-and-spoke/README.md)로 이동하세요.
 
 ### Jenkins로 배포하기
 
@@ -194,14 +189,14 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    git checkout -b development
    ```
 
-1. Rename `terraform.example.tfvars` to `terraform.tfvars`.
+1. `terraform.example.tfvars`를 `terraform.tfvars`로 이름을 바꿉니다.
 
    ```bash
    mv terraform.example.tfvars terraform.tfvars
    ```
 
-1. Update the file with values from your environment and 0-bootstrap output.See any of the envs folder [README.md](./envs/production/README.md#inputs) files for additional information on the values in the `terraform.tfvars` file.
-1. Use `terraform output` to get the backend bucket value from 0-bootstrap output.
+1. 환경과 0-bootstrap 출력의 값으로 파일을 업데이트합니다. `terraform.tfvars` 파일의 값에 대한 추가 정보는 envs 폴더 [README.md](./envs/production/README.md#inputs) 파일을 참조하세요.
+1. `terraform output`을 사용하여 0-bootstrap 출력에서 백엔드 버킷 값을 가져옵니다.
 
    ```bash
    export backend_bucket=$(terraform -chdir="../gcp-bootstrap/" output -raw gcs_bucket_tfstate)
@@ -214,7 +209,7 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
 
 `tf-wrapper.sh` 스크립트의 `validate` 옵션을 사용하려면, [지침](https://cloud.google.com/docs/terraform/policy-validation/validate-policies#install)을 따라 terraform-tools 구성 요소를 설치하세요.
 
-1. Use `terraform output` to get the Seed project ID and the organization step Terraform service account from gcp-bootstrap output. An environment variable `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT` will be set using the Terraform Service Account to enable impersonation.
+1. `terraform output`을 사용하여 gcp-bootstrap 출력에서 Seed 프로젝트 ID와 조직 단계 Terraform 서비스 계정을 가져옵니다. 가장을 활성화하기 위해 Terraform 서비스 계정을 사용하여 환경 변수 `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT`가 설정됩니다.
 
    ```bash
    export SEED_PROJECT_ID=$(terraform -chdir="../gcp-bootstrap/" output -raw seed_project_id)
@@ -224,7 +219,7 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    echo ${GOOGLE_IMPERSONATE_SERVICE_ACCOUNT}
    ```
 
-1. Checkout `development` branch. Run `init` and `plan` and review output for environment development.
+1. `development` 브랜치를 체크아웃합니다. `init`과 `plan`을 실행하고 development 환경에 대한 출력을 검토합니다.
 
    ```bash
    git checkout development
@@ -232,13 +227,13 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    ./tf-wrapper.sh plan development
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate development $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` development and commit the initial version of `development` branch.
+1. `apply` development를 실행하고 `development` 브랜치의 초기 버전을 커밋합니다.
 
    ```bash
    ./tf-wrapper.sh apply development
@@ -246,7 +241,7 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    git commit -m "Development initial commit."
    ```
 
-1. Checkout `nonproduction` branch and merge `development` branch into it. Run `init` and `plan` and review output for environment nonproduction.
+1. `nonproduction` 브랜치를 체크아웃하고 `development` 브랜치를 병합합니다. `init`과 `plan`을 실행하고 nonproduction 환경에 대한 출력을 검토합니다.
 
    ```bash
    git checkout nonproduction
@@ -255,13 +250,13 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    ./tf-wrapper.sh plan nonproduction
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate nonproduction $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` production and commit initial version of nonproduction.
+1. `apply` nonproduction을 실행하고 nonproduction의 초기 버전을 커밋합니다.
 
    ```bash
    ./tf-wrapper.sh apply nonproduction
@@ -269,7 +264,7 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    git commit -m "Nonproduction initial commit."
    ```
 
-1. Checkout `production` branch and merge `nonproduction` branch into it. Run `init` and `plan` and review output for environment production.
+1. `production` 브랜치를 체크아웃하고 `nonproduction` 브랜치를 병합합니다. `init`과 `plan`을 실행하고 production 환경에 대한 출력을 검토합니다.
 
    ```bash
    git checkout production
@@ -278,13 +273,13 @@ Assured Workloads를 활성화한 경우, Assured 워크로드를 삭제하려�
    ./tf-wrapper.sh plan production
    ```
 
-1. Run `validate` and check for violations.
+1. `validate`를 실행하고 위반 사항을 확인합니다.
 
    ```bash
    ./tf-wrapper.sh validate production $(pwd)/../gcp-policies ${SEED_PROJECT_ID}
    ```
 
-1. Run `apply` production and commit initial version of production.
+1. `apply` production을 실행하고 production의 초기 버전을 커밋합니다.
 
    ```bash
    ./tf-wrapper.sh apply production

@@ -1,21 +1,21 @@
-# Dedicated Interconnect module
+# Dedicated Interconnect 모듈
 
-This module implements the recommendation proposed in [Establishing 99.99% Availability for Dedicated Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/dedicated-creating-9999-availability).
+이 모듈은 [Dedicated Interconnect에 대한 99.99% 가용성 확보](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/dedicated-creating-9999-availability)에서 제안된 권장 사항을 구현합니다.
 
-## Prerequisites
+## 전제 조건
 
-1. Provisioning of four [Dedicated Interconnect connections](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/dedicated-overview) in the `prj-interconnect` project created in step `1-org` under folder `fldr-common`.
+1. `fldr-common` 폴더 아래 `1-org` 단계에서 생성된 `prj-interconnect` 프로젝트에서 4개의 [Dedicated Interconnect 연결](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/dedicated-overview)을 프로비저닝합니다.
 
-## Usage
+## 사용법
 
-1. Rename `interconnect.tf.example` to `interconnect.tf` in the shared envs folder in `3-networks-svpc/envs/shared`
-1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
-1. Rename `interconnect.tf.example` to `interconnect.tf` in base_env folder in `3-networks-svpc/modules/base_env`.
-1. Update the file `interconnect.tf` with values that are valid for your environment for the interconnects, locations, candidate subnetworks, vlan_tag8021q and peer info.
-1. The candidate subnetworks and vlan_tag8021q variables can be set to `null` to allow the interconnect module to auto generate these values.
+1. `3-networks-svpc/envs/shared`의 shared envs 폴더에서 `interconnect.tf.example`을 `interconnect.tf`로 이름을 바꿉니다.
+1. interconnect, 위치, 후보 서브네트워크, vlan_tag8021q 및 피어 정보에 대해 사용자 환경에 유효한 값으로 `interconnect.tf` 파일을 업데이트합니다.
+1. `3-networks-svpc/modules/base_env`의 base_env 폴더에서 `interconnect.tf.example`을 `interconnect.tf`로 이름을 바꿉니다.
+1. interconnect, 위치, 후보 서브네트워크, vlan_tag8021q 및 피어 정보에 대해 사용자 환경에 유효한 값으로 `interconnect.tf` 파일을 업데이트합니다.
+1. interconnect 모듈이 이러한 값을 자동으로 생성할 수 있도록 후보 서브네트워크 및 vlan_tag8021q 변수를 `null`로 설정할 수 있습니다.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+## 입력
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -51,7 +51,7 @@ This module implements the recommendation proposed in [Establishing 99.99% Avail
 | region2\_router2\_name | Name of the Router 2 for Region 2 where the attachment resides | `string` | n/a | yes |
 | vpc\_name | Label to identify the VPC associated with shared VPC that will use the Interconnect. | `string` | n/a | yes |
 
-## Outputs
+## 출력
 
 | Name | Description |
 |------|-------------|

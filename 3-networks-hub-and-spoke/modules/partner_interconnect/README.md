@@ -2,15 +2,15 @@
 
 이 모듈은 [Partner Interconnect에 대한 99.99% 가용성 확보](https://cloud.google.com/network-connectivity/docs/interconnect/tutorials/partner-creating-9999-availability)에서 제안된 권장 사항을 구현합니다.
 
-## Prerequisites
+## 전제 조건
 
-1. Provisioning of four [VLAN attachments](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/partner-overview) in the Hub project in the specified environment. That would be the `prj-c-svpc-net-hub` and  `prj-net-dns` under the folder `fldr-common` in case of Hub and Spoke architecture.
+1. 지정된 환경의 허브 프로젝트에서 4개의 [VLAN 연결](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/partner-overview)을 프로비저닝합니다. 허브 앤 스포크 아키텍처의 경우 `fldr-common` 폴더 아래의 `prj-c-svpc-net-hub` 및 `prj-net-dns`가 해당됩니다.
 
-## Usage
+## 사용법
 
-1. Rename `partner_interconnect.tf.example` to `partner_interconnect.tf`in the shared envs folder in `3-networks-hub-and-spoke/envs/shared`.
-1. Rename `partner_interconnect.auto.tfvars.example` to `partner_interconnect.auto.tfvars` in the shared envs folder in `3-networks-hub-and-spoke/envs/shared`.
-1. Update the file `partner_interconnect.tf` with values that are valid for your environment for the VLAN attachments, locations.
+1. `3-networks-hub-and-spoke/envs/shared`의 shared envs 폴더에서 `partner_interconnect.tf.example`을 `partner_interconnect.tf`로 이름을 바꿉니다.
+1. `3-networks-hub-and-spoke/envs/shared`의 shared envs 폴더에서 `partner_interconnect.auto.tfvars.example`을 `partner_interconnect.auto.tfvars`로 이름을 바꿉니다.
+1. VLAN 연결 및 위치에 대해 사용자 환경에 유효한 값으로 `partner_interconnect.tf` 파일을 업데이트합니다.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## 입력
